@@ -1,0 +1,125 @@
+import 'dart:convert';
+import 'dart:async';
+
+import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
+import 'package:rms_app/core/network/api_client.dart';
+import 'package:rms_app/core/network/api_exception.dart';
+
+void main() {
+  group('ApiClient', () {
+    test('attaches bearer token and decodes JSON', () async {
+      late http.Request seen;
+      final client = ApiClient(
+        baseUrl: 'http://localhost:9002/api/v1',
+        accessToken: () async => 'access-token',
+        refreshSession: () async => false,
+        client: MockClient((request) async {
+          seen = request;
+          return http.Response('{"branches":[]}', 200);
+        }),
+      );
+
+      final response = await client.get('/branches');
+
+      expect(seen.url.path, '/api/v1/branches');
+      expect(seen.headers['authorization'], 'Bearer access-token');
+      expect(response, {'branches': []});
+    });
+
+    test('handles 204 without JSON deserialization', () async {
+      final client = ApiClient(
+        baseUrl: 'http://localhost:9001/api/v1',
+        accessToken: () async => null,
+        refreshSession: () async => false,
+        client: MockClient((_) async => http.Response('', 204)),
+      );
+
+      expect(
+        await client.request('POST', '/auth/logout',
+            body: {'refresh_token': 'r'}, authenticated: false),
+        isNull,
+      );
+    });
+
+    test('refreshes once then retries a protected request', () async {
+      var token = 'expired';
+      var refreshes = 0;
+      var requests = 0;
+      final client = ApiClient(
+        baseUrl: 'http://localhost:9003/api/v1',
+        accessToken: () async => token,
+        refreshSession: () async {
+          refreshes++;
+          token = 'rotated';
+          return true;
+        },
+        client: MockClient((request) async {
+          requests++;
+          if (request.headers['authorization'] == 'Bearer expired') {
+            return http.Response('{"error":{"code":"unauthorized","message":"expired"}}', 401);
+          }
+          return http.Response('{"ok":true}', 200);
+        }),
+      );
+
+      expect(await client.get('/employees'), {'ok': true});
+      expect(refreshes, 1);
+      expect(requests, 2);
+    });
+
+    test('serializes concurrent 401 refreshes', () async {
+      var token = 'expired';
+      var refreshes = 0;
+      var expiredRequests = 0;
+      final bothExpiredRequests = Completer<void>();
+      final client = ApiClient(
+        baseUrl: 'http://localhost:9003/api/v1',
+        accessToken: () async => token,
+        refreshSession: () async {
+          refreshes++;
+          await Future<void>.delayed(const Duration(milliseconds: 10));
+          token = 'rotated';
+          return true;
+        },
+        client: MockClient((request) async {
+          if (request.headers['authorization'] == 'Bearer expired') {
+            expiredRequests++;
+            if (expiredRequests == 2) bothExpiredRequests.complete();
+            await bothExpiredRequests.future;
+            return http.Response('{}', 401);
+          }
+          return http.Response('{"ok":true}', 200);
+        }),
+      );
+
+      final responses = await Future.wait([
+        client.get('/employees'),
+        client.get('/overtime'),
+      ]);
+
+      expect(responses, [{'ok': true}, {'ok': true}]);
+      expect(refreshes, 1);
+    });
+
+    test('maps server error structure and malformed success responses', () async {
+      final forbidden = ApiClient(
+        baseUrl: 'http://localhost:9003/api/v1',
+        accessToken: () async => 'token',
+        refreshSession: () async => false,
+        client: MockClient((_) async => http.Response(
+            jsonEncode({'error': {'code': 'forbidden', 'message': 'no'}}), 403)),
+      );
+      await expectLater(forbidden.get('/employees'), throwsA(isA<ApiException>()));
+
+      final malformed = ApiClient(
+        baseUrl: 'http://localhost:9003/api/v1',
+        accessToken: () async => null,
+        refreshSession: () async => false,
+        client: MockClient((_) async => http.Response('not-json', 200)),
+      );
+      await expectLater(malformed.get('/employees'), throwsA(isA<ApiException>()));
+    });
+  });
+}
