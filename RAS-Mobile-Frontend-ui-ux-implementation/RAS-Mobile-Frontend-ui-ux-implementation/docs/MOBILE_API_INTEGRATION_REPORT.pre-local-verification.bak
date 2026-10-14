@@ -1,0 +1,116 @@
+# RAS Sprint Integration Verification Report
+
+**Audit date:** 2026-10-14  
+**Verification disposition:** **NOT VERIFIED / BLOCKED** — no deployment or release decision is made by this report.
+
+## Scope and workspace
+
+- Flutter frontend: `RAS-Mobile-Frontend-ui-ux-implementation/RAS-Mobile-Frontend-ui-ux-implementation`; Flutter with `flutter_bloc`, `get_it`, and `go_router`, Arabic RTL UI.
+- Backend: `RAS-Backend-main/RAS-Backend-main`; separate Auth, Branch, and Attendance Go services, PostgreSQL, migrations, Docker Compose, service API docs, and authorization tests.
+- Handoff artifacts: workspace-root `api/` includes OpenAPI, mobile integration guide, Postman collection, environment template, and mock fixtures.
+- The root and nested components have no Git metadata. Before editing, backups were made for the API client, its test, this report, and the Postman collection. Backups have `.pre-readiness.bak` in their names. No deployment or CI/CD action was taken.
+
+## Verification matrix
+
+Service clients use separate configurable base URLs and append requests to `/api/v1`. All authenticated rows send `Authorization: Bearer <access_token>`. HTTP failures are decoded from the common `{error:{code,message}}` shape when present; Arabic UI messages avoid showing raw server details. The client has a 15-second request timeout and handles empty/204 responses without JSON decoding.
+
+Source review also confirms Arabic error mapping for 400, 401, 403, 404, 409, 429 (including `Retry-After`), and 5xx responses; malformed successful JSON becomes an invalid-response error, and network/timeout exceptions map to a generic connectivity message. These cases were not all exercised against a live service; the API-client automated tests cover representative error, malformed JSON, and 204 responses.
+
+| Connected flow | Mobile request/response mapping | Backend contract and authorization | Outcome |
+|---|---|---|---|
+| Login and session lifecycle | `POST /auth/login` sends `email`, `password` without bearer auth; session parser reads `access_token`, `refresh_token`, `token_type`, `expires_at`, `user`. Tokens and identity are stored using secure storage. Refresh sends `refresh_token`; logout sends `refresh_token` and accepts 204. | Auth routes are `/api/v1/auth/login`, `/refresh`, `/logout`, `/change-password`; session JSON is source-defined. Protected routes use bearer JWTs. Change-password sends `current_password`, `new_password`. | **BLOCKED — live verification unavailable.** Source contract reviewed; shared API-client tests pass, but there is no configured Auth service or development account to verify repository/session behavior live. |
+| Branch listing | `GET /branches`, no body; repository expects a JSON array and maps `id`, `name`, `type`, `address`, `official_start_time`, and `is_active`. | Branch handler returns a direct array. CEO and Branch Manager may read; a Branch Manager receives only the branch in the authenticated token. | **BLOCKED — live verification unavailable.** Source mapping is consistent; actual role-scoped data was not obtained. |
+| Employee listing | `GET /employees`, no body; repository expects `{employees:[...],total}`. It maps string IDs, name, branch, phone, job title, payment type/amount, and active state; optional fields may be absent. | Attendance employee route. CEO may list all (with optional filters); Branch Manager is scoped to own branch. Response wrapper and employee fields match the Go DTO. | **BLOCKED — live verification unavailable.** Source mapping is consistent; empty-list, optional-value, and role-scope behavior was not tested against a running service. |
+| Employee editing | `PATCH /employees/:id` sends existing edit fields `name`, `phone`, `job_title`, `payment_type`, `payment_amount`; identifier is backend employee ID. | Attendance update DTO accepts those optional fields and validates payment type/amount. Service enforces employee/branch rules. | **BLOCKED — live verification unavailable.** No test employee or isolated database was available for a real mutation. |
+| Attendance check-in | `POST /attendance/check-in` sends `{employee_id,source:"manual"}`; employee ID comes from the backend roster. Expects the service response object; no automatic replay of a mutation after 401. | UUID employee ID and source enum are required. Returns 201 with `{record,deduction?}`. Service authorization checks actor role and employee branch; Branch Manager is restricted to own branch, CEO may act across branches. | **BLOCKED — live verification unavailable.** Payload and authorization source were inspected; no attendance state was changed or tested live. |
+| Attendance check-out | `POST /attendance/check-out` sends `{employee_id}` from the backend roster. Expects the attendance record response; no automatic replay after 401. | UUID employee ID required. Returns 200 with an attendance record. Same server-side role/branch authorization is enforced. | **BLOCKED — live verification unavailable.** No valid open attendance record or isolated test employee was available. |
+| Overtime listing | `GET /overtime`, no body; client reads `{records,total}` and joins each `employee_id` to the existing Employee repository for display data. Maps status, source, date, hours, and amount. | CEO sees all; Branch Manager is branch-scoped. Response fields and list wrapper match Go DTOs. | **BLOCKED — live verification unavailable.** Source mapping was reviewed, but actual/empty list, authorization failures, and service errors were not exercised against the backend. |
+| Overtime approval | `PATCH /overtime/:id/approve`, no request body. On success, the existing list is refreshed. | CEO or Branch Manager of the same branch; returns the updated overtime response. Non-pending or conflicting records may return 409. | **BLOCKED — live verification unavailable.** No eligible isolated record was available to approve. |
+
+### Intentionally unconnected flows
+
+- Overtime creation remains unconnected: backend requires `employee_id` UUID, `work_date`, positive `hours`, positive `rate_per_hour`, and `source`; the existing screen does not collect all required values.
+- Overtime rejection remains unconnected: backend requires a `reason` of 3–500 characters; the existing review UI does not collect it.
+- These gaps are intentional. No fields, dialogs, or UI actions were added to bridge them.
+- Branch create/edit screens do not provide all backend create requirements. Employee creation, CEO user administration, and profile/email screens remain unconnected. Attendance history, payroll history, fingerprint ingestion, branch transfer, password recovery/OTP, menu, and pricing have no verified matching backend routes.
+
+## Source and contract review
+
+- Inspected Auth session DTOs and route registration; Branch direct-array list response; Attendance employee `{employees,total}` response; check-in 201 `{record,deduction?}` and check-out 200 record responses; and Overtime `{records,total}` plus approval/rejection/create DTOs.
+- OpenAPI paths and schemas for these routes are consistent with the inspected backend DTOs for the request/response fields relevant to the connected screens. The mobile contract guide also documents the backend branch check for attendance.
+- The Postman collection had a stale check-in request name claiming that a branch-authorization gap existed. Backend source and authorization tests show that the check is present. The request name now says the server enforces branch scope; the example request itself was not changed.
+- The API client previously replayed POST/PATCH requests after a 401 even though its comment said mutations are not retried and no idempotency key exists. It now refreshes session state but replays only GET; a mutation that got 401 is surfaced without a second send. A focused regression test verifies one POST attempt and successful session refresh.
+- Attendance authorization tests in backend source cover cross-branch denials, missing Branch Manager branch claim, CEO access, and forbidden roles. They could not be run here because Go is not installed.
+
+## Connectivity and backend configuration
+
+- Docker and Docker Compose are installed (`Docker 29.2.0`, Compose `v5.0.2`), but the Docker Engine is currently unavailable: the client cannot connect to the Docker Desktop Linux engine named pipe. Container and volume state therefore could not be inspected, and no local service was started. No backend `.env` exists. The required environment variables declared by Compose are unset: `MIGRATION_DB_PASSWORD`, `AUTH_DB_PASSWORD`, `BRANCH_DB_PASSWORD`, `ATTENDANCE_DB_PASSWORD`, `JWT_SECRET`, `SEED_CEO_EMAIL`, and `SEED_CEO_PASSWORD`. `.env.example` supplies placeholders, not actual credentials. No values were generated and no `.env` was created.
+- An earlier `docker compose -f deploy/docker-compose.yml ps` invocation also failed Compose interpolation at the missing `MIGRATION_DB_PASSWORD`. Compose startup runs role bootstrap and migrations and uses a persistent named PostgreSQL volume. Given the unavailable engine, absent credentials, and inability to inspect existing Docker resources, startup was not attempted; an isolated disposable backend could not be prepared safely in this environment.
+- Safe GET health probes to `http://localhost:9001/health`, `:9002/health`, and `:9003/health` each returned **unreachable**. No authenticated API request or business mutation was made. No service health check passed.
+- No API Gateway is deployed or verified. No production or staging URL or credentials were configured.
+
+## Flutter and API validation
+
+### Automated/local checks
+
+- `flutter test --no-pub` initially hit a Dart VM out-of-memory failure when run alongside other checks. Retried as `flutter test --no-pub --concurrency=1`: **passed, 7 tests** (six API-client tests and the app smoke test), including the new mutation-not-replayed regression test.
+- `flutter analyze --no-pub` initially crashed under resource pressure; a sequential retry after the test run passed: **No issues found**.
+- `flutter pub get` — passed in the earlier integration run; dependencies and lockfile are unchanged in this verification pass.
+- Redocly lint for the backend OpenAPI and workspace handoff had previously passed in the integration run. Re-runs during this audit produced no output within 30 seconds and were canceled; no new lint pass is claimed for this run. OpenAPI files were not changed in this audit.
+- `go test ./...` — blocked because `go` is not installed.
+- `docker compose -f deploy/docker-compose.yml ps` — an earlier invocation was blocked at required environment interpolation; the latest Docker inspection was blocked because the Docker Engine was unavailable. No container or volume was changed.
+
+### Live API checks
+
+**No live business API request was verified.** Only the three safe localhost health GETs were attempted, and all were unreachable. Automated tests use controlled HTTP responses and do not establish service connectivity, database behavior, authentication against real accounts, or branch authorization at runtime.
+
+## Deployment configuration inspection — no deployment performed
+
+- `ApiConfig` defaults to HTTP localhost service URLs (`10.0.2.2` for Android emulator, `localhost` otherwise); Dart defines can override each service URL. No release target URLs are supplied or enforced in the repository. A release invocation must explicitly provide reachable HTTPS URLs; this was not tested.
+- The main Android manifest does not enable cleartext traffic. The debug-only manifest enables cleartext for local development. This does not enable cleartext in the release manifest.
+- Android `release` build type currently uses `signingConfigs.getByName("debug")`. This is a release/distribution configuration blocker and must be replaced by owner-provided release signing configuration before any distribution. No signing material was requested, generated, or changed.
+- The prior debug APK build remained at Gradle `assembleDebug` while the Gradle 8.12 distribution was a zero-byte partial download. No APK was produced. Current Flutter diagnostics also reported that the Java version could not be determined. No release build was generated.
+- No CI/CD pipeline, deployment, publish, release, cloud resource, production environment, database, migration, or DNS action was triggered.
+
+## Verification disposition and resumption prerequisites
+
+**NOT VERIFIED / BLOCKED.** The existing integration has passing Flutter automated checks and source-level contract alignment, but none of the connected flows has been verified against a live backend. The Docker Engine is unavailable and required local backend credentials are absent. The Android build is unverified and its current signing configuration is unsuitable for distribution. This disposition is a verification status, not a release decision or authorization.
+
+To resume local verification, an operator must first prepare an isolated disposable backend environment and supply distinct values for all seven required variables above in a local `.env` without committing it. Compose startup applies migrations and uses persistent local database storage. After the three health endpoints are available, use a controlled authorized local test account and disposable test employees/attendance/overtime records. Do not point mutation tests at production. Then run the backend checks (with Go installed), Flutter tests/analysis, and API lint. For the app, pass the three service URLs as `--dart-define` values appropriate to the selected emulator/device; physical devices require reachable LAN addresses and firewall access.
+
+Local startup commands, only for an explicitly configured isolated development environment:
+
+```powershell
+docker compose -f deploy/docker-compose.yml up --build -d
+docker compose -f deploy/docker-compose.yml ps
+```
+
+After startup, verify health and run backend tests from each service module (requires Go):
+
+```powershell
+Invoke-WebRequest http://localhost:9001/health
+Invoke-WebRequest http://localhost:9002/health
+Invoke-WebRequest http://localhost:9003/health
+
+Push-Location services/auth-api; go test ./...; Pop-Location
+Push-Location services/branch-api; go test ./...; Pop-Location
+Push-Location services/attendance-api; go test ./...; Pop-Location
+```
+
+API contract lint commands:
+
+```powershell
+# From RAS-Backend-main/RAS-Backend-main
+npx --yes @redocly/cli lint --config docs/api/redocly.yaml docs/api/openapi.yaml
+
+# From the workspace api/ directory
+npx --yes @redocly/cli lint --config redocly.yaml openapi.yaml
+```
+
+Flutter checks and launch:
+
+```powershell
+flutter analyze --no-pub
+flutter test --no-pub --concurrency=1
+flutter run -d <android-emulator-id>
+```

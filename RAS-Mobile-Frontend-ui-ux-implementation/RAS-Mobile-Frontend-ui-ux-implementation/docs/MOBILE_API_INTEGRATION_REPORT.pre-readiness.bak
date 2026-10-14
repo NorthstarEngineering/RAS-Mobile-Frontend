@@ -1,0 +1,97 @@
+# RAS Mobile API Integration Report
+
+**Audit date:** 2026-10-14
+
+## Workspace and architecture
+
+- Flutter app: `RAS-Mobile-Frontend-ui-ux-implementation/RAS-Mobile-Frontend-ui-ux-implementation`. It uses Flutter, `flutter_bloc`, `get_it`, and `go_router`; the interface is Arabic and uses RTL layout.
+- Backend: `RAS-Backend-main/RAS-Backend-main`. It contains separate Auth, Branch, and Attendance Go services, PostgreSQL migrations, Docker Compose configuration, API documentation, and authorization tests.
+- API handoff: workspace-root `api/` contains the OpenAPI specification, mobile integration guide, Postman collection, environment template, and mock fixtures.
+- The component directories and workspace root have no usable Git metadata, so a `git status` baseline or source diff was unavailable. Formatting-only changes to existing Dart files could not be restored from version control.
+
+## Service configuration and verified contract
+
+Auth, Branch, and Attendance use ports `9001`, `9002`, and `9003` by default, with API routes under `/api/v1`. Each service exposes a root `/health` endpoint. There is no deployed or verified API Gateway.
+
+`lib/core/network/api_config.dart` centralizes service URLs. Android emulator defaults target `http://10.0.2.2:<port>/api/v1`; other targets default to `http://localhost:<port>/api/v1`. The `RAS_AUTH_BASE_URL`, `RAS_BRANCH_BASE_URL`, and `RAS_ATTENDANCE_BASE_URL` Dart defines override these values. Physical devices need a reachable development-machine LAN address and appropriate firewall and development transport settings. The Android debug manifest permits local cleartext HTTP; the release manifest does not. No production URL is configured.
+
+Backend source confirms the login and refresh session fields, logout's `204 No Content`, supported profile/password operations, Branch role restrictions, Attendance employee/check-in/check-out routes, and overtime routes. Branch and Attendance verify Auth-issued bearer JWTs and enforce authorization server-side; the mobile app does not send identity or branch headers as authorization proof.
+
+## Screen-to-endpoint mapping
+
+| Existing screen or flow | Service and route | Integration state |
+|---|---|---|
+| Login, session restore/refresh, password change, logout | Auth `POST /auth/login`, `/auth/refresh`, `/auth/change-password`, `/auth/logout` | Integrated with secure token storage, bearer auth, refresh-token rotation, session restoration, and `204` logout handling. Demo preset credentials are not used. |
+| Branch listing | Branch `GET /branches` | Integrated; maps backend branch data and provides loading, empty, error, and retry states. |
+| Employee listing | Attendance `GET /employees` | Integrated through the API repository with loading, empty, error, and retry states. |
+| Employee editing | Attendance `PATCH /employees/:id` | Integrated for the fields supported by the existing edit screen and backend. |
+| Attendance check-in/check-out | Attendance `POST /attendance/check-in`, `/attendance/check-out` | Integrated using backend employee IDs and authenticated server-side branch authorization. Mutations are not automatically retried. |
+| Overtime listing | Attendance `GET /overtime` | Integrated; maps returned records and joins employee display data from the existing employee repository. |
+| Overtime approval | Attendance `PATCH /overtime/:id/approve` | Integrated; approval uses the selected record ID and refreshes the list on success. |
+| Overtime creation | Attendance `POST /overtime` | Not connected. The existing form lacks required backend fields for work date and hourly rate. No fields were added. |
+| Overtime rejection | Attendance `PATCH /overtime/:id/reject` | Not connected. The backend requires a rejection reason, which the existing review UI does not collect. No dialog or field was added. |
+| Branch detail/create/edit | Branch `GET /branches/:id`, `POST /branches`, `PATCH /branches/:id` | Existing presentation remains prototype-only; create/edit screens do not provide all required API fields. |
+| Employee creation, CEO user administration, profile/email | Attendance `POST /employees`; Auth `/users`, `/auth/me`, `/auth/me/email` | Existing screens are not connected. Available API wrappers do not mean these UI flows are integrated. |
+| Attendance history, payroll history, fingerprint ingestion, branch transfer, password recovery/OTP, menu and pricing | No verified matching backend routes for these existing surfaces | Not supported by the current backend; their existing prototype behavior is not live API data. |
+
+## Integration changes
+
+- Added the shared network layer for service URL configuration, timeouts, bearer tokens, refresh retry, `204` responses, JSON/error handling, and service API wrappers.
+- Added secure Auth session storage and connected the existing login, restore, logout, and password-change flows.
+- Connected the existing Branch and Employee repositories to their services and connected Employee editing through the existing repository abstraction.
+- Connected the existing attendance operations to the Attendance API; the backend enforces role and branch scope.
+- Connected the existing overtime listing and approval action. Creation and rejection remain unconnected due to missing fields in their existing UI, as detailed above.
+- Added Android debug-only cleartext support for local HTTP testing and API-client tests for bearer headers, `204`, refresh retry/concurrency, error responses, and malformed JSON.
+- Synchronized the workspace `api/` OpenAPI and mobile-integration documents with the verified backend copies and added the matching Redocly configuration.
+
+## Security and authorization
+
+Backend source and existing tests confirm that attendance check-in/check-out checks the authenticated actor's role and branch against the employee's branch. Branch Managers are restricted to their branch, CEO access is cross-branch, and other roles are denied. No backend security change was made. Backend Go tests could not be run because Go is unavailable in this environment.
+
+## Verification results
+
+### Automated/local checks
+
+- `flutter pub get` — passed; resolved the HTTP and secure-storage dependencies and updated `pubspec.lock`.
+- `flutter analyze --no-pub` — passed with **No issues found** after the latest integration scope adjustment.
+- `flutter test --no-pub` — passed: **6 tests**, comprising five API-client tests and the existing app smoke test.
+- Backend OpenAPI lint — passed with `npx --yes @redocly/cli lint --config docs/api/redocly.yaml docs/api/openapi.yaml` from the backend root.
+- Handoff OpenAPI lint — passed with `npx --yes @redocly/cli lint --config redocly.yaml openapi.yaml` from `api/`.
+- `docker compose -f deploy/docker-compose.yml ps` — blocked because the backend `.env` containing local database/JWT/seed configuration is absent. No environment file was created and no services or database were started.
+- `go test ./...` — unavailable because Go is not installed.
+- `flutter build apk --debug --no-pub` — unverified; Gradle remained at `assembleDebug` while its configured Gradle 8.12 distribution was a zero-byte partial download. No APK was produced.
+
+### Live API verification
+
+No live API request was verified. The backend is not configured with its required `.env`, and no service health check or authenticated request was confirmed. Automated Flutter tests exercise controlled HTTP responses; they do not establish runtime connectivity to the backend. The API Gateway is not deployed or verified.
+
+## Remaining implementation limits
+
+Overtime creation and rejection remain unconnected because the existing screens do not collect all required backend fields; this is intentional, and no UI fields or dialogs should be added under the integration-only scope. Branch create/edit, employee creation, CEO account administration, and profile/email screens also remain unconnected. Existing history, payroll, fingerprint, branch-transfer, recovery, menu, and pricing surfaces have no verified matching backend routes. These limitations must not be represented as working live functionality.
+
+Attendance branch-scope authorization is verified by source and existing backend tests, but was not runtime-tested here. Persistent session expiration behavior has not been exercised through widget tests. Auth and Branch do not have independent OpenAPI files beyond the combined handoff; Attendance has separate Swagger documentation.
+
+## Local run commands
+
+From `RAS-Backend-main/RAS-Backend-main`, configure a local `.env` from `.env.example` with distinct development secrets, then run:
+
+```powershell
+docker compose -f deploy/docker-compose.yml up --build -d
+docker compose -f deploy/docker-compose.yml ps
+```
+
+From `RAS-Mobile-Frontend-ui-ux-implementation/RAS-Mobile-Frontend-ui-ux-implementation`, run:
+
+```powershell
+flutter pub get
+flutter run -d <android-emulator-id>
+```
+
+For a physical device, provide reachable service URLs, for example:
+
+```powershell
+flutter run -d <device-id> `
+  --dart-define=RAS_AUTH_BASE_URL=http://<host-lan-ip>:9001/api/v1 `
+  --dart-define=RAS_BRANCH_BASE_URL=http://<host-lan-ip>:9002/api/v1 `
+  --dart-define=RAS_ATTENDANCE_BASE_URL=http://<host-lan-ip>:9003/api/v1
+```

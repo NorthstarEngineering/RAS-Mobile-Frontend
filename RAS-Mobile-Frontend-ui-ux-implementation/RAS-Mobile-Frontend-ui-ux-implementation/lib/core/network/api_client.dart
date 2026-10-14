@@ -1,0 +1,121 @@
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
+
+import 'api_exception.dart';
+
+typedef TokenProvider = Future<String?> Function();
+typedef RefreshHandler = Future<bool> Function();
+
+class ApiClient {
+  ApiClient({
+    required this.baseUrl,
+    required this.accessToken,
+    required this.refreshSession,
+    http.Client? client,
+  }) : _client = client ?? http.Client();
+
+  final String baseUrl;
+  final TokenProvider accessToken;
+  final RefreshHandler refreshSession;
+  final http.Client _client;
+  Future<bool>? _refreshInFlight;
+
+  Future<dynamic> get(String path) => request('GET', path);
+  Future<dynamic> post(String path, [Map<String, dynamic>? body]) =>
+      request('POST', path, body: body);
+  Future<dynamic> patch(String path, [Map<String, dynamic>? body]) =>
+      request('PATCH', path, body: body);
+
+  Future<dynamic> request(
+    String method,
+    String path, {
+    Map<String, dynamic>? body,
+    bool authenticated = true,
+    bool retryUnauthorized = true,
+  }) async {
+    final uri = Uri.parse('$baseUrl$path');
+    final token = authenticated ? await accessToken() : null;
+    final response = await _send(method, uri, token, body);
+    if (response.statusCode == 401 && authenticated && retryUnauthorized) {
+      // Another request may already have refreshed while this request was in
+      // flight. Reuse its new token instead of rotating the refresh token again.
+      final latestToken = await accessToken();
+      final refreshed = latestToken != token
+          ? true
+          : await (_refreshInFlight ??= _runRefresh());
+      // Replaying a mutation without an idempotency key may duplicate an
+      // operation if the server processed it before returning 401.
+      if (refreshed && method == 'GET') {
+        return request(
+          method,
+          path,
+          body: body,
+          authenticated: true,
+          retryUnauthorized: false,
+        );
+      }
+    }
+    if (response.statusCode == 204 || response.bodyBytes.isEmpty) return null;
+    dynamic decoded;
+    try {
+      decoded = jsonDecode(utf8.decode(response.bodyBytes));
+    } on FormatException {
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        throw const ApiException(
+          502,
+          'invalid_response',
+          'Invalid server response',
+        );
+      }
+      decoded = null;
+    }
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      final error = decoded is Map ? decoded['error'] : null;
+      final retry = response.headers['retry-after'];
+      throw ApiException(
+        response.statusCode,
+        error is Map ? error['code']?.toString() : null,
+        error is Map
+            ? error['message']?.toString() ?? 'Request failed'
+            : 'Request failed',
+        retryAfter: retry == null
+            ? null
+            : Duration(seconds: int.tryParse(retry) ?? 0),
+      );
+    }
+    return decoded;
+  }
+
+  Future<bool> _runRefresh() async {
+    try {
+      return await refreshSession();
+    } finally {
+      _refreshInFlight = null;
+    }
+  }
+
+  Future<http.Response> _send(
+    String method,
+    Uri uri,
+    String? token,
+    Map<String, dynamic>? body,
+  ) {
+    final headers = <String, String>{'Accept': 'application/json'};
+    if (body != null) {
+      headers['Content-Type'] = 'application/json';
+    }
+    if (token != null && token.isNotEmpty) {
+      headers['Authorization'] = 'Bearer $token';
+    }
+    final encoded = body == null ? null : jsonEncode(body);
+    final future = switch (method) {
+      'GET' => _client.get(uri, headers: headers),
+      'POST' => _client.post(uri, headers: headers, body: encoded),
+      'PATCH' => _client.patch(uri, headers: headers, body: encoded),
+      _ => throw ArgumentError.value(method, 'method'),
+    };
+    return future.timeout(const Duration(seconds: 15));
+  }
+}
