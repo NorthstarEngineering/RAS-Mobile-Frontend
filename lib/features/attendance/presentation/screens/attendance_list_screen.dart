@@ -57,13 +57,17 @@ class _AttendanceListScreenState extends State<AttendanceListScreen> {
 
   List<AttendanceRecord> get _filteredRecords {
     if (_selectedFilter == 'present') {
-      return _records.where((r) => r.status == AttendanceStatus.present).toList();
+      return _records
+          .where((r) => r.status == AttendanceStatus.present)
+          .toList();
     }
     if (_selectedFilter == 'late') {
       return _records.where((r) => r.status == AttendanceStatus.late).toList();
     }
     if (_selectedFilter == 'absent') {
-      return _records.where((r) => r.status == AttendanceStatus.absent).toList();
+      return _records
+          .where((r) => r.status == AttendanceStatus.absent)
+          .toList();
     }
     return _records;
   }
@@ -71,7 +75,9 @@ class _AttendanceListScreenState extends State<AttendanceListScreen> {
   void _onSyncDevices() {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('تمت مزامنة بيانات البصمة مع أجهزة الدخول البيومترية بنجاح.'),
+        content: Text(
+          'تمت مزامنة بيانات البصمة مع أجهزة الدخول البيومترية بنجاح.',
+        ),
         backgroundColor: AppColors.success,
         behavior: SnackBarBehavior.floating,
       ),
@@ -134,34 +140,44 @@ class _AttendanceListScreenState extends State<AttendanceListScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Text(
-                        'سجلات البصمة اليوم',
-                        style: AppTypography.labelMd.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 2,
-                        ),
-                        decoration: const BoxDecoration(
-                          color: AppColors.surfaceContainerHigh,
-                          borderRadius: AppRadius.fullAll,
-                        ),
-                        child: Text(
-                          'الوردية الصباحية',
-                          style: AppTypography.labelSm.copyWith(
-                            fontSize: 11,
-                            color: AppColors.secondary,
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'سجلات البصمة اليوم',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTypography.labelMd.copyWith(
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 8),
+                        Container(
+                          constraints: const BoxConstraints(maxWidth: 124),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
+                          decoration: const BoxDecoration(
+                            color: AppColors.surfaceContainerHigh,
+                            borderRadius: AppRadius.fullAll,
+                          ),
+                          child: Text(
+                            'الوردية الصباحية',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTypography.labelSm.copyWith(
+                              fontSize: 11,
+                              color: AppColors.secondary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
+                  const SizedBox(width: AppSpacing.xs),
                   TextButton.icon(
                     onPressed: _onSyncDevices,
                     icon: const Icon(Symbols.sync, size: 16),
@@ -181,7 +197,8 @@ class _AttendanceListScreenState extends State<AttendanceListScreen> {
                   AppSpacing.xl,
                 ),
                 itemCount: _filteredRecords.length,
-                separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.sm),
+                separatorBuilder: (_, __) =>
+                    const SizedBox(height: AppSpacing.sm),
                 itemBuilder: (context, index) {
                   final record = _filteredRecords[index];
                   return _buildAttendanceCard(record);
@@ -259,10 +276,14 @@ class _AttendanceListScreenState extends State<AttendanceListScreen> {
                       children: [
                         Row(
                           children: [
-                            Text(
-                              record.employeeName,
-                              style: AppTypography.labelMd.copyWith(
-                                fontWeight: FontWeight.w700,
+                            Expanded(
+                              child: Text(
+                                record.employeeName,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: AppTypography.labelMd.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                             ),
                             const SizedBox(width: 6),
@@ -276,6 +297,8 @@ class _AttendanceListScreenState extends State<AttendanceListScreen> {
                         ),
                         Text(
                           record.role,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: AppTypography.labelSm.copyWith(
                             color: AppColors.secondary,
                             fontSize: 12,
@@ -293,8 +316,8 @@ class _AttendanceListScreenState extends State<AttendanceListScreen> {
                       color: isLate
                           ? AppColors.warningContainer
                           : isAbsent
-                              ? AppColors.errorContainer
-                              : const Color(0xFFE8F5E9),
+                          ? AppColors.errorContainer
+                          : const Color(0xFFE8F5E9),
                       borderRadius: AppRadius.fullAll,
                     ),
                     child: Text(
@@ -305,8 +328,8 @@ class _AttendanceListScreenState extends State<AttendanceListScreen> {
                         color: isLate
                             ? AppColors.warning
                             : isAbsent
-                                ? AppColors.error
-                                : const Color(0xFF2E8B2E),
+                            ? AppColors.error
+                            : const Color(0xFF2E8B2E),
                       ),
                     ),
                   ),
@@ -326,41 +349,56 @@ class _AttendanceListScreenState extends State<AttendanceListScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      children: [
-                        const Icon(
-                          Symbols.schedule,
-                          size: 16,
-                          color: AppColors.secondary,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          'تسجيل الحضور: ${record.checkInTime}',
-                          style: AppTypography.labelSm.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                    if (isLate || isAbsent)
-                      Row(
+                    Expanded(
+                      child: Row(
                         children: [
-                          Text(
-                            record.isDeductionAdjusted
-                                ? 'تم تعديل الخصم'
-                                : 'خصم: ${record.deductionAmount.toStringAsFixed(0)} ج.م (تعديل)',
-                            style: AppTypography.labelSm.copyWith(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.w700,
+                          const Icon(
+                            Symbols.schedule,
+                            size: 16,
+                            color: AppColors.secondary,
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              'تسجيل الحضور: ${record.checkInTime}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTypography.labelSm.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
-                          const SizedBox(width: 2),
-                          const Icon(
-                            Symbols.chevron_left,
-                            size: 16,
-                            color: AppColors.primary,
-                          ),
                         ],
+                      ),
+                    ),
+                    if (isLate || isAbsent)
+                      const SizedBox(width: AppSpacing.xs),
+                    if (isLate || isAbsent)
+                      Flexible(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                record.isDeductionAdjusted
+                                    ? 'تم تعديل الخصم'
+                                    : 'خصم: ${record.deductionAmount.toStringAsFixed(0)} ج.م (تعديل)',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: AppTypography.labelSm.copyWith(
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 2),
+                            const Icon(
+                              Symbols.chevron_left,
+                              size: 16,
+                              color: AppColors.primary,
+                            ),
+                          ],
+                        ),
                       ),
                   ],
                 ),

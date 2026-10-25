@@ -9,10 +9,7 @@ import '../../../../core/widgets/widgets.dart';
 import '../../domain/entities/attendance_record.dart';
 
 class DeductionAdjustmentScreen extends StatefulWidget {
-  const DeductionAdjustmentScreen({
-    super.key,
-    required this.record,
-  });
+  const DeductionAdjustmentScreen({super.key, required this.record});
 
   final AttendanceRecord record;
 
@@ -146,41 +143,54 @@ class _DeductionAdjustmentScreenState extends State<DeductionAdjustmentScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'مدة التأخير المسجلة',
-                              style: AppTypography.labelSm.copyWith(
-                                color: AppColors.secondary,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'مدة التأخير المسجلة',
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: AppTypography.labelSm.copyWith(
+                                  color: AppColors.secondary,
+                                ),
                               ),
-                            ),
-                            Text(
-                              '${widget.record.delayMinutes} دقيقة',
-                              style: AppTypography.labelMd.copyWith(
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.warning,
+                              Text(
+                                '${widget.record.delayMinutes} دقيقة',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: AppTypography.labelMd.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.warning,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              'الخصم التلقائي المحسوب',
-                              style: AppTypography.labelSm.copyWith(
-                                color: AppColors.secondary,
+                        const SizedBox(width: AppSpacing.md),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                'الخصم التلقائي المحسوب',
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: AppTypography.labelSm.copyWith(
+                                  color: AppColors.secondary,
+                                ),
                               ),
-                            ),
-                            Text(
-                              '${widget.record.deductionAmount.toStringAsFixed(0)} ج.م',
-                              style: AppTypography.labelMd.copyWith(
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.error,
+                              Text(
+                                '${widget.record.deductionAmount.toStringAsFixed(0)} ج.م',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: AppTypography.labelMd.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.error,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -234,17 +244,20 @@ class _DeductionAdjustmentScreenState extends State<DeductionAdjustmentScreen> {
                         ChoiceChip(
                           label: const Text('عطل مواصلات عامة'),
                           selected: _presetReason == 'traffic',
-                          onSelected: (_) => setState(() => _presetReason = 'traffic'),
+                          onSelected: (_) =>
+                              setState(() => _presetReason = 'traffic'),
                         ),
                         ChoiceChip(
                           label: const Text('ظرف طبي طارئ'),
                           selected: _presetReason == 'medical',
-                          onSelected: (_) => setState(() => _presetReason = 'medical'),
+                          onSelected: (_) =>
+                              setState(() => _presetReason = 'medical'),
                         ),
                         ChoiceChip(
                           label: const Text('تكليف إداري خارجي'),
                           selected: _presetReason == 'official',
-                          onSelected: (_) => setState(() => _presetReason = 'official'),
+                          onSelected: (_) =>
+                              setState(() => _presetReason = 'official'),
                         ),
                       ],
                     ),

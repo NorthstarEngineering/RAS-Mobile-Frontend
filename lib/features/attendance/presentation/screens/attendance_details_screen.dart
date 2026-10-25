@@ -22,7 +22,8 @@ class AttendanceDetailsScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.history_outlined),
             tooltip: 'سجل الحضور التاريخي',
-            onPressed: () => context.push('/attendance/history', extra: record.employeeName),
+            onPressed: () =>
+                context.push('/attendance/history', extra: record.employeeName),
           ),
         ],
       ),
@@ -35,26 +36,49 @@ class AttendanceDetailsScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    const Icon(Icons.calendar_today, size: 16, color: AppColors.primary),
-                    const SizedBox(width: 6),
-                    Text(
-                      'الثلاثاء، 16 أبريل 2024',
-                      style: AppTypography.labelSm.copyWith(color: AppColors.secondary),
-                    ),
-                  ],
+                Expanded(
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.calendar_today,
+                        size: 16,
+                        color: AppColors.primary,
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          'الثلاثاء، 16 أبريل 2024',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTypography.labelSm.copyWith(
+                            color: AppColors.secondary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
+                const SizedBox(width: AppDimens.paddingSm),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  constraints: const BoxConstraints(maxWidth: 150),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
-                    color: hasDelay ? AppColors.errorContainer : const Color(0xFFEAF5EA),
+                    color: hasDelay
+                        ? AppColors.errorContainer
+                        : const Color(0xFFEAF5EA),
                     borderRadius: BorderRadius.circular(AppDimens.radiusFull),
                   ),
                   child: Text(
                     hasDelay ? 'حالة غير مكتملة (تأخير)' : 'منضبط',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: AppTypography.labelSm.copyWith(
-                      color: hasDelay ? AppColors.onErrorContainer : const Color(0xFF2E8B2E),
+                      color: hasDelay
+                          ? AppColors.onErrorContainer
+                          : const Color(0xFF2E8B2E),
                       fontWeight: FontWeight.bold,
                       fontSize: 11,
                     ),
@@ -87,7 +111,11 @@ class AttendanceDetailsScreen extends StatelessWidget {
                       color: AppColors.primaryFixed,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.person, color: AppColors.primary, size: 26),
+                    child: const Icon(
+                      Icons.person,
+                      color: AppColors.primary,
+                      size: 26,
+                    ),
                   ),
                   const SizedBox(width: AppDimens.paddingMd),
                   Expanded(
@@ -96,15 +124,23 @@ class AttendanceDetailsScreen extends StatelessWidget {
                       children: [
                         Text(
                           record.employeeName,
-                          style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
+                          style: AppTypography.labelMd.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         Text(
                           record.role,
-                          style: AppTypography.bodySm.copyWith(color: AppColors.secondary, fontSize: 12),
+                          style: AppTypography.bodySm.copyWith(
+                            color: AppColors.secondary,
+                            fontSize: 12,
+                          ),
                         ),
                         Text(
                           'الفرع الرئيسي - وسط البلد (#01)',
-                          style: AppTypography.labelSm.copyWith(color: AppColors.secondary, fontSize: 11),
+                          style: AppTypography.labelSm.copyWith(
+                            color: AppColors.secondary,
+                            fontSize: 11,
+                          ),
                         ),
                       ],
                     ),
@@ -134,24 +170,45 @@ class AttendanceDetailsScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: [
-                          const Icon(Icons.timelapse, color: AppColors.primary, size: 20),
-                          const SizedBox(width: 6),
-                          Text(
-                            'سجل البصمة مقابل المواعيد',
-                            style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                        ],
+                      Expanded(
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.timelapse,
+                              color: AppColors.primary,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                'سجل البصمة مقابل المواعيد',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: AppTypography.labelMd.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
+                      const SizedBox(width: AppDimens.paddingSm),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        constraints: const BoxConstraints(maxWidth: 130),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.surfaceContainer,
-                          borderRadius: BorderRadius.circular(AppDimens.radiusFull),
+                          borderRadius: BorderRadius.circular(
+                            AppDimens.radiusFull,
+                          ),
                         ),
                         child: Text(
                           'الوردية الصباحية A',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: AppTypography.labelSm.copyWith(
                             color: AppColors.onSurfaceVariant,
                             fontSize: 10,
@@ -169,14 +226,18 @@ class AttendanceDetailsScreen extends StatelessWidget {
                           padding: const EdgeInsets.all(AppDimens.paddingMd),
                           decoration: BoxDecoration(
                             color: AppColors.surfaceContainerLow,
-                            borderRadius: BorderRadius.circular(AppDimens.radiusLg),
+                            borderRadius: BorderRadius.circular(
+                              AppDimens.radiusLg,
+                            ),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 'الموعد المجدول',
-                                style: AppTypography.labelSm.copyWith(color: AppColors.secondary),
+                                style: AppTypography.labelSm.copyWith(
+                                  color: AppColors.secondary,
+                                ),
                               ),
                               const SizedBox(height: 4),
                               Text(
@@ -189,7 +250,10 @@ class AttendanceDetailsScreen extends StatelessWidget {
                               const SizedBox(height: 2),
                               Text(
                                 '8 ساعات عمل',
-                                style: AppTypography.labelSm.copyWith(color: AppColors.secondary, fontSize: 10),
+                                style: AppTypography.labelSm.copyWith(
+                                  color: AppColors.secondary,
+                                  fontSize: 10,
+                                ),
                               ),
                             ],
                           ),
@@ -200,8 +264,14 @@ class AttendanceDetailsScreen extends StatelessWidget {
                         child: Container(
                           padding: const EdgeInsets.all(AppDimens.paddingMd),
                           decoration: BoxDecoration(
-                            color: hasDelay ? AppColors.errorContainer.withValues(alpha: 0.4) : AppColors.surfaceContainerLow,
-                            borderRadius: BorderRadius.circular(AppDimens.radiusLg),
+                            color: hasDelay
+                                ? AppColors.errorContainer.withValues(
+                                    alpha: 0.4,
+                                  )
+                                : AppColors.surfaceContainerLow,
+                            borderRadius: BorderRadius.circular(
+                              AppDimens.radiusLg,
+                            ),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -209,7 +279,9 @@ class AttendanceDetailsScreen extends StatelessWidget {
                               Text(
                                 'البصمة الفعلية',
                                 style: AppTypography.labelSm.copyWith(
-                                  color: hasDelay ? AppColors.error : AppColors.secondary,
+                                  color: hasDelay
+                                      ? AppColors.error
+                                      : AppColors.secondary,
                                 ),
                               ),
                               const SizedBox(height: 4),
@@ -218,14 +290,20 @@ class AttendanceDetailsScreen extends StatelessWidget {
                                 style: AppTypography.labelMd.copyWith(
                                   fontWeight: FontWeight.bold,
                                   fontFamily: 'monospace',
-                                  color: hasDelay ? AppColors.error : AppColors.onSurface,
+                                  color: hasDelay
+                                      ? AppColors.error
+                                      : AppColors.onSurface,
                                 ),
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                hasDelay ? 'تأخير ${record.delayMinutes} دقيقة' : 'حضور منضبط',
+                                hasDelay
+                                    ? 'تأخير ${record.delayMinutes} دقيقة'
+                                    : 'حضور منضبط',
                                 style: AppTypography.labelSm.copyWith(
-                                  color: hasDelay ? AppColors.error : const Color(0xFF2E8B2E),
+                                  color: hasDelay
+                                      ? AppColors.error
+                                      : const Color(0xFF2E8B2E),
                                   fontWeight: FontWeight.bold,
                                   fontSize: 10,
                                 ),
@@ -253,13 +331,17 @@ class AttendanceDetailsScreen extends StatelessWidget {
                           children: [
                             Text(
                               'الخصم الآلي المسجل',
-                              style: AppTypography.labelSm.copyWith(color: AppColors.secondary),
+                              style: AppTypography.labelSm.copyWith(
+                                color: AppColors.secondary,
+                              ),
                             ),
                             Text(
                               '${record.deductionAmount.toStringAsFixed(2)} ج.م',
                               style: AppTypography.headlineSm.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: hasDelay ? AppColors.error : AppColors.onSurface,
+                                color: hasDelay
+                                    ? AppColors.error
+                                    : AppColors.onSurface,
                                 fontSize: 18,
                               ),
                             ),
@@ -267,10 +349,17 @@ class AttendanceDetailsScreen extends StatelessWidget {
                         ),
                         if (record.isDeductionAdjusted)
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 3,
+                            ),
                             decoration: BoxDecoration(
-                              color: AppColors.primaryContainer.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(AppDimens.radiusFull),
+                              color: AppColors.primaryContainer.withValues(
+                                alpha: 0.15,
+                              ),
+                              borderRadius: BorderRadius.circular(
+                                AppDimens.radiusFull,
+                              ),
                             ),
                             child: Text(
                               'معدل إدارياً',
@@ -290,7 +379,8 @@ class AttendanceDetailsScreen extends StatelessWidget {
 
             // Action Buttons
             ElevatedButton.icon(
-              onPressed: () => context.push('/attendance/adjust', extra: record),
+              onPressed: () =>
+                  context.push('/attendance/adjust', extra: record),
               icon: const Icon(Icons.edit_note),
               label: const Text('تعديل الخصم الإداري (ATT-03)'),
               style: ElevatedButton.styleFrom(
@@ -304,7 +394,10 @@ class AttendanceDetailsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             OutlinedButton.icon(
-              onPressed: () => context.push('/attendance/history', extra: record.employeeName),
+              onPressed: () => context.push(
+                '/attendance/history',
+                extra: record.employeeName,
+              ),
               icon: const Icon(Icons.calendar_month_outlined),
               label: const Text('عرض سجل الحضور الشهري (ATT-04)'),
               style: OutlinedButton.styleFrom(
