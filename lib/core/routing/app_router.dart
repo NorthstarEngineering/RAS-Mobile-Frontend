@@ -49,6 +49,23 @@ import '../../features/menu/presentation/screens/menu_item_requests_screen.dart'
 import '../../features/pricing/presentation/screens/price_change_requests_screen.dart';
 import '../../features/pricing/presentation/screens/price_change_review_screen.dart';
 import '../../features/pricing/presentation/screens/price_history_screen.dart';
+import '../../features/stock_control/presentation/screens/central_kitchen_dashboard_screen.dart';
+import '../../features/stock_control/presentation/screens/central_kitchen_goods_screen.dart';
+import '../../features/stock_control/presentation/screens/central_kitchen_item_details_screen.dart';
+import '../../features/stock_control/presentation/screens/central_kitchen_movements_screen.dart';
+import '../../features/stock_control/presentation/screens/create_stock_item_screen.dart';
+import '../../features/stock_control/presentation/screens/inventory_item_details_screen.dart';
+import '../../features/stock_control/presentation/screens/inventory_list_screen.dart';
+import '../../features/stock_control/presentation/screens/inventory_movements_screen.dart';
+import '../../features/stock_control/presentation/screens/inventory_value_screen.dart';
+import '../../features/stock_control/presentation/screens/stock_adjustment_screen.dart';
+import '../../features/dashboards/presentation/screens/role_dashboards_screen.dart';
+import '../../features/overtime/presentation/screens/overtime_approval_screen.dart';
+import '../../features/supply/presentation/screens/supply_screens.dart';
+import '../../features/transfers/presentation/screens/transfer_screens.dart';
+import '../../features/sales/presentation/screens/sales_screens.dart';
+import '../../features/cost_reports/presentation/screens/cost_screens.dart';
+import '../../features/reports/presentation/screens/report_screens.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/splash',
@@ -142,8 +159,11 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/profile',
       name: 'profile',
-      builder: (context, state) => const MobileViewport(
-        child: ProfileAccountScreen(),
+      builder: (context, state) => MobileViewport(
+        child: BlocProvider.value(
+          value: sl<AuthBloc>(),
+          child: const ProfileAccountScreen(),
+        ),
       ),
     ),
     // Branches Routes
@@ -474,6 +494,362 @@ final appRouter = GoRouter(
           child: PriceHistoryScreen(itemId: id),
         );
       },
+    ),
+    GoRoute(
+      path: '/kitchen',
+      name: 'central-kitchen-dashboard',
+      builder: (context, state) => const MobileViewport(
+        child: CentralKitchenDashboardScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/kitchen/items',
+      name: 'central-kitchen-goods',
+      builder: (context, state) => const MobileViewport(
+        child: CentralKitchenGoodsScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/kitchen/items/create',
+      name: 'create-stock-item',
+      builder: (context, state) => const MobileViewport(
+        child: CreateStockItemScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/kitchen/items/:id',
+      name: 'central-kitchen-item-details',
+      builder: (context, state) => MobileViewport(
+        child: CentralKitchenItemDetailsScreen(
+          itemId: state.pathParameters['id'] ?? '',
+        ),
+      ),
+    ),
+    GoRoute(
+      path: '/kitchen/movements',
+      name: 'central-kitchen-movements',
+      builder: (context, state) => const MobileViewport(
+        child: CentralKitchenMovementsScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/inventory',
+      name: 'inventory-list',
+      builder: (context, state) => const MobileViewport(
+        child: InventoryListScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/inventory/value',
+      name: 'inventory-value',
+      builder: (context, state) => const MobileViewport(
+        child: InventoryValueScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/inventory/movements',
+      name: 'inventory-movements',
+      builder: (context, state) => const MobileViewport(
+        child: InventoryMovementsScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/inventory/adjust/:id',
+      name: 'inventory-adjustment',
+      builder: (context, state) => MobileViewport(
+        child: StockAdjustmentScreen(
+          itemId: state.pathParameters['id'] ?? '',
+        ),
+      ),
+    ),
+    GoRoute(
+      path: '/inventory/:id',
+      name: 'inventory-item-details',
+      builder: (context, state) => MobileViewport(
+        child: InventoryItemDetailsScreen(
+          itemId: state.pathParameters['id'] ?? '',
+        ),
+      ),
+    ),
+    GoRoute(
+      path: '/dashboard/ceo',
+      name: 'ceo-dashboard',
+      builder: (context, state) => const MobileViewport(
+        child: CeoDashboardScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/dashboard/branch',
+      name: 'branch-manager-dashboard',
+      builder: (context, state) => const MobileViewport(
+        child: BranchManagerDashboardScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/dashboard/supply',
+      name: 'supply-manager-dashboard',
+      builder: (context, state) => const MobileViewport(
+        child: SupplyManagerDashboardScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/overtime/approve',
+      name: 'overtime-approval',
+      builder: (context, state) => const MobileViewport(
+        child: OvertimeApprovalScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/supply',
+      name: 'supply-orders',
+      builder: (context, state) => const MobileViewport(
+        child: SupplyOrdersScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/supply/create',
+      name: 'create-supply-order',
+      builder: (context, state) => const MobileViewport(
+        child: CreateSupplyOrderScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/supply/:id/execute',
+      name: 'execute-supply-order',
+      builder: (context, state) => MobileViewport(
+        child: ExecuteSupplyOrderScreen(
+          orderId: state.pathParameters['id'] ?? '',
+        ),
+      ),
+    ),
+    GoRoute(
+      path: '/supply/:id/receive',
+      name: 'receive-supply-order',
+      builder: (context, state) => MobileViewport(
+        child: ReceiveSupplyOrderScreen(
+          orderId: state.pathParameters['id'] ?? '',
+        ),
+      ),
+    ),
+    GoRoute(
+      path: '/supply/:id',
+      name: 'supply-order-details',
+      builder: (context, state) => MobileViewport(
+        child: SupplyOrderDetailsScreen(
+          orderId: state.pathParameters['id'] ?? '',
+        ),
+      ),
+    ),
+    GoRoute(
+      path: '/transfers',
+      name: 'transfers',
+      builder: (context, state) => const MobileViewport(
+        child: TransferListScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/transfers/create',
+      name: 'create-transfer',
+      builder: (context, state) => const MobileViewport(
+        child: CreateTransferScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/transfers/history',
+      name: 'transfer-history',
+      builder: (context, state) => const MobileViewport(
+        child: TransferHistoryScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/transfers/:id/review',
+      name: 'review-transfer',
+      builder: (context, state) => MobileViewport(
+        child: ReviewTransferScreen(
+          transferId: state.pathParameters['id'] ?? '',
+        ),
+      ),
+    ),
+    GoRoute(
+      path: '/transfers/:id/send',
+      name: 'send-transfer',
+      builder: (context, state) => MobileViewport(
+        child: SendTransferScreen(
+          transferId: state.pathParameters['id'] ?? '',
+        ),
+      ),
+    ),
+    GoRoute(
+      path: '/transfers/:id/receive',
+      name: 'receive-transfer',
+      builder: (context, state) => MobileViewport(
+        child: ReceiveTransferScreen(
+          transferId: state.pathParameters['id'] ?? '',
+        ),
+      ),
+    ),
+    GoRoute(
+      path: '/sales',
+      name: 'sales-dashboard',
+      builder: (context, state) => const MobileViewport(
+        child: SalesDashboardScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/sales/restaurant',
+      name: 'restaurant-sales',
+      builder: (context, state) => const MobileViewport(
+        child: RestaurantSalesScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/sales/delivery',
+      name: 'delivery-sales',
+      builder: (context, state) => const MobileViewport(
+        child: DeliverySalesScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/sales/shift/entry',
+      name: 'shift-sales-entry',
+      builder: (context, state) => const MobileViewport(
+        child: ShiftSalesEntryScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/sales/discounts',
+      name: 'sales-discounts',
+      builder: (context, state) => const MobileViewport(
+        child: DiscountsScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/sales/discounts/:id/cancel',
+      name: 'cancel-sales-discount',
+      builder: (context, state) => MobileViewport(
+        child: CancelDiscountScreen(
+          discountId: state.pathParameters['id'] ?? '',
+        ),
+      ),
+    ),
+    GoRoute(
+      path: '/sales/shift/review',
+      name: 'shift-close-review',
+      builder: (context, state) => const MobileViewport(
+        child: ShiftCloseReviewScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/sales/shift/closed',
+      name: 'closed-shift-summary',
+      builder: (context, state) => const MobileViewport(
+        child: ClosedShiftSummaryScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/cost/recipe',
+      name: 'recipe-cost',
+      builder: (context, state) => const MobileViewport(
+        child: RecipeCostScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/cost/cogs',
+      name: 'cogs-report',
+      builder: (context, state) => const MobileViewport(
+        child: CogsReportScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/cost/gross-profit',
+      name: 'gross-profit-report',
+      builder: (context, state) => const MobileViewport(
+        child: GrossProfitReportScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/cost/labor',
+      name: 'labor-cost-report',
+      builder: (context, state) => const MobileViewport(
+        child: LaborCostReportScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/cost/contribution',
+      name: 'contribution-report',
+      builder: (context, state) => const MobileViewport(
+        child: ContributionReportScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/cost/inventory',
+      name: 'inventory-value-report',
+      builder: (context, state) => const MobileViewport(
+        child: InventoryValueReportScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/cost/variance',
+      name: 'consumption-variance-report',
+      builder: (context, state) => const MobileViewport(
+        child: ConsumptionVarianceScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/reports/sales',
+      name: 'sales-report',
+      builder: (context, state) => const MobileViewport(
+        child: SalesReportScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/reports/inventory',
+      name: 'inventory-report',
+      builder: (context, state) => const MobileViewport(
+        child: InventoryReportScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/reports/attendance',
+      name: 'attendance-report',
+      builder: (context, state) => const MobileViewport(
+        child: AttendanceReportScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/reports/overtime',
+      name: 'overtime-report',
+      builder: (context, state) => const MobileViewport(
+        child: OvertimeReportScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/reports/branches',
+      name: 'branch-performance-report',
+      builder: (context, state) => const MobileViewport(
+        child: BranchPerformanceReportScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/reports/supply',
+      name: 'central-supply-report',
+      builder: (context, state) => const MobileViewport(
+        child: CentralSupplyReportScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/reports/audit',
+      name: 'audit-log-report',
+      builder: (context, state) => const MobileViewport(
+        child: AuditLogReportScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/approvals',
+      name: 'approval-queue',
+      builder: (context, state) => const MobileViewport(
+        child: ApprovalQueueScreen(),
+      ),
     ),
     GoRoute(
       path: '/preview',
