@@ -153,24 +153,51 @@ class _BranchListScreenState extends State<BranchListScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('التحكم الميداني المباشر', style: AppTypography.labelSm.copyWith(color: AppColors.secondary)),
-                        Text('8 مواقع تشغيلية نشطة', style: AppTypography.headlineSm.copyWith(fontSize: 16)),
-                      ],
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'التحكم الميداني المباشر',
+                            style: AppTypography.labelSm.copyWith(
+                              color: AppColors.secondary,
+                            ),
+                          ),
+                          Text(
+                            '8 مواقع تشغيلية نشطة',
+                            style: AppTypography.headlineSm.copyWith(
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.surfaceContainerHigh,
-                        borderRadius: BorderRadius.circular(AppDimens.radiusFull),
+                        borderRadius: BorderRadius.circular(
+                          AppDimens.radiusFull,
+                        ),
                       ),
                       child: Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Symbols.hub, color: AppColors.primary, size: 16),
+                          const Icon(
+                            Symbols.hub,
+                            color: AppColors.primary,
+                            size: 16,
+                          ),
                           const SizedBox(width: 4),
-                          Text('كافة الفروع متصلة', style: AppTypography.labelSm.copyWith(fontWeight: FontWeight.bold)),
+                          Text(
+                            'كافة الفروع متصلة',
+                            style: AppTypography.labelSm.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -211,7 +238,8 @@ class _BranchListScreenState extends State<BranchListScreen> {
                   80,
                 ),
                 itemCount: _filteredBranches.length,
-                separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.sm),
+                separatorBuilder: (_, __) =>
+                    const SizedBox(height: AppSpacing.sm),
                 itemBuilder: (context, index) {
                   final branch = _filteredBranches[index];
                   return _buildBranchCard(branch);
@@ -248,36 +276,58 @@ class _BranchListScreenState extends State<BranchListScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: isKitchen ? AppColors.surfaceContainerHigh : AppColors.primaryFixed,
-                          borderRadius: BorderRadius.circular(AppDimens.radiusSm),
-                        ),
-                        child: Text(
-                          branch.code,
-                          style: AppTypography.labelSm.copyWith(
-                            fontFamily: 'monospace',
-                            fontWeight: FontWeight.bold,
-                            color: isKitchen ? AppColors.onSurface : AppColors.onPrimaryFixedVariant,
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isKitchen
+                                ? AppColors.surfaceContainerHigh
+                                : AppColors.primaryFixed,
+                            borderRadius: BorderRadius.circular(
+                              AppDimens.radiusSm,
+                            ),
+                          ),
+                          child: Text(
+                            branch.code,
+                            style: AppTypography.labelSm.copyWith(
+                              fontFamily: 'monospace',
+                              fontWeight: FontWeight.bold,
+                              color: isKitchen
+                                  ? AppColors.onSurface
+                                  : AppColors.onPrimaryFixedVariant,
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        branch.name,
-                        style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                    ],
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            branch.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTypography.labelMd.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   if (branch.isMain)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFFEAF5EA),
-                        borderRadius: BorderRadius.circular(AppDimens.radiusFull),
+                        borderRadius: BorderRadius.circular(
+                          AppDimens.radiusFull,
+                        ),
                       ),
                       child: Text(
                         'المقر الرئيسي',
@@ -293,7 +343,10 @@ class _BranchListScreenState extends State<BranchListScreen> {
               const SizedBox(height: 6),
               Text(
                 branch.address,
-                style: AppTypography.bodySm.copyWith(color: AppColors.secondary, fontSize: 12),
+                style: AppTypography.bodySm.copyWith(
+                  color: AppColors.secondary,
+                  fontSize: 12,
+                ),
               ),
               const SizedBox(height: AppSpacing.sm),
               const Divider(height: 1, color: AppColors.surfaceContainer),
@@ -301,22 +354,40 @@ class _BranchListScreenState extends State<BranchListScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      const Icon(Symbols.badge, size: 16, color: AppColors.secondary),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${branch.employeeCount} موظف',
-                        style: AppTypography.labelSm.copyWith(color: AppColors.secondary),
-                      ),
-                      const SizedBox(width: 12),
-                      const Icon(Symbols.point_of_sale, size: 16, color: AppColors.secondary),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${branch.posTerminalsCount} نقاط بيع',
-                        style: AppTypography.labelSm.copyWith(color: AppColors.secondary),
-                      ),
-                    ],
+                  Expanded(
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Symbols.badge,
+                          size: 16,
+                          color: AppColors.secondary,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${branch.employeeCount} موظف',
+                          style: AppTypography.labelSm.copyWith(
+                            color: AppColors.secondary,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        const Icon(
+                          Symbols.point_of_sale,
+                          size: 16,
+                          color: AppColors.secondary,
+                        ),
+                        const SizedBox(width: 4),
+                        Flexible(
+                          child: Text(
+                            '${branch.posTerminalsCount} نقاط بيع',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTypography.labelSm.copyWith(
+                              color: AppColors.secondary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   Row(
                     children: [
@@ -328,7 +399,11 @@ class _BranchListScreenState extends State<BranchListScreen> {
                         ),
                       ),
                       const SizedBox(width: 4),
-                      const Icon(Symbols.chevron_left, size: 16, color: AppColors.secondary),
+                      const Icon(
+                        Symbols.chevron_left,
+                        size: 16,
+                        color: AppColors.secondary,
+                      ),
                     ],
                   ),
                 ],

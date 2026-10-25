@@ -28,7 +28,8 @@ class _BranchDetailsScreenState extends State<BranchDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    final b = widget.branch ??
+    final b =
+        widget.branch ??
         const Branch(
           id: 'br_1',
           code: 'BR-01',
@@ -73,7 +74,8 @@ class _BranchDetailsScreenState extends State<BranchDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final b = widget.branch ??
+    final b =
+        widget.branch ??
         const Branch(
           id: 'br_1',
           code: 'BR-01',
@@ -119,51 +121,75 @@ class _BranchDetailsScreenState extends State<BranchDetailsScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                              decoration: BoxDecoration(
-                                color: AppColors.primaryFixed,
-                                borderRadius: BorderRadius.circular(AppDimens.radiusSm),
-                              ),
-                              child: Text(
-                                b.code,
-                                style: AppTypography.labelSm.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'monospace',
-                                  color: AppColors.onPrimaryFixedVariant,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            if (b.isMain)
+                        Expanded(
+                          child: Wrap(
+                            spacing: AppSpacing.sm,
+                            runSpacing: AppSpacing.xs,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 3,
+                                ),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFEAF5EA),
-                                  borderRadius: BorderRadius.circular(AppDimens.radiusFull),
+                                  color: AppColors.primaryFixed,
+                                  borderRadius: BorderRadius.circular(
+                                    AppDimens.radiusSm,
+                                  ),
                                 ),
                                 child: Text(
-                                  'المقر الرئيسي',
+                                  b.code,
                                   style: AppTypography.labelSm.copyWith(
-                                    color: const Color(0xFF2E8B2E),
                                     fontWeight: FontWeight.bold,
+                                    fontFamily: 'monospace',
+                                    color: AppColors.onPrimaryFixedVariant,
                                   ),
                                 ),
                               ),
-                          ],
+                              if (b.isMain)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFEAF5EA),
+                                    borderRadius: BorderRadius.circular(
+                                      AppDimens.radiusFull,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'المقر الرئيسي',
+                                    style: AppTypography.labelSm.copyWith(
+                                      color: const Color(0xFF2E8B2E),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
                         ),
+                        const SizedBox(width: AppSpacing.sm),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 3,
+                          ),
                           decoration: BoxDecoration(
-                            color: _isActive ? const Color(0xFFEAF5EA) : AppColors.surfaceContainerHigh,
-                            borderRadius: BorderRadius.circular(AppDimens.radiusFull),
+                            color: _isActive
+                                ? const Color(0xFFEAF5EA)
+                                : AppColors.surfaceContainerHigh,
+                            borderRadius: BorderRadius.circular(
+                              AppDimens.radiusFull,
+                            ),
                           ),
                           child: Text(
                             _isActive ? 'تشغيل نشط' : 'موقف مؤقتاً',
                             style: AppTypography.labelSm.copyWith(
-                              color: _isActive ? const Color(0xFF2E8B2E) : AppColors.secondary,
+                              color: _isActive
+                                  ? const Color(0xFF2E8B2E)
+                                  : AppColors.secondary,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -172,7 +198,12 @@ class _BranchDetailsScreenState extends State<BranchDetailsScreen> {
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     Text(b.name, style: AppTypography.headlineSm),
-                    Text(b.address, style: AppTypography.bodySm.copyWith(color: AppColors.secondary)),
+                    Text(
+                      b.address,
+                      style: AppTypography.bodySm.copyWith(
+                        color: AppColors.secondary,
+                      ),
+                    ),
                     const SizedBox(height: AppSpacing.md),
                     const Divider(height: 1),
                     const SizedBox(height: AppSpacing.sm),
@@ -182,8 +213,18 @@ class _BranchDetailsScreenState extends State<BranchDetailsScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('الموظفون', style: AppTypography.labelSm.copyWith(color: AppColors.secondary)),
-                              Text('${b.employeeCount} موظف', style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold)),
+                              Text(
+                                'الموظفون',
+                                style: AppTypography.labelSm.copyWith(
+                                  color: AppColors.secondary,
+                                ),
+                              ),
+                              Text(
+                                '${b.employeeCount} موظف',
+                                style: AppTypography.labelMd.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -191,8 +232,18 @@ class _BranchDetailsScreenState extends State<BranchDetailsScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('نقاط البيع', style: AppTypography.labelSm.copyWith(color: AppColors.secondary)),
-                              Text('${b.posTerminalsCount} نقاط', style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold)),
+                              Text(
+                                'نقاط البيع',
+                                style: AppTypography.labelSm.copyWith(
+                                  color: AppColors.secondary,
+                                ),
+                              ),
+                              Text(
+                                '${b.posTerminalsCount} نقاط',
+                                style: AppTypography.labelMd.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -200,8 +251,21 @@ class _BranchDetailsScreenState extends State<BranchDetailsScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('الكفاءة التشغيلية', style: AppTypography.labelSm.copyWith(color: AppColors.secondary)),
-                              Text('${b.efficiencyRate}%', style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold, color: const Color(0xFF2E8B2E))),
+                              Text(
+                                'الكفاءة التشغيلية',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: AppTypography.labelSm.copyWith(
+                                  color: AppColors.secondary,
+                                ),
+                              ),
+                              Text(
+                                '${b.efficiencyRate}%',
+                                style: AppTypography.labelMd.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color(0xFF2E8B2E),
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -217,43 +281,80 @@ class _BranchDetailsScreenState extends State<BranchDetailsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('تعديل البيانات الميدانية', style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold)),
+                    Text(
+                      'تعديل البيانات الميدانية',
+                      style: AppTypography.labelMd.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const SizedBox(height: AppSpacing.md),
 
                     // Name
-                    Text('اسم الفرع', style: AppTypography.labelSm.copyWith(fontWeight: FontWeight.bold)),
+                    Text(
+                      'اسم الفرع',
+                      style: AppTypography.labelSm.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const SizedBox(height: 4),
                     TextField(
                       controller: _nameController,
-                      decoration: const InputDecoration(border: OutlineInputBorder(), prefixIcon: Icon(Symbols.store)),
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Symbols.store),
+                      ),
                     ),
                     const SizedBox(height: AppSpacing.md),
 
                     // Phone
-                    Text('رقم الهاتف', style: AppTypography.labelSm.copyWith(fontWeight: FontWeight.bold)),
+                    Text(
+                      'رقم الهاتف',
+                      style: AppTypography.labelSm.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const SizedBox(height: 4),
                     TextField(
                       controller: _phoneController,
-                      decoration: const InputDecoration(border: OutlineInputBorder(), prefixIcon: Icon(Symbols.phone)),
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Symbols.phone),
+                      ),
                     ),
                     const SizedBox(height: AppSpacing.md),
 
                     // Address
-                    Text('العنوان', style: AppTypography.labelSm.copyWith(fontWeight: FontWeight.bold)),
+                    Text(
+                      'العنوان',
+                      style: AppTypography.labelSm.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const SizedBox(height: 4),
                     TextField(
                       controller: _addressController,
                       maxLines: 2,
-                      decoration: const InputDecoration(border: OutlineInputBorder(), prefixIcon: Icon(Symbols.location_on)),
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Symbols.location_on),
+                      ),
                     ),
                     const SizedBox(height: AppSpacing.md),
 
                     // Manager
-                    Text('مدير الفرع المشرف', style: AppTypography.labelSm.copyWith(fontWeight: FontWeight.bold)),
+                    Text(
+                      'مدير الفرع المشرف',
+                      style: AppTypography.labelSm.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const SizedBox(height: 4),
                     TextField(
                       controller: _managerController,
-                      decoration: const InputDecoration(border: OutlineInputBorder(), prefixIcon: Icon(Symbols.person)),
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Symbols.person),
+                      ),
                     ),
                     const SizedBox(height: AppSpacing.md),
 
@@ -261,7 +362,11 @@ class _BranchDetailsScreenState extends State<BranchDetailsScreen> {
                     SwitchListTile(
                       contentPadding: EdgeInsets.zero,
                       title: const Text('حالة تشغيل الفرع'),
-                      subtitle: Text(_isActive ? 'الفرع يستقبل الطلبات ويعمل بانتظام' : 'الفرع موقف مؤقتاً عن استقبال الطلبات'),
+                      subtitle: Text(
+                        _isActive
+                            ? 'الفرع يستقبل الطلبات ويعمل بانتظام'
+                            : 'الفرع موقف مؤقتاً عن استقبال الطلبات',
+                      ),
                       activeThumbColor: AppColors.primary,
                       value: _isActive,
                       onChanged: (val) => setState(() => _isActive = val),
@@ -275,7 +380,14 @@ class _BranchDetailsScreenState extends State<BranchDetailsScreen> {
               ElevatedButton.icon(
                 onPressed: _isSaving ? null : _saveChanges,
                 icon: _isSaving
-                    ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
                     : const Icon(Symbols.save),
                 label: Text(_isSaving ? 'جاري الحفظ...' : 'حفظ تعديلات الفرع'),
                 style: ElevatedButton.styleFrom(

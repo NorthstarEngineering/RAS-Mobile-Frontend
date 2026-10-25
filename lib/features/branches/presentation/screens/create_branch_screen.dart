@@ -18,7 +18,9 @@ class _CreateBranchScreenState extends State<CreateBranchScreen> {
   final _nameController = TextEditingController(text: 'فرع الرحاب (#06)');
   final _codeController = TextEditingController(text: 'BR-06');
   final _phoneController = TextEditingController(text: '0226954120');
-  final _addressController = TextEditingController(text: 'السوق الشرقي، مدينة الرحاب، القاهرة الجديدة');
+  final _addressController = TextEditingController(
+    text: 'السوق الشرقي، مدينة الرحاب، القاهرة الجديدة',
+  );
   final _managerController = TextEditingController(text: 'م. شريف حامد');
   int _posTerminals = 4;
   bool _isMainBranch = false;
@@ -76,7 +78,10 @@ class _CreateBranchScreenState extends State<CreateBranchScreen> {
             children: [
               // Executive Clearance Banner
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(AppDimens.radiusFull),
@@ -84,28 +89,47 @@ class _CreateBranchScreenState extends State<CreateBranchScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      children: [
-                        const Icon(Symbols.verified_user, color: AppColors.primary, size: 18),
-                        const SizedBox(width: 8),
-                        Text(
-                          'صلاحية وصول تنفيذية: المدير التنفيذي (CEO)',
-                          style: AppTypography.labelSm.copyWith(
+                    Expanded(
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Symbols.verified_user,
                             color: AppColors.primary,
-                            fontWeight: FontWeight.bold,
+                            size: 18,
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'صلاحية وصول تنفيذية: المدير التنفيذي (CEO)',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTypography.labelSm.copyWith(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(AppDimens.radiusFull),
+                        borderRadius: BorderRadius.circular(
+                          AppDimens.radiusFull,
+                        ),
                       ),
                       child: const Text(
                         'تصريح كامل',
-                        style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],
@@ -120,15 +144,33 @@ class _CreateBranchScreenState extends State<CreateBranchScreen> {
                   children: [
                     Row(
                       children: [
-                        const Icon(Symbols.storefront, color: AppColors.primary, size: 22),
+                        const Icon(
+                          Symbols.storefront,
+                          color: AppColors.primary,
+                          size: 22,
+                        ),
                         const SizedBox(width: 8),
-                        Text('البيانات الأساسية للفرع', style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold)),
+                        Expanded(
+                          child: Text(
+                            'البيانات الأساسية للفرع',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTypography.labelMd.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: AppSpacing.md),
 
                     // Branch Name
-                    Text('اسم الفرع التشغيلي *', style: AppTypography.labelSm.copyWith(fontWeight: FontWeight.bold)),
+                    Text(
+                      'اسم الفرع التشغيلي *',
+                      style: AppTypography.labelSm.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const SizedBox(height: 4),
                     TextField(
                       controller: _nameController,
@@ -146,7 +188,12 @@ class _CreateBranchScreenState extends State<CreateBranchScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('كود الفرع *', style: AppTypography.labelSm.copyWith(fontWeight: FontWeight.bold)),
+                              Text(
+                                'كود الفرع *',
+                                style: AppTypography.labelSm.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                               const SizedBox(height: 4),
                               TextField(
                                 controller: _codeController,
@@ -163,7 +210,12 @@ class _CreateBranchScreenState extends State<CreateBranchScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('رقم هاتف الفرع *', style: AppTypography.labelSm.copyWith(fontWeight: FontWeight.bold)),
+                              Text(
+                                'رقم هاتف الفرع *',
+                                style: AppTypography.labelSm.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                               const SizedBox(height: 4),
                               TextField(
                                 controller: _phoneController,
@@ -181,7 +233,12 @@ class _CreateBranchScreenState extends State<CreateBranchScreen> {
                     const SizedBox(height: AppSpacing.md),
 
                     // Address
-                    Text('العنوان الجغرافي الكامل *', style: AppTypography.labelSm.copyWith(fontWeight: FontWeight.bold)),
+                    Text(
+                      'العنوان الجغرافي الكامل *',
+                      style: AppTypography.labelSm.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const SizedBox(height: 4),
                     TextField(
                       controller: _addressController,
@@ -194,7 +251,12 @@ class _CreateBranchScreenState extends State<CreateBranchScreen> {
                     const SizedBox(height: AppSpacing.md),
 
                     // Manager Name
-                    Text('مدير الفرع المشرف', style: AppTypography.labelSm.copyWith(fontWeight: FontWeight.bold)),
+                    Text(
+                      'مدير الفرع المشرف',
+                      style: AppTypography.labelSm.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const SizedBox(height: 4),
                     TextField(
                       controller: _managerController,
@@ -215,9 +277,22 @@ class _CreateBranchScreenState extends State<CreateBranchScreen> {
                   children: [
                     Row(
                       children: [
-                        const Icon(Symbols.settings, color: AppColors.primary, size: 22),
+                        const Icon(
+                          Symbols.settings,
+                          color: AppColors.primary,
+                          size: 22,
+                        ),
                         const SizedBox(width: 8),
-                        Text('إعدادات التشغيل ونقاط البيع (POS)', style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold)),
+                        Expanded(
+                          child: Text(
+                            'إعدادات التشغيل ونقاط البيع (POS)',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTypography.labelMd.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: AppSpacing.md),
@@ -226,24 +301,45 @@ class _CreateBranchScreenState extends State<CreateBranchScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('عدد أجهزة نقاط البيع المصرح بها', style: AppTypography.labelMd),
-                            Text('تراخيص الكاشير والشاشات (KDS/POS)', style: AppTypography.labelSm.copyWith(color: AppColors.secondary)),
-                          ],
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'عدد أجهزة نقاط البيع المصرح بها',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: AppTypography.labelMd,
+                              ),
+                              Text(
+                                'تراخيص الكاشير والشاشات (KDS/POS)',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: AppTypography.labelSm.copyWith(
+                                  color: AppColors.secondary,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
+                        const SizedBox(width: AppSpacing.sm),
                         Row(
                           children: [
                             IconButton.outlined(
                               icon: const Icon(Symbols.remove, size: 18),
-                              onPressed: _posTerminals > 1 ? () => setState(() => _posTerminals--) : null,
+                              onPressed: _posTerminals > 1
+                                  ? () => setState(() => _posTerminals--)
+                                  : null,
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                              ),
                               child: Text(
                                 '$_posTerminals',
-                                style: AppTypography.headlineSm.copyWith(fontWeight: FontWeight.bold),
+                                style: AppTypography.headlineSm.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                             IconButton.outlined(
@@ -262,7 +358,9 @@ class _CreateBranchScreenState extends State<CreateBranchScreen> {
                     SwitchListTile(
                       contentPadding: EdgeInsets.zero,
                       title: const Text('تعيين كمقر رئيسي للعمليات'),
-                      subtitle: const Text('تمنح صلاحيات التنسيق المركزي مع المستودع'),
+                      subtitle: const Text(
+                        'تمنح صلاحيات التنسيق المركزي مع المستودع',
+                      ),
                       activeThumbColor: AppColors.primary,
                       value: _isMainBranch,
                       onChanged: (val) => setState(() => _isMainBranch = val),
@@ -276,9 +374,18 @@ class _CreateBranchScreenState extends State<CreateBranchScreen> {
               ElevatedButton.icon(
                 onPressed: _isSaving ? null : _saveBranch,
                 icon: _isSaving
-                    ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
                     : const Icon(Symbols.save),
-                label: Text(_isSaving ? 'جاري حفظ الفرع...' : 'إتمام تسجيل وإنشاء الفرع'),
+                label: Text(
+                  _isSaving ? 'جاري حفظ الفرع...' : 'إتمام تسجيل وإنشاء الفرع',
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
