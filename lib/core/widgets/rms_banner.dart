@@ -77,12 +77,18 @@ class RmsBanner extends StatelessWidget {
         borderRadius: AppRadius.lgAll,
       ),
       child: Row(
-        crossAxisAlignment:
-            hasTitle ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+        crossAxisAlignment: hasTitle
+            ? CrossAxisAlignment.start
+            : CrossAxisAlignment.center,
         children: [
           Padding(
             padding: EdgeInsets.only(top: hasTitle ? 2 : 0),
-            child: Icon(icon, size: AppSizes.iconMd, color: tone.iconColor, fill: 1),
+            child: Icon(
+              icon,
+              size: AppSizes.iconMd,
+              color: tone.iconColor,
+              fill: 1,
+            ),
           ),
           const SizedBox(width: AppSpacing.sm),
           Expanded(child: hasTitle ? _titledContent() : _inlineContent()),

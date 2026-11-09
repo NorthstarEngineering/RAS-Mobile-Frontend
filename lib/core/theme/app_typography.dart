@@ -39,11 +39,11 @@ abstract final class AppTypography {
   static final labelSm = _cairo(12, 16, FontWeight.w400);
 
   static TextTheme get textTheme => TextTheme(
-        headlineLarge: headlineLg,
-        headlineSmall: headlineSm,
-        bodyLarge: bodyMd,
-        bodyMedium: bodySm,
-        labelLarge: labelMd,
-        labelSmall: labelSm,
-      );
+    headlineLarge: headlineLg,
+    headlineSmall: headlineSm,
+    bodyLarge: bodyMd,
+    bodyMedium: bodySm,
+    labelLarge: labelMd,
+    labelSmall: labelSm,
+  );
 }

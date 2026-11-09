@@ -46,7 +46,10 @@ class RmsChip extends StatelessWidget {
             Icon(icon, size: 14, color: tone.foreground),
             const SizedBox(width: 2),
           ],
-          Text(label, style: AppTypography.labelSm.copyWith(color: tone.foreground)),
+          Text(
+            label,
+            style: AppTypography.labelSm.copyWith(color: tone.foreground),
+          ),
         ],
       ),
     );

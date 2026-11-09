@@ -92,7 +92,9 @@ abstract final class AppTheme {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: AppColors.primary,
-          textStyle: AppTypography.labelMd.copyWith(fontWeight: FontWeight.w700),
+          textStyle: AppTypography.labelMd.copyWith(
+            fontWeight: FontWeight.w700,
+          ),
           padding: EdgeInsets.zero,
           minimumSize: Size.zero,
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,

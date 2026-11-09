@@ -7,11 +7,7 @@ import '../theme/app_colors.dart';
 /// (~430px) with subtle elevation and background contrast, while expanding
 /// to native full-screen on mobile devices.
 class MobileViewport extends StatelessWidget {
-  const MobileViewport({
-    super.key,
-    required this.child,
-    this.maxWidth = 430.0,
-  });
+  const MobileViewport({super.key, required this.child, this.maxWidth = 430.0});
 
   final Widget child;
   final double maxWidth;
@@ -31,7 +27,9 @@ class MobileViewport extends StatelessWidget {
         }
 
         return Container(
-          color: const Color(0xFF1E1E24), // Sleek studio dark backdrop for desktop
+          color: const Color(
+            0xFF1E1E24,
+          ), // Sleek studio dark backdrop for desktop
           alignment: Alignment.center,
           child: Container(
             constraints: BoxConstraints(maxWidth: maxWidth),

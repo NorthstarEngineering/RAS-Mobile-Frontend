@@ -46,7 +46,9 @@ class RmsPrimaryButton extends StatelessWidget {
             ),
             backgroundColor: WidgetStateProperty.resolveWith((states) {
               if (states.contains(WidgetState.disabled)) {
-                return AppColors.primary.withValues(alpha: isLoading ? 0.85 : 0.4);
+                return AppColors.primary.withValues(
+                  alpha: isLoading ? 0.85 : 0.4,
+                );
               }
               if (states.contains(WidgetState.hovered)) {
                 return AppColors.primaryContainer;
@@ -70,9 +72,14 @@ class RmsPrimaryButton extends StatelessWidget {
               else if (icon != null)
                 Transform.flip(
                   flipX: mirrorIcon,
-                  child: Icon(icon, size: AppSizes.iconMd, color: AppColors.onPrimary),
+                  child: Icon(
+                    icon,
+                    size: AppSizes.iconMd,
+                    color: AppColors.onPrimary,
+                  ),
                 ),
-              if (isLoading || icon != null) const SizedBox(width: AppSpacing.sm),
+              if (isLoading || icon != null)
+                const SizedBox(width: AppSpacing.sm),
               Text(isLoading ? (loadingLabel ?? label) : label),
             ],
           ),
