@@ -61,19 +61,19 @@ class Employee extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        code,
-        name,
-        role,
-        branchName,
-        branchCode,
-        status,
-        wageType,
-        baseSalary,
-        overtimeRate,
-        phone,
-        managerName,
-        totalHoursThisMonth,
-        department,
-      ];
+    id,
+    code,
+    name,
+    role,
+    branchName,
+    branchCode,
+    status,
+    wageType,
+    baseSalary,
+    overtimeRate,
+    phone,
+    managerName,
+    totalHoursThisMonth,
+    department,
+  ];
 }

@@ -14,10 +14,12 @@ class MenuItemRequestReviewScreen extends StatefulWidget {
   const MenuItemRequestReviewScreen({super.key, required this.requestId});
 
   @override
-  State<MenuItemRequestReviewScreen> createState() => _MenuItemRequestReviewScreenState();
+  State<MenuItemRequestReviewScreen> createState() =>
+      _MenuItemRequestReviewScreenState();
 }
 
-class _MenuItemRequestReviewScreenState extends State<MenuItemRequestReviewScreen> {
+class _MenuItemRequestReviewScreenState
+    extends State<MenuItemRequestReviewScreen> {
   final MenuRepository _repository = getIt<MenuRepository>();
   MenuItemRequest? _request;
   bool _isLoading = true;
@@ -74,7 +76,9 @@ class _MenuItemRequestReviewScreenState extends State<MenuItemRequestReviewScree
                 ? 'تم قبول الطلب وإدراج الصنف بالقائمة المركزية فوراً'
                 : 'تم رفض طلب الصنف وتسجيل السبب التشغيلي',
           ),
-          backgroundColor: isApproved ? const Color(0xFF2E8B2E) : AppColors.error,
+          backgroundColor: isApproved
+              ? const Color(0xFF2E8B2E)
+              : AppColors.error,
         ),
       );
       context.pop();
@@ -86,7 +90,9 @@ class _MenuItemRequestReviewScreenState extends State<MenuItemRequestReviewScree
     if (_isLoading) {
       return const Scaffold(
         backgroundColor: AppColors.surface,
-        body: Center(child: CircularProgressIndicator(color: AppColors.primary)),
+        body: Center(
+          child: CircularProgressIndicator(color: AppColors.primary),
+        ),
       );
     }
 
@@ -104,9 +110,7 @@ class _MenuItemRequestReviewScreenState extends State<MenuItemRequestReviewScree
 
     return Scaffold(
       backgroundColor: AppColors.surface,
-      appBar: AppBar(
-        title: const Text('مراجعة طلب الصنف'),
-      ),
+      appBar: AppBar(title: const Text('مراجعة طلب الصنف')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppDimens.paddingMd),
         child: Column(
@@ -124,7 +128,11 @@ class _MenuItemRequestReviewScreenState extends State<MenuItemRequestReviewScree
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.verified_user, color: AppColors.primary, size: 20),
+                      const Icon(
+                        Icons.verified_user,
+                        color: AppColors.primary,
+                        size: 20,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         'صلاحية اعتماد حصري: الإدارة التنفيذية',
@@ -136,7 +144,10 @@ class _MenuItemRequestReviewScreenState extends State<MenuItemRequestReviewScree
                     ],
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.primaryContainer,
                       borderRadius: BorderRadius.circular(AppDimens.radiusSm),
@@ -178,13 +189,20 @@ class _MenuItemRequestReviewScreenState extends State<MenuItemRequestReviewScree
                     children: [
                       Text(
                         'بيانات الطلب التشغيلي',
-                        style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
+                        style: AppTypography.labelMd.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.errorContainer,
-                          borderRadius: BorderRadius.circular(AppDimens.radiusFull),
+                          borderRadius: BorderRadius.circular(
+                            AppDimens.radiusFull,
+                          ),
                         ),
                         child: Text(
                           req.status.labelArabic,
@@ -201,10 +219,16 @@ class _MenuItemRequestReviewScreenState extends State<MenuItemRequestReviewScree
                   Row(
                     children: [
                       Expanded(
-                        child: _buildMetaField('الفرع ومقدم الطلب', '${req.requestedByName}\n(${req.branchName})'),
+                        child: _buildMetaField(
+                          'الفرع ومقدم الطلب',
+                          '${req.requestedByName}\n(${req.branchName})',
+                        ),
                       ),
                       Expanded(
-                        child: _buildMetaField('تاريخ التقديم', '16 أبريل 2024 • 11:30 ص'),
+                        child: _buildMetaField(
+                          'تاريخ التقديم',
+                          '16 أبريل 2024 • 11:30 ص',
+                        ),
                       ),
                     ],
                   ),
@@ -231,7 +255,10 @@ class _MenuItemRequestReviewScreenState extends State<MenuItemRequestReviewScree
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.secondaryContainer,
                       borderRadius: BorderRadius.circular(AppDimens.radiusSm),
@@ -247,11 +274,15 @@ class _MenuItemRequestReviewScreenState extends State<MenuItemRequestReviewScree
                   const SizedBox(height: 6),
                   Text(
                     req.itemNameAr,
-                    style: AppTypography.headlineSm.copyWith(fontWeight: FontWeight.bold),
+                    style: AppTypography.headlineSm.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   Text(
                     req.itemNameEn,
-                    style: AppTypography.bodySm.copyWith(color: AppColors.secondary),
+                    style: AppTypography.bodySm.copyWith(
+                      color: AppColors.secondary,
+                    ),
                   ),
                   const SizedBox(height: AppDimens.paddingMd),
 
@@ -259,11 +290,19 @@ class _MenuItemRequestReviewScreenState extends State<MenuItemRequestReviewScree
                   Row(
                     children: [
                       Expanded(
-                        child: _buildPriceBox('السعر المقترح', '${req.proposedPrice.toStringAsFixed(2)} ج.م', AppColors.primary),
+                        child: _buildPriceBox(
+                          'السعر المقترح',
+                          '${req.proposedPrice.toStringAsFixed(2)} ج.م',
+                          AppColors.primary,
+                        ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
-                        child: _buildPriceBox('التكلفة المقدرة', '${req.estimatedCost.toStringAsFixed(2)} ج.م', AppColors.secondary),
+                        child: _buildPriceBox(
+                          'التكلفة المقدرة',
+                          '${req.estimatedCost.toStringAsFixed(2)} ج.م',
+                          AppColors.secondary,
+                        ),
                       ),
                     ],
                   ),
@@ -279,7 +318,9 @@ class _MenuItemRequestReviewScreenState extends State<MenuItemRequestReviewScree
                       children: [
                         Text(
                           'هامش الربح المتوقع',
-                          style: AppTypography.labelSm.copyWith(color: AppColors.secondary),
+                          style: AppTypography.labelSm.copyWith(
+                            color: AppColors.secondary,
+                          ),
                         ),
                         Text(
                           '+${marginPercent.toStringAsFixed(1)}% (${profit.toStringAsFixed(2)} ج.م)',
@@ -310,8 +351,12 @@ class _MenuItemRequestReviewScreenState extends State<MenuItemRequestReviewScree
                       borderRadius: BorderRadius.circular(AppDimens.radiusLg),
                     ),
                     child: Text(
-                      req.reason.isEmpty ? 'لا توجد ملاحظات إضافية' : req.reason,
-                      style: AppTypography.bodySm.copyWith(color: AppColors.onSurface),
+                      req.reason.isEmpty
+                          ? 'لا توجد ملاحظات إضافية'
+                          : req.reason,
+                      style: AppTypography.bodySm.copyWith(
+                        color: AppColors.onSurface,
+                      ),
                     ),
                   ),
                 ],
@@ -358,7 +403,9 @@ class _MenuItemRequestReviewScreenState extends State<MenuItemRequestReviewScree
                 ),
                 child: Text(
                   'تم اتخاذ القرار مسبقاً: ${req.status.labelArabic}',
-                  style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
+                  style: AppTypography.labelMd.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             const SizedBox(height: 32),
@@ -372,9 +419,18 @@ class _MenuItemRequestReviewScreenState extends State<MenuItemRequestReviewScree
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: AppTypography.labelSm.copyWith(color: AppColors.secondary, fontSize: 11)),
+        Text(
+          title,
+          style: AppTypography.labelSm.copyWith(
+            color: AppColors.secondary,
+            fontSize: 11,
+          ),
+        ),
         const SizedBox(height: 2),
-        Text(value, style: AppTypography.bodySm.copyWith(fontWeight: FontWeight.bold)),
+        Text(
+          value,
+          style: AppTypography.bodySm.copyWith(fontWeight: FontWeight.bold),
+        ),
       ],
     );
   }
@@ -389,9 +445,18 @@ class _MenuItemRequestReviewScreenState extends State<MenuItemRequestReviewScree
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: AppTypography.labelSm.copyWith(color: AppColors.secondary)),
+          Text(
+            title,
+            style: AppTypography.labelSm.copyWith(color: AppColors.secondary),
+          ),
           const SizedBox(height: 2),
-          Text(value, style: AppTypography.labelMd.copyWith(color: color, fontWeight: FontWeight.bold)),
+          Text(
+            value,
+            style: AppTypography.labelMd.copyWith(
+              color: color,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ],
       ),
     );

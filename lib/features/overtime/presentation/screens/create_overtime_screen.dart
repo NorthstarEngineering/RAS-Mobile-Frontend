@@ -3,6 +3,10 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_dimens.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/di/service_locator.dart';
+import '../../../employees/domain/entities/employee.dart';
+import '../../../employees/domain/repositories/employee_repository.dart';
+import '../../data/repositories/api_overtime_repository.dart';
 
 class CreateOvertimeScreen extends StatefulWidget {
   const CreateOvertimeScreen({super.key});
@@ -13,50 +17,96 @@ class CreateOvertimeScreen extends StatefulWidget {
 
 class _CreateOvertimeScreenState extends State<CreateOvertimeScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _reasonController = TextEditingController(text: 'ضغط تشغيلي في تجهيز وجبات الغداء وتغطية عجز الوردية');
+  final _reasonController = TextEditingController();
+  final _rateController = TextEditingController();
   double _hours = 2.0;
   String _multiplier = '1.5x (عمل إضافي معتاد)';
-  String _selectedEmployee = 'مصطفى خالد عثمان (#1052)';
+  List<Employee> _employees = [];
+  String? _selectedEmployeeId;
   bool _isSubmitting = false;
 
-  final double _baseHourlyRate = 42.0;
-
   double get _calculatedAmount {
-    final rate = _multiplier.startsWith('2') ? 2.0 : 1.5;
-    return _hours * _baseHourlyRate * rate;
+    final rate = double.tryParse(_rateController.text) ?? 0;
+    return _hours * rate;
   }
 
   @override
   void dispose() {
     _reasonController.dispose();
+    _rateController.dispose();
     super.dispose();
   }
 
-  void _handleSubmit() {
-    if (!_formKey.currentState!.validate()) return;
-    setState(() => _isSubmitting = true);
+  @override
+  void initState() {
+    super.initState();
+    _loadEmployees();
+  }
 
-    Future.delayed(const Duration(milliseconds: 700), () {
+  Future<void> _loadEmployees() async {
+    try {
+      final employees = await sl<EmployeeRepository>().getEmployees();
       if (mounted) {
-        setState(() => _isSubmitting = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('تم تسجيل وإرسال طلب الساعات الإضافية للاعتماد الإداري'),
-            backgroundColor: Color(0xFF2E8B2E),
-          ),
-        );
-        context.pop();
+        setState(() {
+          _employees = employees
+              .where((employee) => employee.status != EmployeeStatus.suspended)
+              .toList();
+          _selectedEmployeeId = _employees.isEmpty ? null : _employees.first.id;
+          if (_employees.isNotEmpty) {
+            _rateController.text = _employees.first.baseSalary.toStringAsFixed(
+              2,
+            );
+          }
+        });
       }
-    });
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('تعذر تحميل الموظفين: $error')));
+      }
+    }
+  }
+
+  Future<void> _handleSubmit() async {
+    if (!_formKey.currentState!.validate()) return;
+    final employeeId = _selectedEmployeeId;
+    final rate = double.tryParse(_rateController.text);
+    if (employeeId == null || rate == null || rate <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('اختر موظفاً وأدخل سعر الساعة')),
+      );
+      return;
+    }
+    setState(() => _isSubmitting = true);
+    try {
+      await sl<ApiOvertimeRepository>().create(
+        employeeId: employeeId,
+        workDate: DateTime.now().toIso8601String().substring(0, 10),
+        hours: _hours,
+        ratePerHour: rate,
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('تم تسجيل الساعات الإضافية فعلياً')),
+      );
+      context.pop();
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('تعذر تسجيل الساعات الإضافية: $error')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.surface,
-      appBar: AppBar(
-        title: const Text('إضافة ساعات عمل إضافية'),
-      ),
+      appBar: AppBar(title: const Text('إضافة ساعات عمل إضافية')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppDimens.paddingMd),
         child: Form(
@@ -76,19 +126,30 @@ class _CreateOvertimeScreenState extends State<CreateOvertimeScreen> {
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.badge_outlined, color: AppColors.primary, size: 20),
+                        const Icon(
+                          Icons.badge_outlined,
+                          color: AppColors.primary,
+                          size: 20,
+                        ),
                         const SizedBox(width: 6),
                         Text(
                           'مصدر التسجيل:',
-                          style: AppTypography.labelSm.copyWith(color: AppColors.secondary),
+                          style: AppTypography.labelSm.copyWith(
+                            color: AppColors.secondary,
+                          ),
                         ),
                       ],
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.surfaceContainerHighest,
-                        borderRadius: BorderRadius.circular(AppDimens.radiusFull),
+                        borderRadius: BorderRadius.circular(
+                          AppDimens.radiusFull,
+                        ),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -104,7 +165,9 @@ class _CreateOvertimeScreenState extends State<CreateOvertimeScreen> {
                           const SizedBox(width: 4),
                           Text(
                             'إدخال يدوي بإشراف المشرف',
-                            style: AppTypography.labelSm.copyWith(fontWeight: FontWeight.bold),
+                            style: AppTypography.labelSm.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ],
                       ),
@@ -133,34 +196,54 @@ class _CreateOvertimeScreenState extends State<CreateOvertimeScreen> {
                   children: [
                     Text(
                       'الموظف المستحق *',
-                      style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
+                      style: AppTypography.labelMd.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     DropdownButtonFormField<String>(
                       isExpanded: true,
-                      initialValue: _selectedEmployee,
+                      initialValue: _selectedEmployeeId,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.person_outline),
                       ),
-                      items: const [
-                        DropdownMenuItem(
-                          value: 'مصطفى خالد عثمان (#1052)',
-                          child: Text('مصطفى خالد (#1052) - طاهي ساخن', overflow: TextOverflow.ellipsis),
-                        ),
-                        DropdownMenuItem(
-                          value: 'أحمد محمود سالم (#1084)',
-                          child: Text('أحمد سالم (#1084) - مشرف صالة', overflow: TextOverflow.ellipsis),
-                        ),
-                        DropdownMenuItem(
-                          value: 'سارة مراد كمال (#1090)',
-                          child: Text('سارة كمال (#1090) - كاشير رئيسي', overflow: TextOverflow.ellipsis),
-                        ),
-                      ],
-                      onChanged: (val) => setState(() => _selectedEmployee = val ?? _selectedEmployee),
+                      items: _employees
+                          .map(
+                            (employee) => DropdownMenuItem(
+                              value: employee.id,
+                              child: Text(
+                                employee.name,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (val) =>
+                          setState(() => _selectedEmployeeId = val),
                     ),
                   ],
                 ),
+              ),
+              const SizedBox(height: AppDimens.paddingMd),
+
+              TextFormField(
+                controller: _rateController,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                onChanged: (_) => setState(() {}),
+                decoration: const InputDecoration(
+                  labelText: 'سعر الساعة',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.payments_outlined),
+                ),
+                validator: (value) {
+                  final amount = double.tryParse(value ?? '');
+                  return amount == null || amount <= 0
+                      ? 'أدخل سعر الساعة'
+                      : null;
+                },
               ),
               const SizedBox(height: AppDimens.paddingMd),
 
@@ -186,7 +269,9 @@ class _CreateOvertimeScreenState extends State<CreateOvertimeScreen> {
                       children: [
                         Text(
                           'عدد الساعات الإضافية',
-                          style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
+                          style: AppTypography.labelMd.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         Text(
                           '$_hours ساعة',
@@ -219,14 +304,21 @@ class _CreateOvertimeScreenState extends State<CreateOvertimeScreen> {
                       items: const [
                         DropdownMenuItem(
                           value: '1.5x (عمل إضافي معتاد)',
-                          child: Text('1.5x (أيام العمل العادية)', overflow: TextOverflow.ellipsis),
+                          child: Text(
+                            '1.5x (أيام العمل العادية)',
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                         DropdownMenuItem(
                           value: '2.0x (عطلات ومواسم رسمية)',
-                          child: Text('2.0x (العطلات الرسمية والمواسم)', overflow: TextOverflow.ellipsis),
+                          child: Text(
+                            '2.0x (العطلات الرسمية والمواسم)',
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ],
-                      onChanged: (val) => setState(() => _multiplier = val ?? _multiplier),
+                      onChanged: (val) =>
+                          setState(() => _multiplier = val ?? _multiplier),
                     ),
                     const SizedBox(height: AppDimens.paddingMd),
 
@@ -281,7 +373,9 @@ class _CreateOvertimeScreenState extends State<CreateOvertimeScreen> {
                   children: [
                     Text(
                       'المبرر التشغيلي *',
-                      style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
+                      style: AppTypography.labelMd.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 6),
                     TextFormField(
@@ -291,7 +385,8 @@ class _CreateOvertimeScreenState extends State<CreateOvertimeScreen> {
                         hintText: 'اذكر سبب طلب العمل الإضافي وموافقة الإشراف',
                         border: OutlineInputBorder(),
                       ),
-                      validator: (val) => val == null || val.trim().isEmpty ? 'مطلوب' : null,
+                      validator: (val) =>
+                          val == null || val.trim().isEmpty ? 'مطلوب' : null,
                     ),
                   ],
                 ),
@@ -313,7 +408,10 @@ class _CreateOvertimeScreenState extends State<CreateOvertimeScreen> {
                     ? const SizedBox(
                         height: 20,
                         width: 20,
-                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
                       )
                     : const Text('إرسال طلب الساعات الإضافية للاعتماد'),
               ),

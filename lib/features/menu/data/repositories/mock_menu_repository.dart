@@ -54,7 +54,8 @@ class MockMenuRepository implements MenuRepository {
       price: 120.00,
       cost: 58.50,
       isActive: true,
-      description: 'شريحة لحم بقري صافي 150 جرام مع جبنة الشيدر الذائبة والخس والصلصة الخاصة في خبز البريوش الطازج.',
+      description:
+          'شريحة لحم بقري صافي 150 جرام مع جبنة الشيدر الذائبة والخس والصلصة الخاصة في خبز البريوش الطازج.',
       kitchenStation: 'محطة البرجر واللحوم',
       branches: ['كافة الفروع'],
       allergens: ['جلوتين', 'منتجات ألبان'],
@@ -70,7 +71,8 @@ class MockMenuRepository implements MenuRepository {
       price: 145.00,
       cost: 65.00,
       isActive: true,
-      description: 'أصابع صدور دجاج طازجة مقرمشة مع بطاطس مقلية وصوص هوني ماسترد وصوص الباربكيو.',
+      description:
+          'أصابع صدور دجاج طازجة مقرمشة مع بطاطس مقلية وصوص هوني ماسترد وصوص الباربكيو.',
       kitchenStation: 'محطة القلي والمقرمشات',
       branches: ['كافة الفروع'],
       allergens: ['جلوتين'],
@@ -86,7 +88,8 @@ class MockMenuRepository implements MenuRepository {
       price: 195.00,
       cost: 92.00,
       isActive: true,
-      description: 'شريحتان لحم بقري 300 جرام مع بيكون بقري مدخن وجبنة جودا وصلصة سموكي باربيكيو.',
+      description:
+          'شريحتان لحم بقري 300 جرام مع بيكون بقري مدخن وجبنة جودا وصلصة سموكي باربيكيو.',
       kitchenStation: 'محطة البرجر واللحوم',
       branches: ['فرع وسط البلد', 'فرع المعادي'],
       allergens: ['جلوتين', 'ألبان'],
@@ -102,7 +105,8 @@ class MockMenuRepository implements MenuRepository {
       price: 65.00,
       cost: 22.00,
       isActive: true,
-      description: 'حلقات بصل ذهبية مقرمشة محضرة يدوياً ومتبلة بالأعشاب مع صوص الرانش المنعش.',
+      description:
+          'حلقات بصل ذهبية مقرمشة محضرة يدوياً ومتبلة بالأعشاب مع صوص الرانش المنعش.',
       kitchenStation: 'محطة المقبلات والسلطات',
       branches: ['كافة الفروع'],
       allergens: ['جلوتين', 'ألبان'],
@@ -181,7 +185,8 @@ class MockMenuRepository implements MenuRepository {
       requestedByName: 'كريم عادل (مدير الفرع)',
       requestDate: DateTime.now().subtract(const Duration(days: 5)),
       status: MenuItemRequestStatus.rejected,
-      reason: 'هامش الربح منخفض جداً وتكلفة زيت الترافل مرتفعة على الميزانية الحالية.',
+      reason:
+          'هامش الربح منخفض جداً وتكلفة زيت الترافل مرتفعة على الميزانية الحالية.',
     ),
   ];
 
@@ -254,7 +259,9 @@ class MockMenuRepository implements MenuRepository {
     if (index >= 0) {
       final req = _requests[index];
       _requests[index] = req.copyWith(
-        status: isApproved ? MenuItemRequestStatus.approved : MenuItemRequestStatus.rejected,
+        status: isApproved
+            ? MenuItemRequestStatus.approved
+            : MenuItemRequestStatus.rejected,
         notes: note ?? req.notes,
       );
     }

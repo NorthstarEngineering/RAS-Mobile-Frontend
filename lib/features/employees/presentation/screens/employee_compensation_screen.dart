@@ -23,7 +23,10 @@ class EmployeeCompensationScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.receipt_long_outlined),
             tooltip: 'سجل الدفعات',
-            onPressed: () => context.push('/employees/${employee.id}/pay-history', extra: employee),
+            onPressed: () => context.push(
+              '/employees/${employee.id}/pay-history',
+              extra: employee,
+            ),
           ),
         ],
       ),
@@ -48,7 +51,11 @@ class EmployeeCompensationScreen extends StatelessWidget {
                       color: AppColors.primary.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(AppDimens.radiusLg),
                     ),
-                    child: const Icon(Icons.policy, color: AppColors.primary, size: 20),
+                    child: const Icon(
+                      Icons.policy,
+                      color: AppColors.primary,
+                      size: 20,
+                    ),
                   ),
                   const SizedBox(width: AppDimens.paddingSm),
                   Expanded(
@@ -59,14 +66,21 @@ class EmployeeCompensationScreen extends StatelessWidget {
                           children: [
                             Text(
                               'معيار نظام الأجور الصارم',
-                              style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
+                              style: AppTypography.labelMd.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             const SizedBox(width: 6),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
+                                vertical: 1,
+                              ),
                               decoration: BoxDecoration(
                                 color: AppColors.surfaceContainerHigh,
-                                borderRadius: BorderRadius.circular(AppDimens.radiusSm),
+                                borderRadius: BorderRadius.circular(
+                                  AppDimens.radiusSm,
+                                ),
                               ),
                               child: Text(
                                 'RMS v2.4',
@@ -80,7 +94,10 @@ class EmployeeCompensationScreen extends StatelessWidget {
                         ),
                         Text(
                           'يُمنع دمج أو خلط الأجر اليومي مع الراتب الشهري في قيود الحسابات.',
-                          style: AppTypography.bodySm.copyWith(color: AppColors.onSurfaceVariant, fontSize: 11),
+                          style: AppTypography.bodySm.copyWith(
+                            color: AppColors.onSurfaceVariant,
+                            fontSize: 11,
+                          ),
                         ),
                       ],
                     ),
@@ -115,8 +132,12 @@ class EmployeeCompensationScreen extends StatelessWidget {
                     ),
                     alignment: Alignment.center,
                     child: Text(
-                      employee.name.length >= 2 ? employee.name.substring(0, 2) : 'مو',
-                      style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
+                      employee.name.length >= 2
+                          ? employee.name.substring(0, 2)
+                          : 'مو',
+                      style: AppTypography.labelMd.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   const SizedBox(width: AppDimens.paddingMd),
@@ -128,31 +149,47 @@ class EmployeeCompensationScreen extends StatelessWidget {
                           children: [
                             Text(
                               employee.name,
-                              style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
+                              style: AppTypography.labelMd.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             const SizedBox(width: 6),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
+                                vertical: 1,
+                              ),
                               decoration: BoxDecoration(
                                 color: AppColors.surfaceContainer,
-                                borderRadius: BorderRadius.circular(AppDimens.radiusSm),
+                                borderRadius: BorderRadius.circular(
+                                  AppDimens.radiusSm,
+                                ),
                               ),
                               child: Text(
                                 '#${employee.code}',
-                                style: AppTypography.labelSm.copyWith(fontSize: 10, fontFamily: 'monospace'),
+                                style: AppTypography.labelSm.copyWith(
+                                  fontSize: 10,
+                                  fontFamily: 'monospace',
+                                ),
                               ),
                             ),
                           ],
                         ),
                         Text(
                           '${employee.role} • ${employee.branchName}',
-                          style: AppTypography.bodySm.copyWith(color: AppColors.secondary, fontSize: 11),
+                          style: AppTypography.bodySm.copyWith(
+                            color: AppColors.secondary,
+                            fontSize: 11,
+                          ),
                         ),
                       ],
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFEAF5EA),
                       borderRadius: BorderRadius.circular(AppDimens.radiusFull),
@@ -192,18 +229,29 @@ class EmployeeCompensationScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.primary,
-                          borderRadius: BorderRadius.circular(AppDimens.radiusFull),
+                          borderRadius: BorderRadius.circular(
+                            AppDimens.radiusFull,
+                          ),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.calendar_month, color: Colors.white, size: 14),
+                            const Icon(
+                              Icons.calendar_month,
+                              color: Colors.white,
+                              size: 14,
+                            ),
                             const SizedBox(width: 4),
                             Text(
-                              isMonthly ? 'نظام الراتب الشهري الثابت' : 'نظام اليومية والأجر المتغير',
+                              isMonthly
+                                  ? 'نظام الراتب الشهري الثابت'
+                                  : 'نظام اليومية والأجر المتغير',
                               style: AppTypography.labelSm.copyWith(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
@@ -215,7 +263,10 @@ class EmployeeCompensationScreen extends StatelessWidget {
                       ),
                       Text(
                         'حساب BOH معتمد',
-                        style: AppTypography.labelSm.copyWith(color: AppColors.secondary, fontSize: 11),
+                        style: AppTypography.labelSm.copyWith(
+                          color: AppColors.secondary,
+                          fontSize: 11,
+                        ),
                       ),
                     ],
                   ),
@@ -236,7 +287,9 @@ class EmployeeCompensationScreen extends StatelessWidget {
                           children: [
                             Text(
                               'الراتب الأساسي الصافي المعتمد',
-                              style: AppTypography.labelSm.copyWith(color: AppColors.secondary),
+                              style: AppTypography.labelSm.copyWith(
+                                color: AppColors.secondary,
+                              ),
                             ),
                             const SizedBox(height: 2),
                             Row(
@@ -253,7 +306,9 @@ class EmployeeCompensationScreen extends StatelessWidget {
                                 const SizedBox(width: 4),
                                 Text(
                                   wageUnit,
-                                  style: AppTypography.labelMd.copyWith(color: AppColors.secondary),
+                                  style: AppTypography.labelMd.copyWith(
+                                    color: AppColors.secondary,
+                                  ),
                                 ),
                               ],
                             ),
@@ -264,9 +319,15 @@ class EmployeeCompensationScreen extends StatelessWidget {
                           height: 48,
                           decoration: BoxDecoration(
                             color: AppColors.surfaceContainerLowest,
-                            borderRadius: BorderRadius.circular(AppDimens.radiusLg),
+                            borderRadius: BorderRadius.circular(
+                              AppDimens.radiusLg,
+                            ),
                           ),
-                          child: const Icon(Icons.payments, color: AppColors.primary, size: 28),
+                          child: const Icon(
+                            Icons.payments,
+                            color: AppColors.primary,
+                            size: 28,
+                          ),
                         ),
                       ],
                     ),
@@ -281,19 +342,26 @@ class EmployeeCompensationScreen extends StatelessWidget {
                           padding: const EdgeInsets.all(AppDimens.paddingMd),
                           decoration: BoxDecoration(
                             color: AppColors.surfaceContainerLow,
-                            borderRadius: BorderRadius.circular(AppDimens.radiusLg),
+                            borderRadius: BorderRadius.circular(
+                              AppDimens.radiusLg,
+                            ),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 'تاريخ بدء السريان',
-                                style: AppTypography.labelSm.copyWith(color: AppColors.secondary, fontSize: 11),
+                                style: AppTypography.labelSm.copyWith(
+                                  color: AppColors.secondary,
+                                  fontSize: 11,
+                                ),
                               ),
                               const SizedBox(height: 2),
                               Text(
                                 '01 نوفمبر 2023',
-                                style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
+                                style: AppTypography.labelMd.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ],
                           ),
@@ -305,14 +373,19 @@ class EmployeeCompensationScreen extends StatelessWidget {
                           padding: const EdgeInsets.all(AppDimens.paddingMd),
                           decoration: BoxDecoration(
                             color: AppColors.surfaceContainerLow,
-                            borderRadius: BorderRadius.circular(AppDimens.radiusLg),
+                            borderRadius: BorderRadius.circular(
+                              AppDimens.radiusLg,
+                            ),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 'المراجعة الدورية',
-                                style: AppTypography.labelSm.copyWith(color: AppColors.secondary, fontSize: 11),
+                                style: AppTypography.labelSm.copyWith(
+                                  color: AppColors.secondary,
+                                  fontSize: 11,
+                                ),
                               ),
                               const SizedBox(height: 2),
                               Text(
@@ -336,12 +409,18 @@ class EmployeeCompensationScreen extends StatelessWidget {
             // Programmed Rules & Deductions
             Text(
               'البنود والخصومات المبرمجة',
-              style: AppTypography.headlineSm.copyWith(fontSize: 18, fontWeight: FontWeight.bold),
+              style: AppTypography.headlineSm.copyWith(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 2),
             Text(
               'المعادلات الحسابية التلقائية لساعة الإغلاق ودفتر الحضور',
-              style: AppTypography.bodySm.copyWith(color: AppColors.secondary, fontSize: 12),
+              style: AppTypography.bodySm.copyWith(
+                color: AppColors.secondary,
+                fontSize: 12,
+              ),
             ),
             const SizedBox(height: AppDimens.paddingSm),
 
@@ -381,7 +460,10 @@ class EmployeeCompensationScreen extends StatelessWidget {
 
             // CTA Pay History
             ElevatedButton.icon(
-              onPressed: () => context.push('/employees/${employee.id}/pay-history', extra: employee),
+              onPressed: () => context.push(
+                '/employees/${employee.id}/pay-history',
+                extra: employee,
+              ),
               icon: const Icon(Icons.history_outlined),
               label: const Text('عرض سجل الدفعات والرواتب السابقة'),
               style: ElevatedButton.styleFrom(
@@ -428,20 +510,34 @@ class EmployeeCompensationScreen extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: isError ? AppColors.errorContainer : AppColors.surfaceContainerHigh,
+              color: isError
+                  ? AppColors.errorContainer
+                  : AppColors.surfaceContainerHigh,
               borderRadius: BorderRadius.circular(AppDimens.radiusLg),
             ),
-            child: Icon(icon, color: isError ? AppColors.onErrorContainer : AppColors.onSurface, size: 20),
+            child: Icon(
+              icon,
+              color: isError ? AppColors.onErrorContainer : AppColors.onSurface,
+              size: 20,
+            ),
           ),
           const SizedBox(width: AppDimens.paddingMd),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold)),
+                Text(
+                  title,
+                  style: AppTypography.labelMd.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 Text(
                   subtitle,
-                  style: AppTypography.bodySm.copyWith(color: AppColors.secondary, fontSize: 11),
+                  style: AppTypography.bodySm.copyWith(
+                    color: AppColors.secondary,
+                    fontSize: 11,
+                  ),
                 ),
               ],
             ),
@@ -451,9 +547,18 @@ class EmployeeCompensationScreen extends StatelessWidget {
             children: [
               Text(
                 amount,
-                style: AppTypography.labelMd.copyWith(color: color, fontWeight: FontWeight.bold),
+                style: AppTypography.labelMd.copyWith(
+                  color: color,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              Text(unit, style: AppTypography.labelSm.copyWith(color: AppColors.secondary, fontSize: 10)),
+              Text(
+                unit,
+                style: AppTypography.labelSm.copyWith(
+                  color: AppColors.secondary,
+                  fontSize: 10,
+                ),
+              ),
             ],
           ),
         ],

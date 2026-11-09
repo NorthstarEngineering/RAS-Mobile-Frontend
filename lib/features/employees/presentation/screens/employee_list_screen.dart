@@ -65,9 +65,11 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
       result = result.where((e) => e.wageType == WageType.hourly).toList();
     } else if (filter == 'active') {
       result = result
-          .where((e) =>
-              e.status == EmployeeStatus.active ||
-              e.status == EmployeeStatus.activeOnShift)
+          .where(
+            (e) =>
+                e.status == EmployeeStatus.active ||
+                e.status == EmployeeStatus.activeOnShift,
+          )
           .toList();
     }
 
@@ -135,7 +137,9 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
                   textAlignVertical: TextAlignVertical.center,
                   decoration: InputDecoration(
                     hintText: 'ابحث بالاسم، الرقم (#1052)، أو المسمى...',
-                    hintStyle: AppTypography.bodySm.copyWith(color: AppColors.secondary),
+                    hintStyle: AppTypography.bodySm.copyWith(
+                      color: AppColors.secondary,
+                    ),
                     prefixIcon: const Icon(Symbols.search, size: 20),
                     suffixIcon: _searchController.text.isNotEmpty
                         ? IconButton(
@@ -150,7 +154,10 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
                     enabledBorder: InputBorder.none,
                     focusedBorder: const OutlineInputBorder(
                       borderRadius: AppRadius.lgAll,
-                      borderSide: BorderSide(color: AppColors.primary, width: 2),
+                      borderSide: BorderSide(
+                        color: AppColors.primary,
+                        width: 2,
+                      ),
                     ),
                   ),
                 ),
@@ -161,7 +168,9 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
             // Filter Chips
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.margin),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.margin,
+              ),
               child: Row(
                 children: [
                   _buildFilterChip('all', 'الكل (${_allEmployees.length})'),
@@ -180,29 +189,34 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
             Expanded(
               child: _isLoading
                   ? const Center(
-                      child: CircularProgressIndicator(color: AppColors.primary),
+                      child: CircularProgressIndicator(
+                        color: AppColors.primary,
+                      ),
                     )
                   : _filteredEmployees.isEmpty
-                      ? Center(
-                          child: Text(
-                            'لا يوجد موظفون مطابقون للبحث',
-                            style: AppTypography.bodyMd.copyWith(color: AppColors.secondary),
-                          ),
-                        )
-                      : ListView.separated(
-                          padding: const EdgeInsets.fromLTRB(
-                            AppSpacing.margin,
-                            0,
-                            AppSpacing.margin,
-                            AppSpacing.xl,
-                          ),
-                          itemCount: _filteredEmployees.length,
-                          separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.sm),
-                          itemBuilder: (context, index) {
-                            final emp = _filteredEmployees[index];
-                            return _buildEmployeeCard(emp);
-                          },
+                  ? Center(
+                      child: Text(
+                        'لا يوجد موظفون مطابقون للبحث',
+                        style: AppTypography.bodyMd.copyWith(
+                          color: AppColors.secondary,
                         ),
+                      ),
+                    )
+                  : ListView.separated(
+                      padding: const EdgeInsets.fromLTRB(
+                        AppSpacing.margin,
+                        0,
+                        AppSpacing.margin,
+                        AppSpacing.xl,
+                      ),
+                      itemCount: _filteredEmployees.length,
+                      separatorBuilder: (_, __) =>
+                          const SizedBox(height: AppSpacing.sm),
+                      itemBuilder: (context, index) {
+                        final emp = _filteredEmployees[index];
+                        return _buildEmployeeCard(emp);
+                      },
+                    ),
             ),
           ],
         ),
@@ -291,10 +305,15 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
                             ),
                             const SizedBox(width: 6),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 5,
+                                vertical: 1,
+                              ),
                               decoration: const BoxDecoration(
                                 color: AppColors.surfaceContainer,
-                                borderRadius: BorderRadius.all(Radius.circular(4)),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(4),
+                                ),
                               ),
                               child: Text(
                                 '#${emp.code}',
@@ -322,9 +341,14 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
 
                   // Status Badge
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
-                      color: isOnShift ? const Color(0xFFE8F5E9) : AppColors.surfaceContainerLow,
+                      color: isOnShift
+                          ? const Color(0xFFE8F5E9)
+                          : AppColors.surfaceContainerLow,
                       borderRadius: AppRadius.fullAll,
                     ),
                     child: Row(
@@ -346,7 +370,9 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
                           style: AppTypography.labelSm.copyWith(
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
-                            color: isOnShift ? const Color(0xFF2E8B2E) : AppColors.secondary,
+                            color: isOnShift
+                                ? const Color(0xFF2E8B2E)
+                                : AppColors.secondary,
                           ),
                         ),
                       ],
@@ -371,7 +397,11 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
                   children: [
                     Row(
                       children: [
-                        const Icon(Symbols.payments, size: 16, color: AppColors.primary),
+                        const Icon(
+                          Symbols.payments,
+                          size: 16,
+                          color: AppColors.primary,
+                        ),
                         const SizedBox(width: 6),
                         Text(
                           emp.wageType == WageType.monthly
@@ -393,7 +423,11 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
                           ),
                         ),
                         const SizedBox(width: 2),
-                        const Icon(Symbols.chevron_left, size: 16, color: AppColors.primary),
+                        const Icon(
+                          Symbols.chevron_left,
+                          size: 16,
+                          color: AppColors.primary,
+                        ),
                       ],
                     ),
                   ],

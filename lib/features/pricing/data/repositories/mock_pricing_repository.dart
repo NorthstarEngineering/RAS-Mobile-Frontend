@@ -19,7 +19,8 @@ class MockPricingRepository implements PricingRepository {
       requestedByName: 'م. ألفاريز',
       requestDate: DateTime(2024, 4, 16),
       status: PriceRequestStatus.pending,
-      reason: 'ارتفاع أسعار توريد اللحوم البقرية الطازجة بنسبة 15% من المورد الرئيسي.',
+      reason:
+          'ارتفاع أسعار توريد اللحوم البقرية الطازجة بنسبة 15% من المورد الرئيسي.',
       effectiveDate: DateTime(2024, 5, 1),
     ),
     PriceChangeRequest(
@@ -152,7 +153,9 @@ class MockPricingRepository implements PricingRepository {
     if (index >= 0) {
       final req = _requests[index];
       _requests[index] = req.copyWith(
-        status: isApproved ? PriceRequestStatus.approved : PriceRequestStatus.rejected,
+        status: isApproved
+            ? PriceRequestStatus.approved
+            : PriceRequestStatus.rejected,
         effectiveDate: effectiveDate ?? req.effectiveDate,
       );
 

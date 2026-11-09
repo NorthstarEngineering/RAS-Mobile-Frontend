@@ -9,10 +9,7 @@ import '../../../../core/widgets/widgets.dart';
 import '../../domain/entities/employee.dart';
 
 class EmployeeDetailsScreen extends StatelessWidget {
-  const EmployeeDetailsScreen({
-    super.key,
-    required this.employee,
-  });
+  const EmployeeDetailsScreen({super.key, required this.employee});
 
   final Employee employee;
 
@@ -39,7 +36,8 @@ class EmployeeDetailsScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Symbols.edit, color: AppColors.primary),
-            onPressed: () => context.push('/employees/${employee.id}/edit', extra: employee),
+            onPressed: () =>
+                context.push('/employees/${employee.id}/edit', extra: employee),
           ),
         ],
       ),
@@ -104,11 +102,16 @@ class EmployeeDetailsScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _buildMetaItem('الفرع', '${employee.branchName} (${employee.branchCode})'),
+                        _buildMetaItem(
+                          'الفرع',
+                          '${employee.branchName} (${employee.branchCode})',
+                        ),
                         _buildMetaItem(
                           'الحالة',
                           employee.status.titleArabic,
-                          color: isOnShift ? AppColors.success : AppColors.secondary,
+                          color: isOnShift
+                              ? AppColors.success
+                              : AppColors.secondary,
                         ),
                         _buildMetaItem('القسم', employee.department),
                       ],
@@ -169,7 +172,9 @@ class EmployeeDetailsScreen extends StatelessWidget {
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('الاتصال بـ ${employee.managerName}...'),
+                            content: Text(
+                              'الاتصال بـ ${employee.managerName}...',
+                            ),
                             behavior: SnackBarBehavior.floating,
                           ),
                         );
@@ -245,35 +250,60 @@ class EmployeeDetailsScreen extends StatelessWidget {
               RmsPrimaryButton(
                 label: 'تعديل بيانات الموظف والراتب',
                 icon: Symbols.edit,
-                onPressed: () => context.push('/employees/${employee.id}/edit', extra: employee),
+                onPressed: () => context.push(
+                  '/employees/${employee.id}/edit',
+                  extra: employee,
+                ),
               ),
               const SizedBox(height: AppSpacing.sm),
               OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(
                   minimumSize: const Size.fromHeight(AppSizes.controlHeight),
-                  shape: const RoundedRectangleBorder(borderRadius: AppRadius.lgAll),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: AppRadius.lgAll,
+                  ),
                   side: const BorderSide(color: AppColors.surfaceContainerHigh),
                 ),
-                icon: const Icon(Symbols.payments, size: 20, color: AppColors.onSurface),
+                icon: const Icon(
+                  Symbols.payments,
+                  size: 20,
+                  color: AppColors.onSurface,
+                ),
                 label: Text(
                   'بيانات الراتب والتعويض المعتمد (EMP-05)',
-                  style: AppTypography.labelMd.copyWith(color: AppColors.onSurface),
+                  style: AppTypography.labelMd.copyWith(
+                    color: AppColors.onSurface,
+                  ),
                 ),
-                onPressed: () => context.push('/employees/${employee.id}/compensation', extra: employee),
+                onPressed: () => context.push(
+                  '/employees/${employee.id}/compensation',
+                  extra: employee,
+                ),
               ),
               const SizedBox(height: AppSpacing.sm),
               OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(
                   minimumSize: const Size.fromHeight(AppSizes.controlHeight),
-                  shape: const RoundedRectangleBorder(borderRadius: AppRadius.lgAll),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: AppRadius.lgAll,
+                  ),
                   side: const BorderSide(color: AppColors.surfaceContainerHigh),
                 ),
-                icon: const Icon(Symbols.receipt_long, size: 20, color: AppColors.onSurface),
+                icon: const Icon(
+                  Symbols.receipt_long,
+                  size: 20,
+                  color: AppColors.onSurface,
+                ),
                 label: Text(
                   'سجل الرواتب والدفعات التاريخي (EMP-06)',
-                  style: AppTypography.labelMd.copyWith(color: AppColors.onSurface),
+                  style: AppTypography.labelMd.copyWith(
+                    color: AppColors.onSurface,
+                  ),
                 ),
-                onPressed: () => context.push('/employees/${employee.id}/pay-history', extra: employee),
+                onPressed: () => context.push(
+                  '/employees/${employee.id}/pay-history',
+                  extra: employee,
+                ),
               ),
             ],
           ),

@@ -37,9 +37,8 @@ class MockAuthRepository implements AuthRepository {
       (u) =>
           u.email.toLowerCase() == identifier.toLowerCase() ||
           u.id.toLowerCase() == identifier.toLowerCase(),
-      orElse: () => throw const FormatException(
-        'بيانات غير صحيحة. متبقي محاولتان (2).',
-      ),
+      orElse: () =>
+          throw const FormatException('بيانات غير صحيحة. متبقي محاولتان (2).'),
     );
 
     // For demo purposes, any password with length >= 6 is valid
@@ -61,4 +60,16 @@ class MockAuthRepository implements AuthRepository {
   Future<UserSession?> getCurrentSession() async {
     return _currentSession;
   }
+
+  @override
+  Future<List<Map<String, dynamic>>> listAccounts() async => const [];
+
+  @override
+  Future<Map<String, dynamic>> createAccount({
+    required String name,
+    required String email,
+    required String password,
+    required String role,
+    String? branchId,
+  }) => throw UnsupportedError('Live authentication is required');
 }

@@ -18,9 +18,10 @@ class LoginUseCase {
       throw const FormatException('يرجى إدخال كلمة المرور');
     }
 
-    return _repository.login(
-      identifier: cleanId,
-      password: password,
-    );
+    return _repository.login(identifier: cleanId, password: password);
   }
+
+  Future<void> logout() => _repository.logout();
+
+  Future<UserSession?> currentSession() => _repository.getCurrentSession();
 }

@@ -2,6 +2,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import '../../../../core/di/service_locator.dart';
+import '../bloc/auth_bloc.dart';
+import '../bloc/auth_event.dart';
+import '../../domain/repositories/auth_repository.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_dimens.dart';
@@ -41,9 +45,13 @@ class _SplashScreenState extends State<SplashScreen> {
       } else {
         timer.cancel();
         // Automatically route to login after terminal is ready
-        Future<void>.delayed(const Duration(milliseconds: 600), () {
+        Future<void>.delayed(const Duration(milliseconds: 600), () async {
           if (mounted) {
-            context.go('/login');
+            final session = await sl<AuthRepository>().getCurrentSession();
+            if (session != null) {
+              sl<AuthBloc>().add(SessionRestored(session));
+            }
+            if (mounted) context.go(session == null ? '/login' : '/home');
           }
         });
       }
@@ -58,7 +66,15 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void _onContinue() {
     _progressTimer?.cancel();
-    context.go('/login');
+    _restoreAndNavigate();
+  }
+
+  Future<void> _restoreAndNavigate() async {
+    final session = await sl<AuthRepository>().getCurrentSession();
+    if (session != null) {
+      sl<AuthBloc>().add(SessionRestored(session));
+    }
+    if (mounted) context.go(session == null ? '/login' : '/home');
   }
 
   @override
@@ -206,10 +222,14 @@ class _SplashScreenState extends State<SplashScreen> {
                         ),
                         const SizedBox(height: AppSpacing.sm),
                         Text(
-                          isDone ? 'المحطة جاهزة للاستخدام' : _statuses[_currentStep],
+                          isDone
+                              ? 'المحطة جاهزة للاستخدام'
+                              : _statuses[_currentStep],
                           style: AppTypography.bodySm.copyWith(
                             fontSize: 13,
-                            color: isDone ? AppColors.primary : AppColors.onSurface,
+                            color: isDone
+                                ? AppColors.primary
+                                : AppColors.onSurface,
                             fontWeight: FontWeight.w600,
                           ),
                           textAlign: TextAlign.center,

@@ -25,7 +25,9 @@ class _SessionExpiredScreenState extends State<SessionExpiredScreen> {
   void _handleUnlock() {
     if (_passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('يرجى إدخال كلمة المرور أو رمز PIN لفتح الجلسة')),
+        const SnackBar(
+          content: Text('يرجى إدخال كلمة المرور أو رمز PIN لفتح الجلسة'),
+        ),
       );
       return;
     }
@@ -54,7 +56,10 @@ class _SessionExpiredScreenState extends State<SessionExpiredScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.surfaceContainerHigh,
                       borderRadius: BorderRadius.circular(AppDimens.radiusFull),
@@ -82,7 +87,11 @@ class _SessionExpiredScreenState extends State<SessionExpiredScreen> {
                   ),
                   Row(
                     children: [
-                      const Icon(Icons.wifi, size: 16, color: AppColors.secondary),
+                      const Icon(
+                        Icons.wifi,
+                        size: 16,
+                        color: AppColors.secondary,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         'مزامنة مباشرة في وضع الاستعداد',
@@ -163,7 +172,10 @@ class _SessionExpiredScreenState extends State<SessionExpiredScreen> {
               // Routine status badge
               Center(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.surfaceContainer,
                     borderRadius: BorderRadius.circular(AppDimens.radiusFull),
@@ -171,7 +183,11 @@ class _SessionExpiredScreenState extends State<SessionExpiredScreen> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.verified_user, size: 14, color: Color(0xFFC77A00)),
+                      const Icon(
+                        Icons.verified_user,
+                        size: 14,
+                        color: Color(0xFFC77A00),
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         'حماية دورية للوردية',
@@ -208,19 +224,30 @@ class _SessionExpiredScreenState extends State<SessionExpiredScreen> {
                       children: [
                         Row(
                           children: [
-                            const Icon(Icons.badge_outlined, size: 20, color: AppColors.primary),
+                            const Icon(
+                              Icons.badge_outlined,
+                              size: 20,
+                              color: AppColors.primary,
+                            ),
                             const SizedBox(width: 6),
                             Text(
                               'بيانات الجلسة النشطة',
-                              style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
+                              style: AppTypography.labelMd.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ],
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
                             color: const Color(0xFFFEF6E9),
-                            borderRadius: BorderRadius.circular(AppDimens.radiusFull),
+                            borderRadius: BorderRadius.circular(
+                              AppDimens.radiusFull,
+                            ),
                           ),
                           child: Text(
                             'انتهاء مهلة الخمول',
@@ -243,7 +270,10 @@ class _SessionExpiredScreenState extends State<SessionExpiredScreen> {
                             color: AppColors.primaryFixed,
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(Icons.person, color: AppColors.primary),
+                          child: const Icon(
+                            Icons.person,
+                            color: AppColors.primary,
+                          ),
                         ),
                         const SizedBox(width: AppDimens.paddingMd),
                         Expanded(
@@ -252,7 +282,9 @@ class _SessionExpiredScreenState extends State<SessionExpiredScreen> {
                             children: [
                               Text(
                                 'م. ألفاريز',
-                                style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
+                                style: AppTypography.labelMd.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                               Text(
                                 'm.alvarez@rms-ops.com • مسؤول وردية',
@@ -274,7 +306,9 @@ class _SessionExpiredScreenState extends State<SessionExpiredScreen> {
               // Unlock field
               Text(
                 'أدخل كلمة المرور للمتابعة',
-                style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
+                style: AppTypography.labelMd.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 6),
               TextField(
@@ -284,10 +318,14 @@ class _SessionExpiredScreenState extends State<SessionExpiredScreen> {
                   hintText: 'كلمة المرور الحالية',
                   prefixIcon: const Icon(Icons.lock_outline),
                   suffixIcon: IconButton(
-                    icon: Icon(_obscure ? Icons.visibility_off : Icons.visibility),
+                    icon: Icon(
+                      _obscure ? Icons.visibility_off : Icons.visibility,
+                    ),
                     onPressed: () => setState(() => _obscure = !_obscure),
                   ),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppDimens.radiusXl)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AppDimens.radiusXl),
+                  ),
                 ),
               ),
               const SizedBox(height: AppDimens.paddingLg),
@@ -307,7 +345,10 @@ class _SessionExpiredScreenState extends State<SessionExpiredScreen> {
                     ? const SizedBox(
                         height: 20,
                         width: 20,
-                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
                       )
                     : const Text('إلغاء القفل والمتابعة'),
               ),
@@ -318,7 +359,9 @@ class _SessionExpiredScreenState extends State<SessionExpiredScreen> {
                 onPressed: () => context.go('/login'),
                 child: Text(
                   'تسجيل الدخول بحساب مستخدم آخر',
-                  style: AppTypography.labelMd.copyWith(color: AppColors.secondary),
+                  style: AppTypography.labelMd.copyWith(
+                    color: AppColors.secondary,
+                  ),
                 ),
               ),
             ],

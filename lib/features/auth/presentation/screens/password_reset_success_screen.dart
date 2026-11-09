@@ -64,12 +64,25 @@ class PasswordResetSuccessScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(AppSpacing.md),
                     child: Column(
                       children: [
-                        _buildRow('الحساب', 'm.alvarez@rms-ops.com', isLtr: true),
-                        const Divider(height: 16, color: AppColors.surfaceContainer),
+                        _buildRow(
+                          'الحساب',
+                          'm.alvarez@rms-ops.com',
+                          isLtr: true,
+                        ),
+                        const Divider(
+                          height: 16,
+                          color: AppColors.surfaceContainer,
+                        ),
                         _buildRow('وقت التحديث', 'اليوم، 14:32 بتوقيت القاهرة'),
-                        const Divider(height: 16, color: AppColors.surfaceContainer),
+                        const Divider(
+                          height: 16,
+                          color: AppColors.surfaceContainer,
+                        ),
                         _buildRow('الجهاز', 'نقطة بيع محمولة #104'),
-                        const Divider(height: 16, color: AppColors.surfaceContainer),
+                        const Divider(
+                          height: 16,
+                          color: AppColors.surfaceContainer,
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -163,9 +176,7 @@ class PasswordResetSuccessScreen extends StatelessWidget {
         ),
         Text(
           value,
-          style: AppTypography.labelMd.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+          style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.w600),
           textDirection: isLtr ? TextDirection.ltr : null,
         ),
       ],

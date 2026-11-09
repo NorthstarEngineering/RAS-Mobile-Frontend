@@ -41,11 +41,11 @@ class _PriceHistoryScreenState extends State<PriceHistoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.surface,
-      appBar: AppBar(
-        title: const Text('السجل التاريخي للأسعار'),
-      ),
+      appBar: AppBar(title: const Text('السجل التاريخي للأسعار')),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+          ? const Center(
+              child: CircularProgressIndicator(color: AppColors.primary),
+            )
           : SingleChildScrollView(
               padding: const EdgeInsets.all(AppDimens.paddingMd),
               child: Column(
@@ -57,19 +57,30 @@ class _PriceHistoryScreenState extends State<PriceHistoryScreen> {
                     children: [
                       Row(
                         children: [
-                          const Icon(Icons.history_toggle_off, size: 18, color: AppColors.primary),
+                          const Icon(
+                            Icons.history_toggle_off,
+                            size: 18,
+                            color: AppColors.primary,
+                          ),
                           const SizedBox(width: 6),
                           Text(
                             'التتبع الزمني المالي لأسعار بيع الصنف',
-                            style: AppTypography.labelSm.copyWith(color: AppColors.onSurfaceVariant),
+                            style: AppTypography.labelSm.copyWith(
+                              color: AppColors.onSurfaceVariant,
+                            ),
                           ),
                         ],
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.surfaceContainerHigh,
-                          borderRadius: BorderRadius.circular(AppDimens.radiusFull),
+                          borderRadius: BorderRadius.circular(
+                            AppDimens.radiusFull,
+                          ),
                         ),
                         child: Text(
                           '${_history.length} قيود مسجلة',
@@ -107,9 +118,15 @@ class _PriceHistoryScreenState extends State<PriceHistoryScreen> {
                               height: 48,
                               decoration: BoxDecoration(
                                 color: AppColors.surfaceContainer,
-                                borderRadius: BorderRadius.circular(AppDimens.radiusLg),
+                                borderRadius: BorderRadius.circular(
+                                  AppDimens.radiusLg,
+                                ),
                               ),
-                              child: const Icon(Icons.lunch_dining, color: AppColors.primary, size: 28),
+                              child: const Icon(
+                                Icons.lunch_dining,
+                                color: AppColors.primary,
+                                size: 28,
+                              ),
                             ),
                             const SizedBox(width: AppDimens.paddingMd),
                             Expanded(
@@ -119,10 +136,15 @@ class _PriceHistoryScreenState extends State<PriceHistoryScreen> {
                                   Row(
                                     children: [
                                       Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 6,
+                                          vertical: 2,
+                                        ),
                                         decoration: BoxDecoration(
                                           color: AppColors.surfaceContainer,
-                                          borderRadius: BorderRadius.circular(AppDimens.radiusSm),
+                                          borderRadius: BorderRadius.circular(
+                                            AppDimens.radiusSm,
+                                          ),
                                         ),
                                         child: Text(
                                           'BURG-1024',
@@ -135,18 +157,24 @@ class _PriceHistoryScreenState extends State<PriceHistoryScreen> {
                                       const SizedBox(width: 6),
                                       Text(
                                         'برجر وسندوتشات',
-                                        style: AppTypography.labelSm.copyWith(color: AppColors.secondary),
+                                        style: AppTypography.labelSm.copyWith(
+                                          color: AppColors.secondary,
+                                        ),
                                       ),
                                     ],
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
                                     'برجر كلاسيك سينجل',
-                                    style: AppTypography.headlineSm.copyWith(fontWeight: FontWeight.bold),
+                                    style: AppTypography.headlineSm.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                   Text(
                                     'Classic Burger Single',
-                                    style: AppTypography.bodySm.copyWith(color: AppColors.secondary),
+                                    style: AppTypography.bodySm.copyWith(
+                                      color: AppColors.secondary,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -161,20 +189,27 @@ class _PriceHistoryScreenState extends State<PriceHistoryScreen> {
                             // Current Active Box
                             Expanded(
                               child: Container(
-                                padding: const EdgeInsets.all(AppDimens.paddingMd),
+                                padding: const EdgeInsets.all(
+                                  AppDimens.paddingMd,
+                                ),
                                 decoration: BoxDecoration(
                                   color: AppColors.surfaceContainerLow,
-                                  borderRadius: BorderRadius.circular(AppDimens.radiusLg),
+                                  borderRadius: BorderRadius.circular(
+                                    AppDimens.radiusLg,
+                                  ),
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
                                           'السعر الحالي',
-                                          style: AppTypography.labelSm.copyWith(color: AppColors.secondary),
+                                          style: AppTypography.labelSm.copyWith(
+                                            color: AppColors.secondary,
+                                          ),
                                         ),
                                         Container(
                                           width: 8,
@@ -211,22 +246,35 @@ class _PriceHistoryScreenState extends State<PriceHistoryScreen> {
                             // Upcoming Approved Box
                             Expanded(
                               child: Container(
-                                padding: const EdgeInsets.all(AppDimens.paddingMd),
+                                padding: const EdgeInsets.all(
+                                  AppDimens.paddingMd,
+                                ),
                                 decoration: BoxDecoration(
-                                  color: AppColors.tertiaryFixed.withValues(alpha: 0.4),
-                                  borderRadius: BorderRadius.circular(AppDimens.radiusLg),
+                                  color: AppColors.tertiaryFixed.withValues(
+                                    alpha: 0.4,
+                                  ),
+                                  borderRadius: BorderRadius.circular(
+                                    AppDimens.radiusLg,
+                                  ),
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
                                           'السعر القادم',
-                                          style: AppTypography.labelSm.copyWith(color: AppColors.tertiary),
+                                          style: AppTypography.labelSm.copyWith(
+                                            color: AppColors.tertiary,
+                                          ),
                                         ),
-                                        const Icon(Icons.schedule_send, size: 16, color: AppColors.tertiary),
+                                        const Icon(
+                                          Icons.schedule_send,
+                                          size: 16,
+                                          color: AppColors.tertiary,
+                                        ),
                                       ],
                                     ),
                                     const SizedBox(height: 4),
@@ -260,7 +308,10 @@ class _PriceHistoryScreenState extends State<PriceHistoryScreen> {
                   // Timeline Heading
                   Text(
                     'سجل التعديلات المعتمدة',
-                    style: AppTypography.headlineSm.copyWith(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: AppTypography.headlineSm.copyWith(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: AppDimens.paddingSm),
 
@@ -276,7 +327,9 @@ class _PriceHistoryScreenState extends State<PriceHistoryScreen> {
                         padding: const EdgeInsets.all(AppDimens.paddingMd),
                         decoration: BoxDecoration(
                           color: AppColors.surfaceContainerLowest,
-                          borderRadius: BorderRadius.circular(AppDimens.radiusXl),
+                          borderRadius: BorderRadius.circular(
+                            AppDimens.radiusXl,
+                          ),
                           boxShadow: const [
                             BoxShadow(
                               color: Color(0x06000000),
@@ -311,10 +364,15 @@ class _PriceHistoryScreenState extends State<PriceHistoryScreen> {
                                   ],
                                 ),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 6,
+                                    vertical: 2,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: const Color(0xFFEAF5EA),
-                                    borderRadius: BorderRadius.circular(AppDimens.radiusSm),
+                                    borderRadius: BorderRadius.circular(
+                                      AppDimens.radiusSm,
+                                    ),
                                   ),
                                   child: Text(
                                     '+${entry.percentageChange.toStringAsFixed(1)}%',
@@ -330,7 +388,9 @@ class _PriceHistoryScreenState extends State<PriceHistoryScreen> {
                             const SizedBox(height: 6),
                             Text(
                               entry.reason,
-                              style: AppTypography.bodySm.copyWith(color: AppColors.onSurface),
+                              style: AppTypography.bodySm.copyWith(
+                                color: AppColors.onSurface,
+                              ),
                             ),
                             const Divider(height: 16),
                             Row(
@@ -338,11 +398,17 @@ class _PriceHistoryScreenState extends State<PriceHistoryScreen> {
                               children: [
                                 Text(
                                   'الاعتماد: ${entry.approvedByName}',
-                                  style: AppTypography.labelSm.copyWith(color: AppColors.secondary, fontSize: 11),
+                                  style: AppTypography.labelSm.copyWith(
+                                    color: AppColors.secondary,
+                                    fontSize: 11,
+                                  ),
                                 ),
                                 Text(
                                   'تاريخ السريان: ${entry.effectiveDate.year}-${entry.effectiveDate.month.toString().padLeft(2, '0')}-${entry.effectiveDate.day.toString().padLeft(2, '0')}',
-                                  style: AppTypography.labelSm.copyWith(color: AppColors.secondary, fontSize: 11),
+                                  style: AppTypography.labelSm.copyWith(
+                                    color: AppColors.secondary,
+                                    fontSize: 11,
+                                  ),
                                 ),
                               ],
                             ),

@@ -52,9 +52,7 @@ class OvertimeRecord extends Equatable {
     return employeeName.isNotEmpty ? employeeName[0] : 'م';
   }
 
-  OvertimeRecord copyWith({
-    OvertimeStatus? status,
-  }) {
+  OvertimeRecord copyWith({OvertimeStatus? status}) {
     return OvertimeRecord(
       id: id,
       employeeName: employeeName,
@@ -72,16 +70,16 @@ class OvertimeRecord extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        employeeName,
-        employeeCode,
-        role,
-        date,
-        hours,
-        timeRange,
-        reason,
-        trigger,
-        status,
-        overtimePay,
-      ];
+    id,
+    employeeName,
+    employeeCode,
+    role,
+    date,
+    hours,
+    timeRange,
+    reason,
+    trigger,
+    status,
+    overtimePay,
+  ];
 }

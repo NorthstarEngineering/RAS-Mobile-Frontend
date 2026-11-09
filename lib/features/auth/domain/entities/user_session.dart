@@ -18,8 +18,9 @@ class UserSession extends Equatable {
     required this.email,
     required this.role,
     required this.token,
-    this.branchId = '104',
-    this.branchName = 'الفرع الرئيسي - وسط البلد',
+    this.refreshToken = '',
+    this.branchId = '',
+    this.branchName = '',
   });
 
   final String id;
@@ -27,9 +28,44 @@ class UserSession extends Equatable {
   final String email;
   final StaffRole role;
   final String token;
+  final String refreshToken;
   final String branchId;
   final String branchName;
 
+  Map<String, String> toStorage() => {
+    'id': id,
+    'name': name,
+    'email': email,
+    'role': role.code,
+    'token': token,
+    'refreshToken': refreshToken,
+    'branchId': branchId,
+    'branchName': branchName,
+  };
+
+  factory UserSession.fromStorage(Map<String, String> values) => UserSession(
+    id: values['id'] ?? '',
+    name: values['name'] ?? '',
+    email: values['email'] ?? '',
+    role: StaffRole.values.firstWhere(
+      (role) => role.code == values['role'],
+      orElse: () => StaffRole.ceo,
+    ),
+    token: values['token'] ?? '',
+    refreshToken: values['refreshToken'] ?? '',
+    branchId: values['branchId'] ?? '',
+    branchName: values['branchName'] ?? '',
+  );
+
   @override
-  List<Object?> get props => [id, name, email, role, token, branchId, branchName];
+  List<Object?> get props => [
+    id,
+    name,
+    email,
+    role,
+    token,
+    refreshToken,
+    branchId,
+    branchName,
+  ];
 }

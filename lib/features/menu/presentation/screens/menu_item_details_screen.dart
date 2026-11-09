@@ -43,7 +43,9 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
     if (_isLoading) {
       return const Scaffold(
         backgroundColor: AppColors.surface,
-        body: Center(child: CircularProgressIndicator(color: AppColors.primary)),
+        body: Center(
+          child: CircularProgressIndicator(color: AppColors.primary),
+        ),
       );
     }
 
@@ -107,16 +109,25 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.verified, size: 18, color: AppColors.primary),
+                      const Icon(
+                        Icons.verified,
+                        size: 18,
+                        color: AppColors.primary,
+                      ),
                       const SizedBox(width: 6),
                       Text(
                         'صنف معتمد بالقائمة الرئيسية المركزية',
-                        style: AppTypography.labelSm.copyWith(color: AppColors.onSurfaceVariant),
+                        style: AppTypography.labelSm.copyWith(
+                          color: AppColors.onSurfaceVariant,
+                        ),
                       ),
                     ],
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(AppDimens.radiusSm),
@@ -158,7 +169,9 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
                         height: 72,
                         decoration: BoxDecoration(
                           color: AppColors.surfaceContainerHigh,
-                          borderRadius: BorderRadius.circular(AppDimens.radiusXl),
+                          borderRadius: BorderRadius.circular(
+                            AppDimens.radiusXl,
+                          ),
                         ),
                         child: const Icon(
                           Icons.lunch_dining,
@@ -173,11 +186,15 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
                           children: [
                             Text(
                               item.nameAr,
-                              style: AppTypography.headlineSm.copyWith(fontWeight: FontWeight.bold),
+                              style: AppTypography.headlineSm.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             Text(
                               item.nameEn,
-                              style: AppTypography.bodySm.copyWith(color: AppColors.secondary),
+                              style: AppTypography.bodySm.copyWith(
+                                color: AppColors.secondary,
+                              ),
                             ),
                             const SizedBox(height: 8),
                             Wrap(
@@ -185,10 +202,15 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
                               runSpacing: 4,
                               children: [
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 2,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: AppColors.secondaryContainer,
-                                    borderRadius: BorderRadius.circular(AppDimens.radiusFull),
+                                    borderRadius: BorderRadius.circular(
+                                      AppDimens.radiusFull,
+                                    ),
                                   ),
                                   child: Text(
                                     item.categoryName,
@@ -198,10 +220,15 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
                                   ),
                                 ),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 2,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: const Color(0xFFEAF5EA),
-                                    borderRadius: BorderRadius.circular(AppDimens.radiusFull),
+                                    borderRadius: BorderRadius.circular(
+                                      AppDimens.radiusFull,
+                                    ),
                                   ),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
@@ -241,14 +268,18 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
                           padding: const EdgeInsets.all(AppDimens.paddingSm),
                           decoration: BoxDecoration(
                             color: AppColors.surfaceContainerLow,
-                            borderRadius: BorderRadius.circular(AppDimens.radiusLg),
+                            borderRadius: BorderRadius.circular(
+                              AppDimens.radiusLg,
+                            ),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 'رمز الصنف (SKU)',
-                                style: AppTypography.labelSm.copyWith(color: AppColors.secondary),
+                                style: AppTypography.labelSm.copyWith(
+                                  color: AppColors.secondary,
+                                ),
                               ),
                               const SizedBox(height: 2),
                               Text(
@@ -268,14 +299,18 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
                           padding: const EdgeInsets.all(AppDimens.paddingSm),
                           decoration: BoxDecoration(
                             color: AppColors.surfaceContainerLow,
-                            borderRadius: BorderRadius.circular(AppDimens.radiusLg),
+                            borderRadius: BorderRadius.circular(
+                              AppDimens.radiusLg,
+                            ),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 'الباركود المسجل',
-                                style: AppTypography.labelSm.copyWith(color: AppColors.secondary),
+                                style: AppTypography.labelSm.copyWith(
+                                  color: AppColors.secondary,
+                                ),
                               ),
                               const SizedBox(height: 2),
                               Text(
@@ -324,7 +359,8 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
                         ),
                       ),
                       TextButton.icon(
-                        onPressed: () => context.push('/pricing/history/${item.id}'),
+                        onPressed: () =>
+                            context.push('/pricing/history/${item.id}'),
                         icon: const Icon(Icons.trending_up, size: 16),
                         label: const Text('سجل الأسعار'),
                         style: TextButton.styleFrom(
@@ -369,7 +405,9 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
                           children: [
                             Text(
                               'هامش الربح الإجمالي',
-                              style: AppTypography.labelSm.copyWith(color: AppColors.secondary),
+                              style: AppTypography.labelSm.copyWith(
+                                color: AppColors.secondary,
+                              ),
                             ),
                             Text(
                               '${profit.toStringAsFixed(2)} ج.م',
@@ -381,10 +419,15 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
                           ],
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: const Color(0xFFEAF5EA),
-                            borderRadius: BorderRadius.circular(AppDimens.radiusFull),
+                            borderRadius: BorderRadius.circular(
+                              AppDimens.radiusFull,
+                            ),
                           ),
                           child: Text(
                             '+${marginPercent.toStringAsFixed(1)}%',
@@ -429,14 +472,20 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
                   const SizedBox(height: AppDimens.paddingSm),
                   ListTile(
                     contentPadding: EdgeInsets.zero,
-                    leading: const Icon(Icons.soup_kitchen_outlined, color: AppColors.primary),
+                    leading: const Icon(
+                      Icons.soup_kitchen_outlined,
+                      color: AppColors.primary,
+                    ),
                     title: const Text('محطة الطهي (KDS)'),
                     subtitle: Text(item.kitchenStation),
                   ),
                   const Divider(height: 1),
                   ListTile(
                     contentPadding: EdgeInsets.zero,
-                    leading: const Icon(Icons.storefront_outlined, color: AppColors.primary),
+                    leading: const Icon(
+                      Icons.storefront_outlined,
+                      color: AppColors.primary,
+                    ),
                     title: const Text('الفروع المتاح بها'),
                     subtitle: Text(item.branches.join(', ')),
                   ),
@@ -444,7 +493,10 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
                     const Divider(height: 1),
                     ListTile(
                       contentPadding: EdgeInsets.zero,
-                      leading: const Icon(Icons.warning_amber_rounded, color: AppColors.error),
+                      leading: const Icon(
+                        Icons.warning_amber_rounded,
+                        color: AppColors.error,
+                      ),
                       title: const Text('مسببات الحساسية'),
                       subtitle: Text(item.allergens.join(' • ')),
                     ),

@@ -11,10 +11,7 @@ import '../../domain/repositories/employee_repository.dart';
 import '../../../../core/di/service_locator.dart';
 
 class EditEmployeeScreen extends StatefulWidget {
-  const EditEmployeeScreen({
-    super.key,
-    required this.employee,
-  });
+  const EditEmployeeScreen({super.key, required this.employee});
 
   final Employee employee;
 
@@ -38,10 +35,12 @@ class _EditEmployeeScreenState extends State<EditEmployeeScreen> {
     _nameController = TextEditingController(text: widget.employee.name);
     _roleController = TextEditingController(text: widget.employee.role);
     _phoneController = TextEditingController(text: widget.employee.phone);
-    _salaryController =
-        TextEditingController(text: widget.employee.baseSalary.toStringAsFixed(0));
-    _overtimeController =
-        TextEditingController(text: widget.employee.overtimeRate.toStringAsFixed(0));
+    _salaryController = TextEditingController(
+      text: widget.employee.baseSalary.toStringAsFixed(0),
+    );
+    _overtimeController = TextEditingController(
+      text: widget.employee.overtimeRate.toStringAsFixed(0),
+    );
     _wageType = widget.employee.wageType;
   }
 
@@ -67,8 +66,11 @@ class _EditEmployeeScreenState extends State<EditEmployeeScreen> {
       branchCode: widget.employee.branchCode,
       status: widget.employee.status,
       wageType: _wageType,
-      baseSalary: double.tryParse(_salaryController.text) ?? widget.employee.baseSalary,
-      overtimeRate: double.tryParse(_overtimeController.text) ?? widget.employee.overtimeRate,
+      baseSalary:
+          double.tryParse(_salaryController.text) ?? widget.employee.baseSalary,
+      overtimeRate:
+          double.tryParse(_overtimeController.text) ??
+          widget.employee.overtimeRate,
       phone: _phoneController.text.trim(),
       managerName: widget.employee.managerName,
       totalHoursThisMonth: widget.employee.totalHoursThisMonth,

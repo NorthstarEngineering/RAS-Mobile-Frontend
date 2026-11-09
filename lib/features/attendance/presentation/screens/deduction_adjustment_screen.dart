@@ -9,10 +9,7 @@ import '../../../../core/widgets/widgets.dart';
 import '../../domain/entities/attendance_record.dart';
 
 class DeductionAdjustmentScreen extends StatefulWidget {
-  const DeductionAdjustmentScreen({
-    super.key,
-    required this.record,
-  });
+  const DeductionAdjustmentScreen({super.key, required this.record});
 
   final AttendanceRecord record;
 
@@ -234,17 +231,20 @@ class _DeductionAdjustmentScreenState extends State<DeductionAdjustmentScreen> {
                         ChoiceChip(
                           label: const Text('عطل مواصلات عامة'),
                           selected: _presetReason == 'traffic',
-                          onSelected: (_) => setState(() => _presetReason = 'traffic'),
+                          onSelected: (_) =>
+                              setState(() => _presetReason = 'traffic'),
                         ),
                         ChoiceChip(
                           label: const Text('ظرف طبي طارئ'),
                           selected: _presetReason == 'medical',
-                          onSelected: (_) => setState(() => _presetReason = 'medical'),
+                          onSelected: (_) =>
+                              setState(() => _presetReason = 'medical'),
                         ),
                         ChoiceChip(
                           label: const Text('تكليف إداري خارجي'),
                           selected: _presetReason == 'official',
-                          onSelected: (_) => setState(() => _presetReason = 'official'),
+                          onSelected: (_) =>
+                              setState(() => _presetReason = 'official'),
                         ),
                       ],
                     ),

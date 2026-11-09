@@ -135,7 +135,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               const SizedBox(height: AppSpacing.xs),
               Text(
                 'اختر كلمة مرور قوية متوافقة مع معايير أمان التشغيل لنظام RMS.',
-                style: AppTypography.bodySm.copyWith(color: AppColors.secondary),
+                style: AppTypography.bodySm.copyWith(
+                  color: AppColors.secondary,
+                ),
               ),
               const SizedBox(height: AppSpacing.lg),
 

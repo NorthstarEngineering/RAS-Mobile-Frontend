@@ -11,7 +11,8 @@ class PriceChangeRequestsScreen extends StatefulWidget {
   const PriceChangeRequestsScreen({super.key});
 
   @override
-  State<PriceChangeRequestsScreen> createState() => _PriceChangeRequestsScreenState();
+  State<PriceChangeRequestsScreen> createState() =>
+      _PriceChangeRequestsScreenState();
 }
 
 class _PriceChangeRequestsScreenState extends State<PriceChangeRequestsScreen> {
@@ -39,28 +40,40 @@ class _PriceChangeRequestsScreenState extends State<PriceChangeRequestsScreen> {
 
   List<PriceChangeRequest> get _filteredRequests {
     if (_activeTab == 'pending') {
-      return _allRequests.where((r) => r.status == PriceRequestStatus.pending).toList();
+      return _allRequests
+          .where((r) => r.status == PriceRequestStatus.pending)
+          .toList();
     } else if (_activeTab == 'approved') {
-      return _allRequests.where((r) => r.status == PriceRequestStatus.approved).toList();
+      return _allRequests
+          .where((r) => r.status == PriceRequestStatus.approved)
+          .toList();
     } else if (_activeTab == 'rejected') {
-      return _allRequests.where((r) => r.status == PriceRequestStatus.rejected).toList();
+      return _allRequests
+          .where((r) => r.status == PriceRequestStatus.rejected)
+          .toList();
     }
     return _allRequests;
   }
 
   @override
   Widget build(BuildContext context) {
-    final pendingCount = _allRequests.where((r) => r.status == PriceRequestStatus.pending).length;
-    final approvedCount = _allRequests.where((r) => r.status == PriceRequestStatus.approved).length;
-    final rejectedCount = _allRequests.where((r) => r.status == PriceRequestStatus.rejected).length;
+    final pendingCount = _allRequests
+        .where((r) => r.status == PriceRequestStatus.pending)
+        .length;
+    final approvedCount = _allRequests
+        .where((r) => r.status == PriceRequestStatus.approved)
+        .length;
+    final rejectedCount = _allRequests
+        .where((r) => r.status == PriceRequestStatus.rejected)
+        .length;
 
     return Scaffold(
       backgroundColor: AppColors.surface,
-      appBar: AppBar(
-        title: const Text('طلبات تعديل الأسعار'),
-      ),
+      appBar: AppBar(title: const Text('طلبات تعديل الأسعار')),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+          ? const Center(
+              child: CircularProgressIndicator(color: AppColors.primary),
+            )
           : RefreshIndicator(
               onRefresh: _loadRequests,
               color: AppColors.primary,
@@ -94,7 +107,11 @@ class _PriceChangeRequestsScreenState extends State<PriceChangeRequestsScreen> {
                               color: AppColors.primary.withValues(alpha: 0.12),
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(Icons.verified_user, color: AppColors.primary, size: 18),
+                            child: const Icon(
+                              Icons.verified_user,
+                              color: AppColors.primary,
+                              size: 18,
+                            ),
                           ),
                           const SizedBox(width: AppDimens.paddingSm),
                           Expanded(
@@ -141,15 +158,27 @@ class _PriceChangeRequestsScreenState extends State<PriceChangeRequestsScreen> {
                     Row(
                       children: [
                         Expanded(
-                          child: _buildStatCard('قيد الانتظار', '$pendingCount طلبات', AppColors.primary),
+                          child: _buildStatCard(
+                            'قيد الانتظار',
+                            '$pendingCount طلبات',
+                            AppColors.primary,
+                          ),
                         ),
                         const SizedBox(width: 8),
                         Expanded(
-                          child: _buildStatCard('معتمدة هذا الشهر', '$approvedCount صنف', AppColors.onSurface),
+                          child: _buildStatCard(
+                            'معتمدة هذا الشهر',
+                            '$approvedCount صنف',
+                            AppColors.onSurface,
+                          ),
                         ),
                         const SizedBox(width: 8),
                         Expanded(
-                          child: _buildStatCard('متوسط الزيادة', '+14%', AppColors.onSurface),
+                          child: _buildStatCard(
+                            'متوسط الزيادة',
+                            '+14%',
+                            AppColors.onSurface,
+                          ),
                         ),
                       ],
                     ),
@@ -160,10 +189,22 @@ class _PriceChangeRequestsScreenState extends State<PriceChangeRequestsScreen> {
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: [
-                          _buildTabButton('all', 'الكل (${_allRequests.length})'),
-                          _buildTabButton('pending', 'قيد الانتظار ($pendingCount)'),
-                          _buildTabButton('approved', 'معتمدة ($approvedCount)'),
-                          _buildTabButton('rejected', 'مرفوضة ($rejectedCount)'),
+                          _buildTabButton(
+                            'all',
+                            'الكل (${_allRequests.length})',
+                          ),
+                          _buildTabButton(
+                            'pending',
+                            'قيد الانتظار ($pendingCount)',
+                          ),
+                          _buildTabButton(
+                            'approved',
+                            'معتمدة ($approvedCount)',
+                          ),
+                          _buildTabButton(
+                            'rejected',
+                            'مرفوضة ($rejectedCount)',
+                          ),
                         ],
                       ),
                     ),
@@ -176,7 +217,9 @@ class _PriceChangeRequestsScreenState extends State<PriceChangeRequestsScreen> {
                         alignment: Alignment.center,
                         child: Text(
                           'لا توجد طلبات تسعير مطابقة',
-                          style: AppTypography.bodyMd.copyWith(color: AppColors.secondary),
+                          style: AppTypography.bodyMd.copyWith(
+                            color: AppColors.secondary,
+                          ),
                         ),
                       )
                     else
@@ -215,7 +258,13 @@ class _PriceChangeRequestsScreenState extends State<PriceChangeRequestsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: AppTypography.labelSm.copyWith(color: AppColors.secondary, fontSize: 11)),
+          Text(
+            label,
+            style: AppTypography.labelSm.copyWith(
+              color: AppColors.secondary,
+              fontSize: 11,
+            ),
+          ),
           const SizedBox(height: 2),
           Text(
             value,
@@ -297,7 +346,10 @@ class _PriceChangeRequestsScreenState extends State<PriceChangeRequestsScreen> {
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.surfaceContainerHigh,
                         borderRadius: BorderRadius.circular(AppDimens.radiusSm),
@@ -314,12 +366,18 @@ class _PriceChangeRequestsScreenState extends State<PriceChangeRequestsScreen> {
                     const SizedBox(width: 6),
                     Text(
                       req.branchName,
-                      style: AppTypography.labelSm.copyWith(color: AppColors.secondary, fontSize: 11),
+                      style: AppTypography.labelSm.copyWith(
+                        color: AppColors.secondary,
+                        fontSize: 11,
+                      ),
                     ),
                   ],
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: statusBg,
                     borderRadius: BorderRadius.circular(AppDimens.radiusFull),
@@ -345,18 +403,26 @@ class _PriceChangeRequestsScreenState extends State<PriceChangeRequestsScreen> {
                     children: [
                       Text(
                         req.itemNameAr,
-                        style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
+                        style: AppTypography.labelMd.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       Text(
                         req.categoryName,
-                        style: AppTypography.bodySm.copyWith(color: AppColors.secondary, fontSize: 12),
+                        style: AppTypography.bodySm.copyWith(
+                          color: AppColors.secondary,
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                   ),
                 ),
                 // Price diff badge
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFEAF5EA),
                     borderRadius: BorderRadius.circular(AppDimens.radiusLg),
@@ -384,7 +450,12 @@ class _PriceChangeRequestsScreenState extends State<PriceChangeRequestsScreen> {
                 children: [
                   Row(
                     children: [
-                      Text('الحالي: ', style: AppTypography.labelSm.copyWith(color: AppColors.secondary)),
+                      Text(
+                        'الحالي: ',
+                        style: AppTypography.labelSm.copyWith(
+                          color: AppColors.secondary,
+                        ),
+                      ),
                       Text(
                         '${req.currentPrice.toStringAsFixed(2)} ج.م',
                         style: AppTypography.labelSm.copyWith(
@@ -394,10 +465,19 @@ class _PriceChangeRequestsScreenState extends State<PriceChangeRequestsScreen> {
                       ),
                     ],
                   ),
-                  const Icon(Icons.arrow_back, size: 14, color: AppColors.primary),
+                  const Icon(
+                    Icons.arrow_back,
+                    size: 14,
+                    color: AppColors.primary,
+                  ),
                   Row(
                     children: [
-                      Text('المقترح: ', style: AppTypography.labelSm.copyWith(color: AppColors.secondary)),
+                      Text(
+                        'المقترح: ',
+                        style: AppTypography.labelSm.copyWith(
+                          color: AppColors.secondary,
+                        ),
+                      ),
                       Text(
                         '${req.proposedPrice.toStringAsFixed(2)} ج.م',
                         style: AppTypography.labelMd.copyWith(
@@ -416,9 +496,16 @@ class _PriceChangeRequestsScreenState extends State<PriceChangeRequestsScreen> {
               children: [
                 Text(
                   'مقدم الطلب: ${req.requestedByName}',
-                  style: AppTypography.bodySm.copyWith(color: AppColors.secondary, fontSize: 11),
+                  style: AppTypography.bodySm.copyWith(
+                    color: AppColors.secondary,
+                    fontSize: 11,
+                  ),
                 ),
-                const Icon(Icons.arrow_forward_ios, size: 12, color: AppColors.secondary),
+                const Icon(
+                  Icons.arrow_forward_ios,
+                  size: 12,
+                  color: AppColors.secondary,
+                ),
               ],
             ),
           ],

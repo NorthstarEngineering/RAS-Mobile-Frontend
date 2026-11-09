@@ -9,10 +9,12 @@ class EmployeeAttendanceHistoryScreen extends StatefulWidget {
   const EmployeeAttendanceHistoryScreen({super.key, this.employeeName});
 
   @override
-  State<EmployeeAttendanceHistoryScreen> createState() => _EmployeeAttendanceHistoryScreenState();
+  State<EmployeeAttendanceHistoryScreen> createState() =>
+      _EmployeeAttendanceHistoryScreenState();
 }
 
-class _EmployeeAttendanceHistoryScreenState extends State<EmployeeAttendanceHistoryScreen> {
+class _EmployeeAttendanceHistoryScreenState
+    extends State<EmployeeAttendanceHistoryScreen> {
   final String _currentMonth = 'أبريل 2024';
 
   final List<Map<String, dynamic>> _mockDays = [
@@ -69,9 +71,7 @@ class _EmployeeAttendanceHistoryScreenState extends State<EmployeeAttendanceHist
 
     return Scaffold(
       backgroundColor: AppColors.surface,
-      appBar: AppBar(
-        title: const Text('سجل الحضور التاريخي'),
-      ),
+      appBar: AppBar(title: const Text('سجل الحضور التاريخي')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppDimens.paddingMd),
         child: Column(
@@ -100,7 +100,10 @@ class _EmployeeAttendanceHistoryScreenState extends State<EmployeeAttendanceHist
                       color: AppColors.primaryFixed,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.badge_outlined, color: AppColors.primary),
+                    child: const Icon(
+                      Icons.badge_outlined,
+                      color: AppColors.primary,
+                    ),
                   ),
                   const SizedBox(width: AppDimens.paddingMd),
                   Expanded(
@@ -109,24 +112,35 @@ class _EmployeeAttendanceHistoryScreenState extends State<EmployeeAttendanceHist
                       children: [
                         Text(
                           name,
-                          style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
+                          style: AppTypography.labelMd.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         Text(
                           'طاهي خط ساخن • الفرع الرئيسي وسط البلد',
-                          style: AppTypography.bodySm.copyWith(color: AppColors.secondary, fontSize: 11),
+                          style: AppTypography.bodySm.copyWith(
+                            color: AppColors.secondary,
+                            fontSize: 11,
+                          ),
                         ),
                       ],
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.surfaceContainerHigh,
                       borderRadius: BorderRadius.circular(AppDimens.radiusFull),
                     ),
                     child: Text(
                       'دوام كامل',
-                      style: AppTypography.labelSm.copyWith(fontSize: 10, fontWeight: FontWeight.bold),
+                      style: AppTypography.labelSm.copyWith(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
@@ -157,16 +171,24 @@ class _EmployeeAttendanceHistoryScreenState extends State<EmployeeAttendanceHist
                   ),
                   Row(
                     children: [
-                      const Icon(Icons.calendar_month, color: AppColors.primary, size: 20),
+                      const Icon(
+                        Icons.calendar_month,
+                        color: AppColors.primary,
+                        size: 20,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         _currentMonth,
-                        style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
+                        style: AppTypography.labelMd.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(width: 4),
                       Text(
                         '(01 - 30 أبريل)',
-                        style: AppTypography.labelSm.copyWith(color: AppColors.secondary),
+                        style: AppTypography.labelSm.copyWith(
+                          color: AppColors.secondary,
+                        ),
                       ),
                     ],
                   ),
@@ -183,11 +205,21 @@ class _EmployeeAttendanceHistoryScreenState extends State<EmployeeAttendanceHist
             Row(
               children: [
                 Expanded(
-                  child: _buildMetricTile('الورديات المكتملة', '22', '/ 24 وردية', AppColors.primary),
+                  child: _buildMetricTile(
+                    'الورديات المكتملة',
+                    '22',
+                    '/ 24 وردية',
+                    AppColors.primary,
+                  ),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
-                  child: _buildMetricTile('نسبة الانضباط', '91.6%', 'التزام المواعيد', const Color(0xFF2E8B2E)),
+                  child: _buildMetricTile(
+                    'نسبة الانضباط',
+                    '91.6%',
+                    'التزام المواعيد',
+                    const Color(0xFF2E8B2E),
+                  ),
                 ),
               ],
             ),
@@ -195,11 +227,21 @@ class _EmployeeAttendanceHistoryScreenState extends State<EmployeeAttendanceHist
             Row(
               children: [
                 Expanded(
-                  child: _buildMetricTile('دقائق التأخير', '52 د', 'إجمالي الشهر', AppColors.error),
+                  child: _buildMetricTile(
+                    'دقائق التأخير',
+                    '52 د',
+                    'إجمالي الشهر',
+                    AppColors.error,
+                  ),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
-                  child: _buildMetricTile('صافي الخصومات', '100 ج.م', '2 خصم مطبق', AppColors.onSurface),
+                  child: _buildMetricTile(
+                    'صافي الخصومات',
+                    '100 ج.م',
+                    '2 خصم مطبق',
+                    AppColors.onSurface,
+                  ),
                 ),
               ],
             ),
@@ -208,7 +250,10 @@ class _EmployeeAttendanceHistoryScreenState extends State<EmployeeAttendanceHist
             // Daily records
             Text(
               'سجل البصمات اليومي',
-              style: AppTypography.headlineSm.copyWith(fontSize: 18, fontWeight: FontWeight.bold),
+              style: AppTypography.headlineSm.copyWith(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: AppDimens.paddingSm),
 
@@ -243,7 +288,9 @@ class _EmployeeAttendanceHistoryScreenState extends State<EmployeeAttendanceHist
                         children: [
                           Text(
                             day['date'] as String,
-                            style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
+                            style: AppTypography.labelMd.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const SizedBox(height: 2),
                           if (!isOff)
@@ -258,7 +305,10 @@ class _EmployeeAttendanceHistoryScreenState extends State<EmployeeAttendanceHist
                           else
                             Text(
                               'عطلة مجدولة',
-                              style: AppTypography.bodySm.copyWith(color: AppColors.secondary, fontSize: 11),
+                              style: AppTypography.bodySm.copyWith(
+                                color: AppColors.secondary,
+                                fontSize: 11,
+                              ),
                             ),
                         ],
                       ),
@@ -266,14 +316,19 @@ class _EmployeeAttendanceHistoryScreenState extends State<EmployeeAttendanceHist
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: isLate
                                   ? AppColors.errorContainer
                                   : isOff
-                                      ? AppColors.surfaceContainerHigh
-                                      : const Color(0xFFEAF5EA),
-                              borderRadius: BorderRadius.circular(AppDimens.radiusFull),
+                                  ? AppColors.surfaceContainerHigh
+                                  : const Color(0xFFEAF5EA),
+                              borderRadius: BorderRadius.circular(
+                                AppDimens.radiusFull,
+                              ),
                             ),
                             child: Text(
                               day['delay'] as String,
@@ -281,8 +336,8 @@ class _EmployeeAttendanceHistoryScreenState extends State<EmployeeAttendanceHist
                                 color: isLate
                                     ? AppColors.onErrorContainer
                                     : isOff
-                                        ? AppColors.secondary
-                                        : const Color(0xFF2E8B2E),
+                                    ? AppColors.secondary
+                                    : const Color(0xFF2E8B2E),
                                 fontWeight: FontWeight.bold,
                                 fontSize: 10,
                               ),
@@ -330,7 +385,13 @@ class _EmployeeAttendanceHistoryScreenState extends State<EmployeeAttendanceHist
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: AppTypography.labelSm.copyWith(color: AppColors.secondary, fontSize: 11)),
+          Text(
+            label,
+            style: AppTypography.labelSm.copyWith(
+              color: AppColors.secondary,
+              fontSize: 11,
+            ),
+          ),
           const SizedBox(height: 4),
           Row(
             crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -348,7 +409,10 @@ class _EmployeeAttendanceHistoryScreenState extends State<EmployeeAttendanceHist
               Flexible(
                 child: Text(
                   sub,
-                  style: AppTypography.labelSm.copyWith(color: AppColors.secondary, fontSize: 10),
+                  style: AppTypography.labelSm.copyWith(
+                    color: AppColors.secondary,
+                    fontSize: 10,
+                  ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),

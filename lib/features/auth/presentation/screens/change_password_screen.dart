@@ -83,12 +83,16 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               // Title text
               Text(
                 'تغيير كلمة المرور',
-                style: AppTypography.headlineSm.copyWith(fontWeight: FontWeight.bold),
+                style: AppTypography.headlineSm.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 2),
               Text(
                 'حدّث كلمة مرورك التشغيلية لجلسة العمل الحالية.',
-                style: AppTypography.bodySm.copyWith(color: AppColors.secondary),
+                style: AppTypography.bodySm.copyWith(
+                  color: AppColors.secondary,
+                ),
               ),
               const SizedBox(height: AppDimens.paddingMd),
 
@@ -115,7 +119,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         color: AppColors.primaryFixed,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.badge, color: AppColors.primary, size: 22),
+                      child: const Icon(
+                        Icons.badge,
+                        color: AppColors.primary,
+                        size: 22,
+                      ),
                     ),
                     const SizedBox(width: AppDimens.paddingMd),
                     Expanded(
@@ -124,24 +132,37 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         children: [
                           Text(
                             'مسجل الدخول باسم',
-                            style: AppTypography.labelSm.copyWith(color: AppColors.secondary, fontSize: 10),
+                            style: AppTypography.labelSm.copyWith(
+                              color: AppColors.secondary,
+                              fontSize: 10,
+                            ),
                           ),
                           Text(
                             'م. ألفاريز',
-                            style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
+                            style: AppTypography.labelMd.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           Text(
                             'مسؤول وردية • فرع وسط البلد #01',
-                            style: AppTypography.bodySm.copyWith(color: AppColors.secondary, fontSize: 11),
+                            style: AppTypography.bodySm.copyWith(
+                              color: AppColors.secondary,
+                              fontSize: 11,
+                            ),
                           ),
                         ],
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFFEAF5EA),
-                        borderRadius: BorderRadius.circular(AppDimens.radiusFull),
+                        borderRadius: BorderRadius.circular(
+                          AppDimens.radiusFull,
+                        ),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -173,7 +194,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               // Current password
               Text(
                 'كلمة المرور الحالية',
-                style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
+                style: AppTypography.labelMd.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 6),
               TextFormField(
@@ -183,19 +206,28 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   hintText: 'أدخل كلمة المرور الحالية',
                   prefixIcon: const Icon(Icons.lock_outline),
                   suffixIcon: IconButton(
-                    icon: Icon(_obscureCurrent ? Icons.visibility_off : Icons.visibility),
-                    onPressed: () => setState(() => _obscureCurrent = !_obscureCurrent),
+                    icon: Icon(
+                      _obscureCurrent ? Icons.visibility_off : Icons.visibility,
+                    ),
+                    onPressed: () =>
+                        setState(() => _obscureCurrent = !_obscureCurrent),
                   ),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppDimens.radiusXl)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AppDimens.radiusXl),
+                  ),
                 ),
-                validator: (val) => val == null || val.isEmpty ? 'يرجى إدخال كلمة المرور الحالية' : null,
+                validator: (val) => val == null || val.isEmpty
+                    ? 'يرجى إدخال كلمة المرور الحالية'
+                    : null,
               ),
               const SizedBox(height: AppDimens.paddingMd),
 
               // New password
               Text(
                 'كلمة المرور الجديدة',
-                style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
+                style: AppTypography.labelMd.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 6),
               TextFormField(
@@ -205,13 +237,19 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   hintText: 'على الأقل 8 أحرف وأرقام',
                   prefixIcon: const Icon(Icons.key_outlined),
                   suffixIcon: IconButton(
-                    icon: Icon(_obscureNew ? Icons.visibility_off : Icons.visibility),
+                    icon: Icon(
+                      _obscureNew ? Icons.visibility_off : Icons.visibility,
+                    ),
                     onPressed: () => setState(() => _obscureNew = !_obscureNew),
                   ),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppDimens.radiusXl)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AppDimens.radiusXl),
+                  ),
                 ),
                 validator: (val) {
-                  if (val == null || val.length < 8) return 'يجب ألا تقل عن 8 خانات';
+                  if (val == null || val.length < 8) {
+                    return 'يجب ألا تقل عن 8 خانات';
+                  }
                   return null;
                 },
               ),
@@ -220,7 +258,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               // Confirm password
               Text(
                 'تأكيد كلمة المرور الجديدة',
-                style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
+                style: AppTypography.labelMd.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 6),
               TextFormField(
@@ -230,13 +270,20 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   hintText: 'أعد إدخال كلمة المرور الجديدة',
                   prefixIcon: const Icon(Icons.check_circle_outline),
                   suffixIcon: IconButton(
-                    icon: Icon(_obscureConfirm ? Icons.visibility_off : Icons.visibility),
-                    onPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
+                    icon: Icon(
+                      _obscureConfirm ? Icons.visibility_off : Icons.visibility,
+                    ),
+                    onPressed: () =>
+                        setState(() => _obscureConfirm = !_obscureConfirm),
                   ),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppDimens.radiusXl)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AppDimens.radiusXl),
+                  ),
                 ),
                 validator: (val) {
-                  if (val != _newPasswordController.text) return 'كلمات المرور غير متطابقة';
+                  if (val != _newPasswordController.text) {
+                    return 'كلمات المرور غير متطابقة';
+                  }
                   return null;
                 },
               ),
@@ -249,14 +296,20 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 controlAffinity: ListTileControlAffinity.leading,
                 title: Text(
                   'تسجيل الخروج من كافة الأجهزة الأخرى',
-                  style: AppTypography.labelSm.copyWith(fontWeight: FontWeight.bold),
+                  style: AppTypography.labelSm.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 subtitle: Text(
                   'إنهاء جلسات الكاشير والهواتف المتصلة بحسابك فورياً',
-                  style: AppTypography.bodySm.copyWith(color: AppColors.secondary, fontSize: 11),
+                  style: AppTypography.bodySm.copyWith(
+                    color: AppColors.secondary,
+                    fontSize: 11,
+                  ),
                 ),
                 activeColor: AppColors.primary,
-                onChanged: (val) => setState(() => _logoutOtherDevices = val ?? true),
+                onChanged: (val) =>
+                    setState(() => _logoutOtherDevices = val ?? true),
               ),
               const SizedBox(height: AppDimens.paddingLg),
 
@@ -275,7 +328,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     ? const SizedBox(
                         height: 20,
                         width: 20,
-                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
                       )
                     : const Text('تحديث كلمة المرور'),
               ),

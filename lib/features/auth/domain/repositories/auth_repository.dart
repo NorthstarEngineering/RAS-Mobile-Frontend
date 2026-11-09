@@ -9,4 +9,14 @@ abstract class AuthRepository {
   Future<void> logout();
 
   Future<UserSession?> getCurrentSession();
+
+  Future<List<Map<String, dynamic>>> listAccounts();
+
+  Future<Map<String, dynamic>> createAccount({
+    required String name,
+    required String email,
+    required String password,
+    required String role,
+    String? branchId,
+  });
 }

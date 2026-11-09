@@ -5,6 +5,8 @@ import 'package:material_symbols_icons/symbols.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_dimens.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/di/service_locator.dart';
+import '../../data/repositories/api_overtime_repository.dart';
 import '../../domain/entities/overtime_record.dart';
 
 class OvertimeListScreen extends StatefulWidget {
@@ -17,54 +19,44 @@ class OvertimeListScreen extends StatefulWidget {
 class _OvertimeListScreenState extends State<OvertimeListScreen> {
   String _selectedFilter = 'pending';
 
-  final List<OvertimeRecord> _records = [
-    const OvertimeRecord(
-      id: '1',
-      employeeName: 'مصطفى خالد عثمان',
-      employeeCode: '1052',
-      role: 'طاهي خط ساخن • المطبخ الساخن',
-      date: 'الثلاثاء 16 أبريل 2024',
-      hours: 3.0,
-      timeRange: 'من 05:00 م حتى 08:00 م',
-      reason: 'بصمة خروج متأخرة 3 ساعات (تغطية ذروة العشاء والطلبات المزدحمة)',
-      trigger: OvertimeTrigger.fingerprint,
-      status: OvertimeStatus.pendingReview,
-      overtimePay: 120.0,
-    ),
-    const OvertimeRecord(
-      id: '2',
-      employeeName: 'أحمد نبيل رضوان',
-      employeeCode: '1074',
-      role: 'كابتن صالة • خدمة الصالة الرئيسية',
-      date: 'الثلاثاء 16 أبريل 2024',
-      hours: 2.0,
-      timeRange: 'من 06:00 م حتى 08:00 م',
-      reason: 'تجهيز صالة كبار الزوار وحجز مناسبة خاصة',
-      trigger: OvertimeTrigger.managerRequest,
-      status: OvertimeStatus.pendingReview,
-      overtimePay: 76.0,
-    ),
-    const OvertimeRecord(
-      id: '3',
-      employeeName: 'سارة محمود إبراهيم',
-      employeeCode: '1060',
-      role: 'مساعد بار ومشروبات',
-      date: 'الاثنين 15 أبريل 2024',
-      hours: 1.5,
-      timeRange: 'من 04:30 م حتى 06:00 م',
-      reason: 'جرد مستودع المشروبات الأسبوعي',
-      trigger: OvertimeTrigger.fingerprint,
-      status: OvertimeStatus.approved,
-      overtimePay: 67.5,
-    ),
-  ];
+  List<OvertimeRecord> _records = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRecords();
+  }
+
+  Future<void> _loadRecords() async {
+    try {
+      final records = await sl<ApiOvertimeRepository>().list();
+      if (mounted) {
+        setState(() {
+          _records = records;
+          _isLoading = false;
+        });
+      }
+    } catch (error) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('تعذر تحميل الساعات الإضافية: $error')),
+        );
+      }
+    }
+  }
 
   List<OvertimeRecord> get _filteredRecords {
     if (_selectedFilter == 'pending') {
-      return _records.where((r) => r.status == OvertimeStatus.pendingReview).toList();
+      return _records
+          .where((r) => r.status == OvertimeStatus.pendingReview)
+          .toList();
     }
     if (_selectedFilter == 'approved') {
-      return _records.where((r) => r.status == OvertimeStatus.approved).toList();
+      return _records
+          .where((r) => r.status == OvertimeStatus.approved)
+          .toList();
     }
     return _records;
   }
@@ -90,7 +82,9 @@ class _OvertimeListScreenState extends State<OvertimeListScreen> {
           IconButton(
             icon: const Icon(Symbols.add, color: AppColors.primary),
             tooltip: 'إضافة ساعات إضافية (OT-02)',
-            onPressed: () => context.push('/overtime/create'),
+            onPressed: () => context.push('/overtime/create').then((_) {
+              if (mounted) _loadRecords();
+            }),
           ),
         ],
       ),
@@ -99,7 +93,9 @@ class _OvertimeListScreenState extends State<OvertimeListScreen> {
         foregroundColor: Colors.white,
         icon: const Icon(Symbols.add),
         label: const Text('إضافة ساعات (OT-02)'),
-        onPressed: () => context.push('/overtime/create'),
+        onPressed: () => context.push('/overtime/create').then((_) {
+          if (mounted) _loadRecords();
+        }),
       ),
       body: SafeArea(
         child: Column(
@@ -113,9 +109,15 @@ class _OvertimeListScreenState extends State<OvertimeListScreen> {
               ),
               child: Row(
                 children: [
-                  _buildFilterPill('pending', 'بانتظار المراجعة (2)'),
+                  _buildFilterPill(
+                    'pending',
+                    'بانتظار المراجعة (${_records.where((r) => r.status == OvertimeStatus.pendingReview).length})',
+                  ),
                   const SizedBox(width: AppSpacing.sm),
-                  _buildFilterPill('approved', 'معتمد (1)'),
+                  _buildFilterPill(
+                    'approved',
+                    'معتمد (${_records.where((r) => r.status == OvertimeStatus.approved).length})',
+                  ),
                   const SizedBox(width: AppSpacing.sm),
                   _buildFilterPill('all', 'الكل (${_records.length})'),
                 ],
@@ -125,20 +127,23 @@ class _OvertimeListScreenState extends State<OvertimeListScreen> {
 
             // Overtime List
             Expanded(
-              child: ListView.separated(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.margin,
-                  0,
-                  AppSpacing.margin,
-                  AppSpacing.xl,
-                ),
-                itemCount: _filteredRecords.length,
-                separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
-                itemBuilder: (context, index) {
-                  final record = _filteredRecords[index];
-                  return _buildOvertimeCard(record);
-                },
-              ),
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : ListView.separated(
+                      padding: const EdgeInsets.fromLTRB(
+                        AppSpacing.margin,
+                        0,
+                        AppSpacing.margin,
+                        AppSpacing.xl,
+                      ),
+                      itemCount: _filteredRecords.length,
+                      separatorBuilder: (_, __) =>
+                          const SizedBox(height: AppSpacing.md),
+                      itemBuilder: (context, index) {
+                        final record = _filteredRecords[index];
+                        return _buildOvertimeCard(record);
+                      },
+                    ),
             ),
           ],
         ),
@@ -178,7 +183,9 @@ class _OvertimeListScreenState extends State<OvertimeListScreen> {
       borderRadius: AppRadius.xlAll,
       elevation: 0.5,
       child: InkWell(
-        onTap: () => context.push('/overtime/review', extra: record),
+        onTap: () => context.push('/overtime/review', extra: record).then((_) {
+          if (mounted) _loadRecords();
+        }),
         borderRadius: AppRadius.xlAll,
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.md),

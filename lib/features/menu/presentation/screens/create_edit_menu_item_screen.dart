@@ -14,7 +14,8 @@ class CreateEditMenuItemScreen extends StatefulWidget {
   const CreateEditMenuItemScreen({super.key, this.itemId});
 
   @override
-  State<CreateEditMenuItemScreen> createState() => _CreateEditMenuItemScreenState();
+  State<CreateEditMenuItemScreen> createState() =>
+      _CreateEditMenuItemScreenState();
 }
 
 class _CreateEditMenuItemScreenState extends State<CreateEditMenuItemScreen> {
@@ -45,7 +46,9 @@ class _CreateEditMenuItemScreenState extends State<CreateEditMenuItemScreen> {
     _barcodeController = TextEditingController();
     _priceController = TextEditingController();
     _costController = TextEditingController();
-    _kitchenStationController = TextEditingController(text: 'محطة البرجر واللحوم');
+    _kitchenStationController = TextEditingController(
+      text: 'محطة البرجر واللحوم',
+    );
     _loadInitialData();
   }
 
@@ -100,7 +103,9 @@ class _CreateEditMenuItemScreenState extends State<CreateEditMenuItemScreen> {
     );
 
     final item = MenuItem(
-      id: isEdit ? widget.itemId! : 'item_${DateTime.now().millisecondsSinceEpoch}',
+      id: isEdit
+          ? widget.itemId!
+          : 'item_${DateTime.now().millisecondsSinceEpoch}',
       sku: _skuController.text.trim(),
       barcode: _barcodeController.text.trim(),
       nameAr: _nameArController.text.trim(),
@@ -118,7 +123,11 @@ class _CreateEditMenuItemScreenState extends State<CreateEditMenuItemScreen> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(isEdit ? 'تم تحديث بيانات الصنف بنجاح' : 'تمت إضافة الصنف الجديد إلى المنيو'),
+          content: Text(
+            isEdit
+                ? 'تم تحديث بيانات الصنف بنجاح'
+                : 'تمت إضافة الصنف الجديد إلى المنيو',
+          ),
           backgroundColor: const Color(0xFF2E8B2E),
         ),
       );
@@ -134,7 +143,9 @@ class _CreateEditMenuItemScreenState extends State<CreateEditMenuItemScreen> {
         title: Text(isEdit ? 'تعديل صنف القائمة' : 'إضافة صنف جديد'),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+          ? const Center(
+              child: CircularProgressIndicator(color: AppColors.primary),
+            )
           : SingleChildScrollView(
               padding: const EdgeInsets.all(AppDimens.paddingMd),
               child: Form(
@@ -151,15 +162,23 @@ class _CreateEditMenuItemScreenState extends State<CreateEditMenuItemScreen> {
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.restaurant_menu, color: AppColors.primary, size: 24),
+                          const Icon(
+                            Icons.restaurant_menu,
+                            color: AppColors.primary,
+                            size: 24,
+                          ),
                           const SizedBox(width: AppDimens.paddingSm),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  isEdit ? 'صنف رقم #${widget.itemId}' : 'إضافة صنف جديد بالقائمة المركزية',
-                                  style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
+                                  isEdit
+                                      ? 'صنف رقم #${widget.itemId}'
+                                      : 'إضافة صنف جديد بالقائمة المركزية',
+                                  style: AppTypography.labelMd.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                                 Text(
                                   'تعديلات الصنف تنعكس مباشرة على أنظمة الكاشير المعتمدة',
@@ -172,10 +191,15 @@ class _CreateEditMenuItemScreenState extends State<CreateEditMenuItemScreen> {
                             ),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
                               color: AppColors.errorContainer,
-                              borderRadius: BorderRadius.circular(AppDimens.radiusFull),
+                              borderRadius: BorderRadius.circular(
+                                AppDimens.radiusFull,
+                              ),
                             ),
                             child: Text(
                               'خاص بالإدارة المركزية',
@@ -220,7 +244,9 @@ class _CreateEditMenuItemScreenState extends State<CreateEditMenuItemScreen> {
                               ),
                               Text(
                                 'حقول إلزامية (*)',
-                                style: AppTypography.labelSm.copyWith(color: AppColors.secondary),
+                                style: AppTypography.labelSm.copyWith(
+                                  color: AppColors.secondary,
+                                ),
                               ),
                             ],
                           ),
@@ -235,7 +261,10 @@ class _CreateEditMenuItemScreenState extends State<CreateEditMenuItemScreen> {
                               border: OutlineInputBorder(),
                               prefixIcon: Icon(Icons.translate),
                             ),
-                            validator: (val) => val == null || val.trim().isEmpty ? 'يرجى إدخال اسم الصنف' : null,
+                            validator: (val) =>
+                                val == null || val.trim().isEmpty
+                                ? 'يرجى إدخال اسم الصنف'
+                                : null,
                           ),
                           const SizedBox(height: AppDimens.paddingMd),
 
@@ -262,7 +291,10 @@ class _CreateEditMenuItemScreenState extends State<CreateEditMenuItemScreen> {
                                     hintText: 'CHK-01',
                                     border: OutlineInputBorder(),
                                   ),
-                                  validator: (val) => val == null || val.trim().isEmpty ? 'مطلوب' : null,
+                                  validator: (val) =>
+                                      val == null || val.trim().isEmpty
+                                      ? 'مطلوب'
+                                      : null,
                                 ),
                               ),
                               const SizedBox(width: 8),
@@ -295,7 +327,8 @@ class _CreateEditMenuItemScreenState extends State<CreateEditMenuItemScreen> {
                                 child: Text(c.nameAr),
                               );
                             }).toList(),
-                            onChanged: (val) => setState(() => _selectedCategoryId = val),
+                            onChanged: (val) =>
+                                setState(() => _selectedCategoryId = val),
                           ),
                         ],
                       ),
@@ -332,24 +365,35 @@ class _CreateEditMenuItemScreenState extends State<CreateEditMenuItemScreen> {
                               Expanded(
                                 child: TextFormField(
                                   controller: _priceController,
-                                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                  keyboardType:
+                                      const TextInputType.numberWithOptions(
+                                        decimal: true,
+                                      ),
                                   decoration: const InputDecoration(
                                     labelText: 'سعر البيع (ج.م) *',
                                     border: OutlineInputBorder(),
                                     prefixIcon: Icon(Icons.sell_outlined),
                                   ),
-                                  validator: (val) => val == null || val.trim().isEmpty ? 'مطلوب' : null,
+                                  validator: (val) =>
+                                      val == null || val.trim().isEmpty
+                                      ? 'مطلوب'
+                                      : null,
                                 ),
                               ),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: TextFormField(
                                   controller: _costController,
-                                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                  keyboardType:
+                                      const TextInputType.numberWithOptions(
+                                        decimal: true,
+                                      ),
                                   decoration: const InputDecoration(
                                     labelText: 'تكلفة الإنتاج (ج.م)',
                                     border: OutlineInputBorder(),
-                                    prefixIcon: Icon(Icons.account_balance_wallet_outlined),
+                                    prefixIcon: Icon(
+                                      Icons.account_balance_wallet_outlined,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -398,7 +442,9 @@ class _CreateEditMenuItemScreenState extends State<CreateEditMenuItemScreen> {
                           SwitchListTile(
                             contentPadding: EdgeInsets.zero,
                             title: const Text('تفعيل الصنف للبيع على الكاشير'),
-                            subtitle: const Text('عند الإلغاء، يختفي الصنف فوراً من نقاط البيع'),
+                            subtitle: const Text(
+                              'عند الإلغاء، يختفي الصنف فوراً من نقاط البيع',
+                            ),
                             value: _isActive,
                             activeThumbColor: AppColors.primary,
                             onChanged: (val) => setState(() => _isActive = val),
@@ -416,7 +462,9 @@ class _CreateEditMenuItemScreenState extends State<CreateEditMenuItemScreen> {
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppDimens.radiusXl),
+                          borderRadius: BorderRadius.circular(
+                            AppDimens.radiusXl,
+                          ),
                         ),
                       ),
                       child: Text(

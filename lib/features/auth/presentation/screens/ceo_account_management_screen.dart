@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../core/di/service_locator.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_dimens.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../domain/repositories/auth_repository.dart';
 
 class CeoAccountManagementScreen extends StatefulWidget {
   const CeoAccountManagementScreen({super.key});
 
   @override
-  State<CeoAccountManagementScreen> createState() => _CeoAccountManagementScreenState();
+  State<CeoAccountManagementScreen> createState() =>
+      _CeoAccountManagementScreenState();
 }
 
-class _CeoAccountManagementScreenState extends State<CeoAccountManagementScreen> {
+class _CeoAccountManagementScreenState
+    extends State<CeoAccountManagementScreen> {
   int _selectedTabIndex = 0; // 0 = Active Accounts, 1 = Create New Account
 
   final _formKey = GlobalKey<FormState>();
@@ -19,48 +24,44 @@ class _CeoAccountManagementScreenState extends State<CeoAccountManagementScreen>
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController(text: 'RMS@2024Ops');
 
-  String _selectedRole = 'مدير فرع (Branch Manager)';
-  String _selectedBranch = 'فرع وسط البلد (#01)';
+  String _selectedRole = 'BRANCH_MANAGER';
+  String _selectedBranch = '';
   bool _mustChangePassword = true;
   bool _isSubmitting = false;
 
-  final List<Map<String, dynamic>> _mockAccounts = [
-    {
-      'name': 'م. ألفاريز',
-      'email': 'm.alvarez@rms-ops.com',
-      'role': 'مسؤول وردية وتشغيل',
-      'branch': 'فرع وسط البلد (#01)',
-      'isActive': true,
-    },
-    {
-      'name': 'أحمد نبيل',
-      'email': 'a.nabil@rms-ops.com',
-      'role': 'مدير فرع',
-      'branch': 'فرع المعادي (#02)',
-      'isActive': true,
-    },
-    {
-      'name': 'سارة مراد',
-      'email': 's.mourad@rms-ops.com',
-      'role': 'مدير فرع',
-      'branch': 'فرع التجمع (#03)',
-      'isActive': true,
-    },
-    {
-      'name': 'كريم عادل',
-      'email': 'k.adel@rms-ops.com',
-      'role': 'مدير فرع',
-      'branch': 'فرع الشيخ زايد (#04)',
-      'isActive': true,
-    },
-    {
-      'name': 'يوسف كمال',
-      'email': 'y.kamal@rms-ops.com',
-      'role': 'محاسب مالي معتمد',
-      'branch': 'الفرع الرئيسي - الإدارة',
-      'isActive': false,
-    },
-  ];
+  List<Map<String, dynamic>> _accounts = [];
+  bool _isLoadingAccounts = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAccounts();
+  }
+
+  Future<void> _loadAccounts() async {
+    try {
+      final accounts = await sl<AuthRepository>().listAccounts();
+      if (mounted) setState(() => _accounts = accounts);
+    } catch (error) {
+      if (mounted) {
+        final message = '$error';
+        if (message.contains('انتهت الجلسة')) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('انتهت الجلسة، يرجى تسجيل الدخول مرة أخرى'),
+            ),
+          );
+          context.go('/login');
+        } else {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(message)));
+        }
+      }
+    } finally {
+      if (mounted) setState(() => _isLoadingAccounts = false);
+    }
+  }
 
   @override
   void dispose() {
@@ -71,32 +72,43 @@ class _CeoAccountManagementScreenState extends State<CeoAccountManagementScreen>
     super.dispose();
   }
 
-  void _handleCreateAccount() {
+  Future<void> _handleCreateAccount() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isSubmitting = true);
-
-    Future.delayed(const Duration(milliseconds: 800), () {
+    try {
+      await sl<AuthRepository>().createAccount(
+        name: _nameController.text.trim(),
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+        role: _selectedRole,
+        branchId: _selectedBranch.isEmpty ? null : _selectedBranch,
+      );
+      await _loadAccounts();
       if (mounted) {
-        setState(() {
-          _mockAccounts.insert(0, {
-            'name': _nameController.text.trim(),
-            'email': _emailController.text.trim(),
-            'role': _selectedRole,
-            'branch': _selectedBranch,
-            'isActive': true,
-          });
-          _isSubmitting = false;
-          _selectedTabIndex = 0;
-        });
-
+        setState(() => _selectedTabIndex = 0);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('تم إصدار الحساب وبيانات الاعتماد بنجاح'),
-            backgroundColor: Color(0xFF2E8B2E),
-          ),
+          const SnackBar(content: Text('تم حفظ الحساب في قاعدة البيانات')),
         );
       }
-    });
+    } catch (error) {
+      if (mounted) {
+        final message = '$error';
+        if (message.contains('انتهت الجلسة')) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('انتهت الجلسة، يرجى تسجيل الدخول مرة أخرى'),
+            ),
+          );
+          context.go('/login');
+        } else {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(message)));
+        }
+      }
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
+    }
   }
 
   @override
@@ -138,12 +150,19 @@ class _CeoAccountManagementScreenState extends State<CeoAccountManagementScreen>
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.admin_panel_settings_outlined, color: AppColors.primary, size: 22),
+                  const Icon(
+                    Icons.admin_panel_settings_outlined,
+                    color: AppColors.primary,
+                    size: 22,
+                  ),
                   const SizedBox(width: AppDimens.paddingSm),
                   Expanded(
                     child: Text(
                       'إدارة مستخدمي النظام الداخلي • إنشاء وتعيين صلاحيات الموظفين عبر كافة الفروع.',
-                      style: AppTypography.bodySm.copyWith(color: AppColors.secondary, fontSize: 12),
+                      style: AppTypography.bodySm.copyWith(
+                        color: AppColors.secondary,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
                 ],
@@ -167,18 +186,29 @@ class _CeoAccountManagementScreenState extends State<CeoAccountManagementScreen>
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         decoration: BoxDecoration(
-                          color: _selectedTabIndex == 0 ? AppColors.surfaceContainerLowest : Colors.transparent,
-                          borderRadius: BorderRadius.circular(AppDimens.radiusLg),
+                          color: _selectedTabIndex == 0
+                              ? AppColors.surfaceContainerLowest
+                              : Colors.transparent,
+                          borderRadius: BorderRadius.circular(
+                            AppDimens.radiusLg,
+                          ),
                           boxShadow: _selectedTabIndex == 0
-                              ? const [BoxShadow(color: Color(0x06000000), blurRadius: 4)]
+                              ? const [
+                                  BoxShadow(
+                                    color: Color(0x06000000),
+                                    blurRadius: 4,
+                                  ),
+                                ]
                               : null,
                         ),
                         alignment: Alignment.center,
                         child: Text(
-                          'الحسابات النشطة (${_mockAccounts.length})',
+                          'الحسابات النشطة (${_accounts.length})',
                           style: AppTypography.labelMd.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: _selectedTabIndex == 0 ? AppColors.onSurface : AppColors.secondary,
+                            color: _selectedTabIndex == 0
+                                ? AppColors.onSurface
+                                : AppColors.secondary,
                           ),
                         ),
                       ),
@@ -192,10 +222,19 @@ class _CeoAccountManagementScreenState extends State<CeoAccountManagementScreen>
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         decoration: BoxDecoration(
-                          color: _selectedTabIndex == 1 ? AppColors.surfaceContainerLowest : Colors.transparent,
-                          borderRadius: BorderRadius.circular(AppDimens.radiusLg),
+                          color: _selectedTabIndex == 1
+                              ? AppColors.surfaceContainerLowest
+                              : Colors.transparent,
+                          borderRadius: BorderRadius.circular(
+                            AppDimens.radiusLg,
+                          ),
                           boxShadow: _selectedTabIndex == 1
-                              ? const [BoxShadow(color: Color(0x06000000), blurRadius: 4)]
+                              ? const [
+                                  BoxShadow(
+                                    color: Color(0x06000000),
+                                    blurRadius: 4,
+                                  ),
+                                ]
                               : null,
                         ),
                         alignment: Alignment.center,
@@ -203,7 +242,9 @@ class _CeoAccountManagementScreenState extends State<CeoAccountManagementScreen>
                           '+ إنشاء حساب جديد',
                           style: AppTypography.labelMd.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: _selectedTabIndex == 1 ? AppColors.primary : AppColors.secondary,
+                            color: _selectedTabIndex == 1
+                                ? AppColors.primary
+                                : AppColors.secondary,
                           ),
                         ),
                       ),
@@ -215,7 +256,10 @@ class _CeoAccountManagementScreenState extends State<CeoAccountManagementScreen>
             const SizedBox(height: AppDimens.paddingMd),
 
             // Tab View Content
-            if (_selectedTabIndex == 0) _buildAccountsListView() else _buildCreateAccountForm(),
+            if (_selectedTabIndex == 0)
+              _buildAccountsListView()
+            else
+              _buildCreateAccountForm(),
             const SizedBox(height: 32),
           ],
         ),
@@ -224,13 +268,16 @@ class _CeoAccountManagementScreenState extends State<CeoAccountManagementScreen>
   }
 
   Widget _buildAccountsListView() {
+    if (_isLoadingAccounts) {
+      return const Center(child: CircularProgressIndicator());
+    }
     return ListView.separated(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: _mockAccounts.length,
+      itemCount: _accounts.length,
       separatorBuilder: (_, __) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
-        final acc = _mockAccounts[index];
+        final acc = _accounts[index];
         final isActive = acc['isActive'] as bool;
         return Container(
           padding: const EdgeInsets.all(AppDimens.paddingMd),
@@ -265,20 +312,31 @@ class _CeoAccountManagementScreenState extends State<CeoAccountManagementScreen>
                       children: [
                         Text(
                           acc['name'] as String,
-                          style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
+                          style: AppTypography.labelMd.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         const SizedBox(width: 6),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 1,
+                          ),
                           decoration: BoxDecoration(
-                            color: isActive ? const Color(0xFFEAF5EA) : AppColors.surfaceContainerHighest,
-                            borderRadius: BorderRadius.circular(AppDimens.radiusFull),
+                            color: isActive
+                                ? const Color(0xFFEAF5EA)
+                                : AppColors.surfaceContainerHighest,
+                            borderRadius: BorderRadius.circular(
+                              AppDimens.radiusFull,
+                            ),
                           ),
                           child: Text(
                             isActive ? 'نشط' : 'معطل',
                             style: AppTypography.labelSm.copyWith(
                               fontSize: 10,
-                              color: isActive ? const Color(0xFF2E8B2E) : AppColors.secondary,
+                              color: isActive
+                                  ? const Color(0xFF2E8B2E)
+                                  : AppColors.secondary,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -287,7 +345,10 @@ class _CeoAccountManagementScreenState extends State<CeoAccountManagementScreen>
                     ),
                     Text(
                       acc['email'] as String,
-                      style: AppTypography.bodySm.copyWith(color: AppColors.secondary, fontSize: 12),
+                      style: AppTypography.bodySm.copyWith(
+                        color: AppColors.secondary,
+                        fontSize: 12,
+                      ),
                     ),
                     const SizedBox(height: 2),
                     Text(
@@ -333,7 +394,10 @@ class _CeoAccountManagementScreenState extends State<CeoAccountManagementScreen>
           children: [
             Text(
               'إصدار بيانات اعتماد داخلية',
-              style: AppTypography.headlineSm.copyWith(fontWeight: FontWeight.bold, fontSize: 18),
+              style: AppTypography.headlineSm.copyWith(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
             ),
             Text(
               'للحسابات الإدارية والتشغيلية المعتمدة فقط',
@@ -350,7 +414,8 @@ class _CeoAccountManagementScreenState extends State<CeoAccountManagementScreen>
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.badge_outlined),
               ),
-              validator: (val) => val == null || val.trim().isEmpty ? 'مطلوب' : null,
+              validator: (val) =>
+                  val == null || val.trim().isEmpty ? 'مطلوب' : null,
             ),
             const SizedBox(height: AppDimens.paddingMd),
 
@@ -364,7 +429,8 @@ class _CeoAccountManagementScreenState extends State<CeoAccountManagementScreen>
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.email_outlined),
               ),
-              validator: (val) => val == null || val.trim().isEmpty ? 'مطلوب' : null,
+              validator: (val) =>
+                  val == null || val.trim().isEmpty ? 'مطلوب' : null,
             ),
             const SizedBox(height: AppDimens.paddingMd),
 
@@ -379,23 +445,16 @@ class _CeoAccountManagementScreenState extends State<CeoAccountManagementScreen>
               ),
               items: const [
                 DropdownMenuItem(
-                  value: 'مدير فرع (Branch Manager)',
+                  value: 'BRANCH_MANAGER',
                   child: Text('مدير فرع (Branch Manager)'),
                 ),
                 DropdownMenuItem(
-                  value: 'مسؤول وردية (Shift Supervisor)',
-                  child: Text('مسؤول وردية (Shift Supervisor)'),
-                ),
-                DropdownMenuItem(
-                  value: 'محاسب مالي للفرع',
-                  child: Text('محاسب مالي للفرع'),
-                ),
-                DropdownMenuItem(
-                  value: 'مدير مطبخ وتشغيل (Head Chef)',
-                  child: Text('مدير مطبخ وتشغيل (Head Chef)'),
+                  value: 'SUPPLY_MANAGER',
+                  child: Text('مدير الإمداد والتشغيل (Supply Manager)'),
                 ),
               ],
-              onChanged: (val) => setState(() => _selectedRole = val ?? _selectedRole),
+              onChanged: (val) =>
+                  setState(() => _selectedRole = val ?? _selectedRole),
             ),
             const SizedBox(height: AppDimens.paddingMd),
 
@@ -410,23 +469,12 @@ class _CeoAccountManagementScreenState extends State<CeoAccountManagementScreen>
               ),
               items: const [
                 DropdownMenuItem(
-                  value: 'فرع وسط البلد (#01)',
-                  child: Text('فرع وسط البلد (#01)'),
-                ),
-                DropdownMenuItem(
-                  value: 'فرع المعادي (#02)',
-                  child: Text('فرع المعادي (#02)'),
-                ),
-                DropdownMenuItem(
-                  value: 'فرع التجمع (#03)',
-                  child: Text('فرع التجمع (#03)'),
-                ),
-                DropdownMenuItem(
-                  value: 'فرع الشيخ زايد (#04)',
-                  child: Text('فرع الشيخ زايد (#04)'),
+                  value: '',
+                  child: Text('بدون فرع - يمكن التعيين من النظام'),
                 ),
               ],
-              onChanged: (val) => setState(() => _selectedBranch = val ?? _selectedBranch),
+              onChanged: (val) =>
+                  setState(() => _selectedBranch = val ?? _selectedBranch),
             ),
             const SizedBox(height: AppDimens.paddingMd),
 
@@ -446,9 +494,12 @@ class _CeoAccountManagementScreenState extends State<CeoAccountManagementScreen>
               value: _mustChangePassword,
               contentPadding: EdgeInsets.zero,
               controlAffinity: ListTileControlAffinity.leading,
-              title: const Text('إلزام الموظف بتغيير كلمة المرور عند أول تسجيل دخول'),
+              title: const Text(
+                'إلزام الموظف بتغيير كلمة المرور عند أول تسجيل دخول',
+              ),
               activeColor: AppColors.primary,
-              onChanged: (val) => setState(() => _mustChangePassword = val ?? true),
+              onChanged: (val) =>
+                  setState(() => _mustChangePassword = val ?? true),
             ),
             const SizedBox(height: AppDimens.paddingLg),
 
@@ -467,7 +518,10 @@ class _CeoAccountManagementScreenState extends State<CeoAccountManagementScreen>
                   ? const SizedBox(
                       height: 20,
                       width: 20,
-                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
                     )
                   : const Text('إصدار الحساب وبيانات الاعتماد'),
             ),

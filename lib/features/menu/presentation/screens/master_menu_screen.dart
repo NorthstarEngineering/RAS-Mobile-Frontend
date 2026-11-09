@@ -44,8 +44,11 @@ class _MasterMenuScreenState extends State<MasterMenuScreen> {
 
   List<MenuItem> get _filteredItems {
     return _allItems.where((item) {
-      final matchesCategory = _selectedCategoryId == 'all' || item.categoryId == _selectedCategoryId;
-      final matchesSearch = _searchQuery.isEmpty ||
+      final matchesCategory =
+          _selectedCategoryId == 'all' ||
+          item.categoryId == _selectedCategoryId;
+      final matchesSearch =
+          _searchQuery.isEmpty ||
           item.nameAr.contains(_searchQuery) ||
           item.nameEn.toLowerCase().contains(_searchQuery.toLowerCase()) ||
           item.sku.toLowerCase().contains(_searchQuery.toLowerCase()) ||
@@ -76,7 +79,9 @@ class _MasterMenuScreenState extends State<MasterMenuScreen> {
         ],
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+          ? const Center(
+              child: CircularProgressIndicator(color: AppColors.primary),
+            )
           : RefreshIndicator(
               onRefresh: _loadData,
               color: AppColors.primary,
@@ -97,10 +102,15 @@ class _MasterMenuScreenState extends State<MasterMenuScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
                                 color: AppColors.secondaryContainer,
-                                borderRadius: BorderRadius.circular(AppDimens.radiusFull),
+                                borderRadius: BorderRadius.circular(
+                                  AppDimens.radiusFull,
+                                ),
                               ),
                               child: Text(
                                 'قائمة موحدة للشركة',
@@ -126,7 +136,9 @@ class _MasterMenuScreenState extends State<MasterMenuScreen> {
                             backgroundColor: AppColors.primary,
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(AppDimens.radiusXl),
+                              borderRadius: BorderRadius.circular(
+                                AppDimens.radiusXl,
+                              ),
                             ),
                             elevation: 0,
                           ),
@@ -154,12 +166,17 @@ class _MasterMenuScreenState extends State<MasterMenuScreen> {
                         children: [
                           Row(
                             children: [
-                              _buildMetricItem('الإجمالي', '${_allItems.length} صنف'),
+                              _buildMetricItem(
+                                'الإجمالي',
+                                '${_allItems.length} صنف',
+                              ),
                               Container(
                                 height: 32,
                                 width: 1,
                                 color: AppColors.surfaceContainerHigh,
-                                margin: const EdgeInsets.symmetric(horizontal: 12),
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
                               ),
                               _buildMetricItem(
                                 'النشط',
@@ -170,9 +187,14 @@ class _MasterMenuScreenState extends State<MasterMenuScreen> {
                                 height: 32,
                                 width: 1,
                                 color: AppColors.surfaceContainerHigh,
-                                margin: const EdgeInsets.symmetric(horizontal: 12),
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
                               ),
-                              _buildMetricItem('الأقسام', '${_categories.length} أقسام'),
+                              _buildMetricItem(
+                                'الأقسام',
+                                '${_categories.length} أقسام',
+                              ),
                             ],
                           ),
                           TextButton.icon(
@@ -207,14 +229,26 @@ class _MasterMenuScreenState extends State<MasterMenuScreen> {
                         decoration: InputDecoration(
                           hintText: 'بحث بالاسم، الكود، أو الباركود...',
                           hintStyle: AppTypography.bodySm.copyWith(
-                            color: AppColors.onSurfaceVariant.withValues(alpha: 0.7),
+                            color: AppColors.onSurfaceVariant.withValues(
+                              alpha: 0.7,
+                            ),
                           ),
-                          prefixIcon: const Icon(Icons.search, color: AppColors.onSurfaceVariant),
+                          prefixIcon: const Icon(
+                            Icons.search,
+                            color: AppColors.onSurfaceVariant,
+                          ),
                           suffixIcon: IconButton(
-                            icon: const Icon(Icons.qr_code_scanner, color: AppColors.primary),
+                            icon: const Icon(
+                              Icons.qr_code_scanner,
+                              color: AppColors.primary,
+                            ),
                             onPressed: () {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('ماسح الباركود متصل وجاهز للعمل')),
+                                const SnackBar(
+                                  content: Text(
+                                    'ماسح الباركود متصل وجاهز للعمل',
+                                  ),
+                                ),
                               );
                             },
                           ),
@@ -252,11 +286,17 @@ class _MasterMenuScreenState extends State<MasterMenuScreen> {
                         alignment: Alignment.center,
                         child: Column(
                           children: [
-                            const Icon(Icons.restaurant_menu, size: 48, color: AppColors.outlineVariant),
+                            const Icon(
+                              Icons.restaurant_menu,
+                              size: 48,
+                              color: AppColors.outlineVariant,
+                            ),
                             const SizedBox(height: 8),
                             Text(
                               'لا توجد أصناف مطابقة للبحث أو الفئة',
-                              style: AppTypography.bodyMd.copyWith(color: AppColors.secondary),
+                              style: AppTypography.bodyMd.copyWith(
+                                color: AppColors.secondary,
+                              ),
                             ),
                           ],
                         ),
@@ -280,7 +320,11 @@ class _MasterMenuScreenState extends State<MasterMenuScreen> {
     );
   }
 
-  Widget _buildMetricItem(String label, String value, {bool isPositive = false}) {
+  Widget _buildMetricItem(
+    String label,
+    String value, {
+    bool isPositive = false,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -303,7 +347,9 @@ class _MasterMenuScreenState extends State<MasterMenuScreen> {
               ),
             Text(
               value,
-              style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
+              style: AppTypography.labelMd.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),
@@ -328,7 +374,9 @@ class _MasterMenuScreenState extends State<MasterMenuScreen> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppDimens.radiusFull),
           side: BorderSide(
-            color: isSelected ? AppColors.primary : AppColors.outlineVariant.withValues(alpha: 0.5),
+            color: isSelected
+                ? AppColors.primary
+                : AppColors.outlineVariant.withValues(alpha: 0.5),
           ),
         ),
       ),
@@ -380,17 +428,24 @@ class _MasterMenuScreenState extends State<MasterMenuScreen> {
                       Flexible(
                         child: Text(
                           item.nameAr,
-                          style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
+                          style: AppTypography.labelMd.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       const SizedBox(width: 6),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 4,
+                          vertical: 1,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.secondaryContainer,
-                          borderRadius: BorderRadius.circular(AppDimens.radiusSm),
+                          borderRadius: BorderRadius.circular(
+                            AppDimens.radiusSm,
+                          ),
                         ),
                         child: Text(
                           item.sku,
@@ -427,15 +482,22 @@ class _MasterMenuScreenState extends State<MasterMenuScreen> {
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
-                    color: item.isActive ? const Color(0xFFEAF5EA) : AppColors.surfaceContainerHighest,
+                    color: item.isActive
+                        ? const Color(0xFFEAF5EA)
+                        : AppColors.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(AppDimens.radiusFull),
                   ),
                   child: Text(
                     item.isActive ? 'نشط' : 'معطل',
                     style: AppTypography.labelSm.copyWith(
-                      color: item.isActive ? const Color(0xFF2E8B2E) : AppColors.secondary,
+                      color: item.isActive
+                          ? const Color(0xFF2E8B2E)
+                          : AppColors.secondary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

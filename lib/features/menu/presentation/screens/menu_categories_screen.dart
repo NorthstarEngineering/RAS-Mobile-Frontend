@@ -63,7 +63,9 @@ class _MenuCategoriesScreenState extends State<MenuCategoriesScreen> {
               children: [
                 Text(
                   'إضافة فئة جديدة',
-                  style: AppTypography.headlineSm.copyWith(fontWeight: FontWeight.bold),
+                  style: AppTypography.headlineSm.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 IconButton(
                   icon: const Icon(Icons.close),
@@ -96,7 +98,9 @@ class _MenuCategoriesScreenState extends State<MenuCategoriesScreen> {
                 final newCat = MenuCategory(
                   id: 'cat_${DateTime.now().millisecondsSinceEpoch}',
                   nameAr: arController.text.trim(),
-                  nameEn: enController.text.trim().isEmpty ? arController.text.trim() : enController.text.trim(),
+                  nameEn: enController.text.trim().isEmpty
+                      ? arController.text.trim()
+                      : enController.text.trim(),
                   itemsCount: 0,
                   sortOrder: _categories.length + 1,
                 );
@@ -105,7 +109,9 @@ class _MenuCategoriesScreenState extends State<MenuCategoriesScreen> {
                 _loadCategories();
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('تمت إضافة الفئة بنجاح وتحديث نقاط البيع')),
+                    const SnackBar(
+                      content: Text('تمت إضافة الفئة بنجاح وتحديث نقاط البيع'),
+                    ),
                   );
                 }
               },
@@ -142,7 +148,9 @@ class _MenuCategoriesScreenState extends State<MenuCategoriesScreen> {
         ],
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+          ? const Center(
+              child: CircularProgressIndicator(color: AppColors.primary),
+            )
           : SingleChildScrollView(
               padding: const EdgeInsets.all(AppDimens.paddingMd),
               child: Column(
@@ -157,12 +165,16 @@ class _MenuCategoriesScreenState extends State<MenuCategoriesScreen> {
                         children: [
                           Text(
                             'تصنيفات المنيو المركزي',
-                            style: AppTypography.headlineSm.copyWith(fontWeight: FontWeight.bold),
+                            style: AppTypography.headlineSm.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             'تتحكم بترتيب ظهور الأصناف على نقاط البيع (POS)',
-                            style: AppTypography.bodySm.copyWith(color: AppColors.secondary),
+                            style: AppTypography.bodySm.copyWith(
+                              color: AppColors.secondary,
+                            ),
                           ),
                         ],
                       ),
@@ -174,7 +186,9 @@ class _MenuCategoriesScreenState extends State<MenuCategoriesScreen> {
                           backgroundColor: AppColors.primary,
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppDimens.radiusXl),
+                            borderRadius: BorderRadius.circular(
+                              AppDimens.radiusXl,
+                            ),
                           ),
                         ),
                       ),
@@ -214,7 +228,10 @@ class _MenuCategoriesScreenState extends State<MenuCategoriesScreen> {
 
                   // Reorder Guidance Hint
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.surfaceContainerLow,
                       borderRadius: BorderRadius.circular(AppDimens.radiusLg),
@@ -224,11 +241,17 @@ class _MenuCategoriesScreenState extends State<MenuCategoriesScreen> {
                       children: [
                         Row(
                           children: [
-                            const Icon(Icons.drag_indicator, size: 18, color: AppColors.secondary),
+                            const Icon(
+                              Icons.drag_indicator,
+                              size: 18,
+                              color: AppColors.secondary,
+                            ),
                             const SizedBox(width: 6),
                             Text(
                               'اسحب لإعادة الترتيب التلقائي على أجهزة الكاشير',
-                              style: AppTypography.labelSm.copyWith(color: AppColors.secondary),
+                              style: AppTypography.labelSm.copyWith(
+                                color: AppColors.secondary,
+                              ),
                             ),
                           ],
                         ),
@@ -236,7 +259,11 @@ class _MenuCategoriesScreenState extends State<MenuCategoriesScreen> {
                           onPressed: () {
                             _repository.updateCategoryOrder(_categories);
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('تم حفظ وتحديث الترتيب على الكاشير')),
+                              const SnackBar(
+                                content: Text(
+                                  'تم حفظ وتحديث الترتيب على الكاشير',
+                                ),
+                              ),
                             );
                           },
                           child: Text(
@@ -272,7 +299,9 @@ class _MenuCategoriesScreenState extends State<MenuCategoriesScreen> {
                         padding: const EdgeInsets.all(AppDimens.paddingMd),
                         decoration: BoxDecoration(
                           color: AppColors.surfaceContainerLowest,
-                          borderRadius: BorderRadius.circular(AppDimens.radiusXl),
+                          borderRadius: BorderRadius.circular(
+                            AppDimens.radiusXl,
+                          ),
                           boxShadow: const [
                             BoxShadow(
                               color: Color(0x06000000),
@@ -283,7 +312,10 @@ class _MenuCategoriesScreenState extends State<MenuCategoriesScreen> {
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.drag_indicator, color: AppColors.secondary),
+                            const Icon(
+                              Icons.drag_indicator,
+                              color: AppColors.secondary,
+                            ),
                             const SizedBox(width: AppDimens.paddingSm),
                             Container(
                               width: 32,
@@ -316,10 +348,16 @@ class _MenuCategoriesScreenState extends State<MenuCategoriesScreen> {
                                       ),
                                       const SizedBox(width: 8),
                                       Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 6,
+                                          vertical: 1,
+                                        ),
                                         decoration: BoxDecoration(
-                                          color: AppColors.surfaceContainerHighest,
-                                          borderRadius: BorderRadius.circular(AppDimens.radiusFull),
+                                          color:
+                                              AppColors.surfaceContainerHighest,
+                                          borderRadius: BorderRadius.circular(
+                                            AppDimens.radiusFull,
+                                          ),
                                         ),
                                         child: Text(
                                           cat.nameEn,

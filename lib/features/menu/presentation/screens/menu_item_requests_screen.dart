@@ -39,28 +39,40 @@ class _MenuItemRequestsScreenState extends State<MenuItemRequestsScreen> {
 
   List<MenuItemRequest> get _filteredRequests {
     if (_activeTab == 'pending') {
-      return _allRequests.where((r) => r.status == MenuItemRequestStatus.pending).toList();
+      return _allRequests
+          .where((r) => r.status == MenuItemRequestStatus.pending)
+          .toList();
     } else if (_activeTab == 'approved') {
-      return _allRequests.where((r) => r.status == MenuItemRequestStatus.approved).toList();
+      return _allRequests
+          .where((r) => r.status == MenuItemRequestStatus.approved)
+          .toList();
     } else if (_activeTab == 'rejected') {
-      return _allRequests.where((r) => r.status == MenuItemRequestStatus.rejected).toList();
+      return _allRequests
+          .where((r) => r.status == MenuItemRequestStatus.rejected)
+          .toList();
     }
     return _allRequests;
   }
 
   @override
   Widget build(BuildContext context) {
-    final pendingCount = _allRequests.where((r) => r.status == MenuItemRequestStatus.pending).length;
-    final approvedCount = _allRequests.where((r) => r.status == MenuItemRequestStatus.approved).length;
-    final rejectedCount = _allRequests.where((r) => r.status == MenuItemRequestStatus.rejected).length;
+    final pendingCount = _allRequests
+        .where((r) => r.status == MenuItemRequestStatus.pending)
+        .length;
+    final approvedCount = _allRequests
+        .where((r) => r.status == MenuItemRequestStatus.approved)
+        .length;
+    final rejectedCount = _allRequests
+        .where((r) => r.status == MenuItemRequestStatus.rejected)
+        .length;
 
     return Scaffold(
       backgroundColor: AppColors.surface,
-      appBar: AppBar(
-        title: const Text('طلبات أصناف القائمة'),
-      ),
+      appBar: AppBar(title: const Text('طلبات أصناف القائمة')),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+          ? const Center(
+              child: CircularProgressIndicator(color: AppColors.primary),
+            )
           : RefreshIndicator(
               onRefresh: _loadRequests,
               color: AppColors.primary,
@@ -79,19 +91,27 @@ class _MenuItemRequestsScreenState extends State<MenuItemRequestsScreen> {
                           children: [
                             Text(
                               'طلبات الفروع للأصناف',
-                              style: AppTypography.headlineSm.copyWith(fontWeight: FontWeight.bold),
+                              style: AppTypography.headlineSm.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             const SizedBox(height: 2),
                             Text(
                               'تتطلب موافقة المدير التنفيذي قبل الإدراج',
-                              style: AppTypography.bodySm.copyWith(color: AppColors.secondary),
+                              style: AppTypography.bodySm.copyWith(
+                                color: AppColors.secondary,
+                              ),
                             ),
                           ],
                         ),
                         ElevatedButton.icon(
                           onPressed: () {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('يتم تقديم طلب الصنف من حساب مدير الفرع')),
+                              const SnackBar(
+                                content: Text(
+                                  'يتم تقديم طلب الصنف من حساب مدير الفرع',
+                                ),
+                              ),
                             );
                           },
                           icon: const Icon(Icons.add, size: 18),
@@ -100,7 +120,9 @@ class _MenuItemRequestsScreenState extends State<MenuItemRequestsScreen> {
                             backgroundColor: AppColors.primary,
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(AppDimens.radiusXl),
+                              borderRadius: BorderRadius.circular(
+                                AppDimens.radiusXl,
+                              ),
                             ),
                           ),
                         ),
@@ -123,9 +145,15 @@ class _MenuItemRequestsScreenState extends State<MenuItemRequestsScreen> {
                             height: 32,
                             decoration: BoxDecoration(
                               color: AppColors.surfaceContainer,
-                              borderRadius: BorderRadius.circular(AppDimens.radiusLg),
+                              borderRadius: BorderRadius.circular(
+                                AppDimens.radiusLg,
+                              ),
                             ),
-                            child: const Icon(Icons.info, color: AppColors.primary, size: 20),
+                            child: const Icon(
+                              Icons.info,
+                              color: AppColors.primary,
+                              size: 20,
+                            ),
                           ),
                           const SizedBox(width: AppDimens.paddingSm),
                           Expanded(
@@ -173,8 +201,14 @@ class _MenuItemRequestsScreenState extends State<MenuItemRequestsScreen> {
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: [
-                          _buildTabButton('all', 'الكل (${_allRequests.length})'),
-                          _buildTabButton('pending', 'قيد المراجعة ($pendingCount)'),
+                          _buildTabButton(
+                            'all',
+                            'الكل (${_allRequests.length})',
+                          ),
+                          _buildTabButton(
+                            'pending',
+                            'قيد المراجعة ($pendingCount)',
+                          ),
                           _buildTabButton('approved', 'مقبول ($approvedCount)'),
                           _buildTabButton('rejected', 'مرفوض ($rejectedCount)'),
                         ],
@@ -189,7 +223,9 @@ class _MenuItemRequestsScreenState extends State<MenuItemRequestsScreen> {
                         alignment: Alignment.center,
                         child: Text(
                           'لا توجد طلبات في هذه الحالة',
-                          style: AppTypography.bodyMd.copyWith(color: AppColors.secondary),
+                          style: AppTypography.bodyMd.copyWith(
+                            color: AppColors.secondary,
+                          ),
                         ),
                       )
                     else
@@ -277,7 +313,10 @@ class _MenuItemRequestsScreenState extends State<MenuItemRequestsScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.surfaceContainerHigh,
                     borderRadius: BorderRadius.circular(AppDimens.radiusSm),
@@ -292,7 +331,10 @@ class _MenuItemRequestsScreenState extends State<MenuItemRequestsScreen> {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: statusBg,
                     borderRadius: BorderRadius.circular(AppDimens.radiusFull),
@@ -311,11 +353,16 @@ class _MenuItemRequestsScreenState extends State<MenuItemRequestsScreen> {
             const SizedBox(height: 8),
             Text(
               req.itemNameAr,
-              style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
+              style: AppTypography.labelMd.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
             Text(
               req.itemNameEn,
-              style: AppTypography.bodySm.copyWith(color: AppColors.secondary, fontSize: 12),
+              style: AppTypography.bodySm.copyWith(
+                color: AppColors.secondary,
+                fontSize: 12,
+              ),
             ),
             const SizedBox(height: 8),
             Row(
@@ -325,7 +372,9 @@ class _MenuItemRequestsScreenState extends State<MenuItemRequestsScreen> {
                   children: [
                     Text(
                       'السعر المقترح: ',
-                      style: AppTypography.labelSm.copyWith(color: AppColors.secondary),
+                      style: AppTypography.labelSm.copyWith(
+                        color: AppColors.secondary,
+                      ),
                     ),
                     Text(
                       '${req.proposedPrice.toStringAsFixed(2)} ج.م',
@@ -338,7 +387,9 @@ class _MenuItemRequestsScreenState extends State<MenuItemRequestsScreen> {
                 ),
                 Text(
                   req.branchName,
-                  style: AppTypography.labelSm.copyWith(color: AppColors.secondary),
+                  style: AppTypography.labelSm.copyWith(
+                    color: AppColors.secondary,
+                  ),
                 ),
               ],
             ),

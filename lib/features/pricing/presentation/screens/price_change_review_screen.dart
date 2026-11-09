@@ -13,7 +13,8 @@ class PriceChangeReviewScreen extends StatefulWidget {
   const PriceChangeReviewScreen({super.key, required this.requestId});
 
   @override
-  State<PriceChangeReviewScreen> createState() => _PriceChangeReviewScreenState();
+  State<PriceChangeReviewScreen> createState() =>
+      _PriceChangeReviewScreenState();
 }
 
 class _PriceChangeReviewScreenState extends State<PriceChangeReviewScreen> {
@@ -56,7 +57,9 @@ class _PriceChangeReviewScreenState extends State<PriceChangeReviewScreen> {
                 ? 'تم اعتماد تعديل السعر وجدولة تطبيقه على أجهزة نقاط البيع (POS)'
                 : 'تم رفض طلب تعديل السعر',
           ),
-          backgroundColor: isApproved ? const Color(0xFF2E8B2E) : AppColors.error,
+          backgroundColor: isApproved
+              ? const Color(0xFF2E8B2E)
+              : AppColors.error,
         ),
       );
       context.pop();
@@ -68,7 +71,9 @@ class _PriceChangeReviewScreenState extends State<PriceChangeReviewScreen> {
     if (_isLoading) {
       return const Scaffold(
         backgroundColor: AppColors.surface,
-        body: Center(child: CircularProgressIndicator(color: AppColors.primary)),
+        body: Center(
+          child: CircularProgressIndicator(color: AppColors.primary),
+        ),
       );
     }
 
@@ -81,8 +86,10 @@ class _PriceChangeReviewScreenState extends State<PriceChangeReviewScreen> {
     }
 
     final req = _request!;
-    final currentMargin = ((req.currentPrice - req.cost) / req.currentPrice) * 100;
-    final proposedMargin = ((req.proposedPrice - req.cost) / req.proposedPrice) * 100;
+    final currentMargin =
+        ((req.currentPrice - req.cost) / req.currentPrice) * 100;
+    final proposedMargin =
+        ((req.proposedPrice - req.cost) / req.proposedPrice) * 100;
 
     return Scaffold(
       backgroundColor: AppColors.surface,
@@ -132,7 +139,10 @@ class _PriceChangeReviewScreenState extends State<PriceChangeReviewScreen> {
                     ],
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.surfaceContainerHigh,
                       borderRadius: BorderRadius.circular(AppDimens.radiusFull),
@@ -140,7 +150,11 @@ class _PriceChangeReviewScreenState extends State<PriceChangeReviewScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.verified_user, size: 14, color: AppColors.primary),
+                        const Icon(
+                          Icons.verified_user,
+                          size: 14,
+                          color: AppColors.primary,
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           'اعتماد المدير التنفيذي',
@@ -181,10 +195,15 @@ class _PriceChangeReviewScreenState extends State<PriceChangeReviewScreen> {
                       Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: AppColors.surfaceContainer,
-                              borderRadius: BorderRadius.circular(AppDimens.radiusSm),
+                              borderRadius: BorderRadius.circular(
+                                AppDimens.radiusSm,
+                              ),
                             ),
                             child: Text(
                               req.requestNumber,
@@ -197,7 +216,9 @@ class _PriceChangeReviewScreenState extends State<PriceChangeReviewScreen> {
                           const SizedBox(width: 8),
                           Text(
                             '16 أبريل 2024',
-                            style: AppTypography.labelSm.copyWith(color: AppColors.secondary),
+                            style: AppTypography.labelSm.copyWith(
+                              color: AppColors.secondary,
+                            ),
                           ),
                         ],
                       ),
@@ -206,16 +227,23 @@ class _PriceChangeReviewScreenState extends State<PriceChangeReviewScreen> {
                         height: 42,
                         decoration: BoxDecoration(
                           color: AppColors.surfaceContainer,
-                          borderRadius: BorderRadius.circular(AppDimens.radiusLg),
+                          borderRadius: BorderRadius.circular(
+                            AppDimens.radiusLg,
+                          ),
                         ),
-                        child: const Icon(Icons.lunch_dining, color: AppColors.primary),
+                        child: const Icon(
+                          Icons.lunch_dining,
+                          color: AppColors.primary,
+                        ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 8),
                   Text(
                     req.itemNameAr,
-                    style: AppTypography.headlineSm.copyWith(fontWeight: FontWeight.bold),
+                    style: AppTypography.headlineSm.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   Row(
                     children: [
@@ -227,11 +255,16 @@ class _PriceChangeReviewScreenState extends State<PriceChangeReviewScreen> {
                         ),
                       ),
                       const SizedBox(width: 6),
-                      const Text('•', style: TextStyle(color: AppColors.secondary)),
+                      const Text(
+                        '•',
+                        style: TextStyle(color: AppColors.secondary),
+                      ),
                       const SizedBox(width: 6),
                       Text(
                         req.categoryName,
-                        style: AppTypography.labelSm.copyWith(color: AppColors.secondary),
+                        style: AppTypography.labelSm.copyWith(
+                          color: AppColors.secondary,
+                        ),
                       ),
                     ],
                   ),
@@ -248,32 +281,48 @@ class _PriceChangeReviewScreenState extends State<PriceChangeReviewScreen> {
                       children: [
                         Row(
                           children: [
-                            const Icon(Icons.badge_outlined, size: 20, color: AppColors.secondary),
+                            const Icon(
+                              Icons.badge_outlined,
+                              size: 20,
+                              color: AppColors.secondary,
+                            ),
                             const SizedBox(width: 8),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   'مقدم الطلب',
-                                  style: AppTypography.labelSm.copyWith(color: AppColors.secondary, fontSize: 10),
+                                  style: AppTypography.labelSm.copyWith(
+                                    color: AppColors.secondary,
+                                    fontSize: 10,
+                                  ),
                                 ),
                                 Text(
                                   req.requestedByName,
-                                  style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
+                                  style: AppTypography.labelMd.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ],
                             ),
                           ],
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.surfaceContainer,
-                            borderRadius: BorderRadius.circular(AppDimens.radiusSm),
+                            borderRadius: BorderRadius.circular(
+                              AppDimens.radiusSm,
+                            ),
                           ),
                           child: Text(
                             req.branchName,
-                            style: AppTypography.labelSm.copyWith(color: AppColors.onSurfaceVariant),
+                            style: AppTypography.labelSm.copyWith(
+                              color: AppColors.onSurfaceVariant,
+                            ),
                           ),
                         ),
                       ],
@@ -303,7 +352,10 @@ class _PriceChangeReviewScreenState extends State<PriceChangeReviewScreen> {
                 children: [
                   Text(
                     'مقارنة الأسعار وهوامش الربح',
-                    style: AppTypography.headlineSm.copyWith(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: AppTypography.headlineSm.copyWith(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: AppDimens.paddingMd),
                   Row(
@@ -383,7 +435,9 @@ class _PriceChangeReviewScreenState extends State<PriceChangeReviewScreen> {
                 children: [
                   Text(
                     'مبررات التعديل والجدولة التشغيلية',
-                    style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
+                    style: AppTypography.labelMd.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Container(
@@ -395,21 +449,31 @@ class _PriceChangeReviewScreenState extends State<PriceChangeReviewScreen> {
                     ),
                     child: Text(
                       req.reason,
-                      style: AppTypography.bodySm.copyWith(color: AppColors.onSurface),
+                      style: AppTypography.bodySm.copyWith(
+                        color: AppColors.onSurface,
+                      ),
                     ),
                   ),
                   const SizedBox(height: AppDimens.paddingMd),
                   Row(
                     children: [
-                      const Icon(Icons.calendar_today, size: 18, color: AppColors.primary),
+                      const Icon(
+                        Icons.calendar_today,
+                        size: 18,
+                        color: AppColors.primary,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         'تاريخ السريان التلقائي على الكاشير: ',
-                        style: AppTypography.labelSm.copyWith(color: AppColors.secondary),
+                        style: AppTypography.labelSm.copyWith(
+                          color: AppColors.secondary,
+                        ),
                       ),
                       Text(
                         '01 مايو 2024',
-                        style: AppTypography.labelSm.copyWith(fontWeight: FontWeight.bold),
+                        style: AppTypography.labelSm.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ],
                   ),
@@ -457,7 +521,9 @@ class _PriceChangeReviewScreenState extends State<PriceChangeReviewScreen> {
                 ),
                 child: Text(
                   'تم اعتماد القرار مسبقاً: ${req.status.labelArabic}',
-                  style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
+                  style: AppTypography.labelMd.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             const SizedBox(height: 32),
@@ -467,18 +533,35 @@ class _PriceChangeReviewScreenState extends State<PriceChangeReviewScreen> {
     );
   }
 
-  Widget _buildComparisonCol(String title, String price, String margin, Color color) {
+  Widget _buildComparisonCol(
+    String title,
+    String price,
+    String margin,
+    Color color,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: AppTypography.labelSm.copyWith(color: AppColors.secondary)),
+        Text(
+          title,
+          style: AppTypography.labelSm.copyWith(color: AppColors.secondary),
+        ),
         const SizedBox(height: 2),
         Text(
           price,
-          style: AppTypography.headlineSm.copyWith(color: color, fontWeight: FontWeight.bold),
+          style: AppTypography.headlineSm.copyWith(
+            color: color,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         const SizedBox(height: 2),
-        Text(margin, style: AppTypography.labelSm.copyWith(color: AppColors.secondary, fontSize: 11)),
+        Text(
+          margin,
+          style: AppTypography.labelSm.copyWith(
+            color: AppColors.secondary,
+            fontSize: 11,
+          ),
+        ),
       ],
     );
   }

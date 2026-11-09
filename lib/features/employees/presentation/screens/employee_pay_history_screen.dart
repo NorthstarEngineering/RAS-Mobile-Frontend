@@ -57,9 +57,7 @@ class EmployeePayHistoryScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.surface,
-      appBar: AppBar(
-        title: const Text('سجل الرواتب والدفعات'),
-      ),
+      appBar: AppBar(title: const Text('سجل الرواتب والدفعات')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppDimens.paddingMd),
         child: Column(
@@ -90,7 +88,9 @@ class EmployeePayHistoryScreen extends StatelessWidget {
                     ),
                     alignment: Alignment.center,
                     child: Text(
-                      employee.name.length >= 2 ? employee.name.substring(0, 2) : 'مو',
+                      employee.name.length >= 2
+                          ? employee.name.substring(0, 2)
+                          : 'مو',
                       style: AppTypography.labelMd.copyWith(
                         color: AppColors.onPrimaryFixed,
                         fontWeight: FontWeight.bold,
@@ -104,24 +104,35 @@ class EmployeePayHistoryScreen extends StatelessWidget {
                       children: [
                         Text(
                           employee.name,
-                          style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
+                          style: AppTypography.labelMd.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         Text(
                           '${employee.role} • ${employee.branchName}',
-                          style: AppTypography.bodySm.copyWith(color: AppColors.secondary, fontSize: 11),
+                          style: AppTypography.bodySm.copyWith(
+                            color: AppColors.secondary,
+                            fontSize: 11,
+                          ),
                         ),
                       ],
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.surfaceContainerHigh,
                       borderRadius: BorderRadius.circular(AppDimens.radiusFull),
                     ),
                     child: Text(
                       '#${employee.code}',
-                      style: AppTypography.labelSm.copyWith(fontFamily: 'monospace', fontSize: 11),
+                      style: AppTypography.labelSm.copyWith(
+                        fontFamily: 'monospace',
+                        fontSize: 11,
+                      ),
                     ),
                   ),
                 ],
@@ -154,9 +165,16 @@ class EmployeePayHistoryScreen extends StatelessWidget {
                           children: [
                             Text(
                               'إجمالي المنصرف 2024',
-                              style: AppTypography.labelSm.copyWith(color: AppColors.secondary, fontSize: 11),
+                              style: AppTypography.labelSm.copyWith(
+                                color: AppColors.secondary,
+                                fontSize: 11,
+                              ),
                             ),
-                            const Icon(Icons.account_balance_wallet_outlined, size: 18, color: AppColors.primary),
+                            const Icon(
+                              Icons.account_balance_wallet_outlined,
+                              size: 18,
+                              color: AppColors.primary,
+                            ),
                           ],
                         ),
                         const SizedBox(height: 6),
@@ -170,7 +188,10 @@ class EmployeePayHistoryScreen extends StatelessWidget {
                         const SizedBox(height: 2),
                         Text(
                           '4 مسيرات معتمدة',
-                          style: AppTypography.labelSm.copyWith(color: AppColors.secondary, fontSize: 10),
+                          style: AppTypography.labelSm.copyWith(
+                            color: AppColors.secondary,
+                            fontSize: 10,
+                          ),
                         ),
                       ],
                     ),
@@ -199,9 +220,16 @@ class EmployeePayHistoryScreen extends StatelessWidget {
                           children: [
                             Text(
                               'آخر دفعة معتمدة',
-                              style: AppTypography.labelSm.copyWith(color: AppColors.secondary, fontSize: 11),
+                              style: AppTypography.labelSm.copyWith(
+                                color: AppColors.secondary,
+                                fontSize: 11,
+                              ),
                             ),
-                            const Icon(Icons.receipt_long, size: 18, color: AppColors.tertiary),
+                            const Icon(
+                              Icons.receipt_long,
+                              size: 18,
+                              color: AppColors.tertiary,
+                            ),
                           ],
                         ),
                         const SizedBox(height: 6),
@@ -216,7 +244,10 @@ class EmployeePayHistoryScreen extends StatelessWidget {
                         const SizedBox(height: 2),
                         Text(
                           'عن شهر مارس 2024',
-                          style: AppTypography.labelSm.copyWith(color: AppColors.secondary, fontSize: 10),
+                          style: AppTypography.labelSm.copyWith(
+                            color: AppColors.secondary,
+                            fontSize: 10,
+                          ),
                         ),
                       ],
                     ),
@@ -229,7 +260,10 @@ class EmployeePayHistoryScreen extends StatelessWidget {
             // Pay History List
             Text(
               'سجل المسيرات الشهرية المعتمدة',
-              style: AppTypography.headlineSm.copyWith(fontSize: 18, fontWeight: FontWeight.bold),
+              style: AppTypography.headlineSm.copyWith(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: AppDimens.paddingSm),
 
@@ -262,14 +296,21 @@ class EmployeePayHistoryScreen extends StatelessWidget {
                             children: [
                               Text(
                                 rec['month'] as String,
-                                style: AppTypography.labelMd.copyWith(fontWeight: FontWeight.bold),
+                                style: AppTypography.labelMd.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                               const SizedBox(width: 8),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 2,
+                                ),
                                 decoration: BoxDecoration(
                                   color: const Color(0xFFEAF5EA),
-                                  borderRadius: BorderRadius.circular(AppDimens.radiusFull),
+                                  borderRadius: BorderRadius.circular(
+                                    AppDimens.radiusFull,
+                                  ),
                                 ),
                                 child: Text(
                                   rec['status'] as String,
@@ -297,23 +338,34 @@ class EmployeePayHistoryScreen extends StatelessWidget {
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           color: AppColors.surfaceContainerLow,
-                          borderRadius: BorderRadius.circular(AppDimens.radiusLg),
+                          borderRadius: BorderRadius.circular(
+                            AppDimens.radiusLg,
+                          ),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             Text(
                               'الأساسي: ${rec['base']} ج.م',
-                              style: AppTypography.labelSm.copyWith(color: AppColors.secondary, fontSize: 11),
+                              style: AppTypography.labelSm.copyWith(
+                                color: AppColors.secondary,
+                                fontSize: 11,
+                              ),
                             ),
                             Text(
                               'البدلات: +${rec['allowance']} ج.م',
-                              style: AppTypography.labelSm.copyWith(color: const Color(0xFF2E8B2E), fontSize: 11),
+                              style: AppTypography.labelSm.copyWith(
+                                color: const Color(0xFF2E8B2E),
+                                fontSize: 11,
+                              ),
                             ),
                             if ((rec['deduction'] as int) > 0)
                               Text(
                                 'الخصومات: -${rec['deduction']} ج.م',
-                                style: AppTypography.labelSm.copyWith(color: AppColors.error, fontSize: 11),
+                                style: AppTypography.labelSm.copyWith(
+                                  color: AppColors.error,
+                                  fontSize: 11,
+                                ),
                               ),
                           ],
                         ),
@@ -332,7 +384,10 @@ class EmployeePayHistoryScreen extends StatelessWidget {
                           ),
                           Text(
                             rec['date'] as String,
-                            style: AppTypography.labelSm.copyWith(color: AppColors.secondary, fontSize: 10),
+                            style: AppTypography.labelSm.copyWith(
+                              color: AppColors.secondary,
+                              fontSize: 10,
+                            ),
                           ),
                         ],
                       ),

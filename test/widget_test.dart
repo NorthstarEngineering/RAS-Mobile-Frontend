@@ -1,9 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:rms_app/core/di/service_locator.dart';
 import 'package:rms_app/main.dart';
 
 void main() {
   setUp(() async {
+    SharedPreferences.setMockInitialValues({});
     await sl.reset();
     await initServiceLocator();
   });

@@ -15,8 +15,7 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
-  final _identifierController =
-      TextEditingController(text: 'm.alvarez@rms-ops.com');
+  final _identifierController = TextEditingController();
   bool _isLoading = false;
   String _selectedMethod = 'sms'; // 'sms' or 'email'
 
@@ -27,13 +26,20 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   void _onSendOtp() async {
+    final identifier = _identifierController.text.trim();
+    if (identifier.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('أدخل البريد الإلكتروني أولاً')),
+      );
+      return;
+    }
     setState(() => _isLoading = true);
     await Future<void>.delayed(const Duration(milliseconds: 700));
     if (!mounted) return;
     setState(() => _isLoading = false);
-
-    // Navigate to OTP Screen (AUTH-04)
-    context.push('/auth/otp', extra: _identifierController.text);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('إرسال رمز OTP غير متاح حالياً: الخدمة قيد التطوير')),
+    );
   }
 
   @override

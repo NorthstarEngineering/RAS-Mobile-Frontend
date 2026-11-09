@@ -53,7 +53,8 @@ class PriceChangeRequest {
   });
 
   double get difference => proposedPrice - currentPrice;
-  double get percentageChange => ((proposedPrice - currentPrice) / currentPrice) * 100;
+  double get percentageChange =>
+      ((proposedPrice - currentPrice) / currentPrice) * 100;
 
   PriceChangeRequest copyWith({
     String? id,

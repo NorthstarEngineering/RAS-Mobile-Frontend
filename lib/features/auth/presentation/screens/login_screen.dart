@@ -19,31 +19,23 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _identifierController =
-      TextEditingController(text: 'm.alvarez@rms-ops.com');
-  final _passwordController =
-      TextEditingController(text: 'SuperSecretOps2024!');
+  final _identifierController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   @override
   void dispose() {
-    _identifierController.dispose;
+    _identifierController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
-  void _onPresetSelected(String identifier) {
-    setState(() {
-      _identifierController.text = identifier;
-    });
-  }
-
   void _onSubmit() {
     context.read<AuthBloc>().add(
-          LoginSubmitted(
-            identifier: _identifierController.text,
-            password: _passwordController.text,
-          ),
-        );
+      LoginSubmitted(
+        identifier: _identifierController.text,
+        password: _passwordController.text,
+      ),
+    );
   }
 
   @override
@@ -56,7 +48,9 @@ class _LoginScreenState extends State<LoginScreen> {
             if (state.isAuthenticated) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('مرحباً بك، ${state.session!.name} (${state.session!.role.titleArabic})'),
+                  content: Text(
+                    'مرحباً بك، ${state.session!.name} (${state.session!.role.titleArabic})',
+                  ),
                   backgroundColor: AppColors.success,
                   behavior: SnackBarBehavior.floating,
                 ),
@@ -78,14 +72,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: AppSpacing.md),
 
                   // 2. Operational Header
-                  Text(
-                    'تسجيل الدخول للنظام',
-                    style: AppTypography.headlineLg,
-                  ),
+                  Text('تسجيل الدخول للنظام', style: AppTypography.headlineLg),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
                     'أدخل بيانات الموظف المعتمدة للوصول إلى نقطة البيع.',
-                    style: AppTypography.bodySm.copyWith(color: AppColors.secondary),
+                    style: AppTypography.bodySm.copyWith(
+                      color: AppColors.secondary,
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.lg),
 
@@ -143,9 +136,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: AppSpacing.lg),
 
                   // 7. Quick Preset Switchers
-                  _buildPresetsSection(),
-                  const SizedBox(height: AppSpacing.lg),
-
                   // 8. Primary Action Button
                   RmsPrimaryButton(
                     label: 'تسجيل الدخول للجهاز',
@@ -256,124 +246,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildPresetsSection() {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: const BoxDecoration(
-        color: AppColors.surfaceContainer,
-        borderRadius: AppRadius.lgAll,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            'اختيار سريع تجريبي',
-            style: AppTypography.labelSm.copyWith(
-              color: AppColors.secondary,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          Row(
-            children: [
-              Expanded(
-                child: _buildPresetButton(
-                  name: 'م. ألفاريز',
-                  role: 'مسؤول وردية',
-                  email: 'm.alvarez@rms-ops.com',
-                  icon: Symbols.dinner_dining,
-                  iconBg: AppColors.primaryFixed,
-                  iconColor: AppColors.onPrimaryFixed,
-                ),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: _buildPresetButton(
-                  name: 'ج. ميلر',
-                  role: 'مدير فرع',
-                  email: 'j.miller@rms-ops.com',
-                  icon: Symbols.storefront,
-                  iconBg: AppColors.tertiaryFixed,
-                  iconColor: AppColors.onTertiaryFixed,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPresetButton({
-    required String name,
-    required String role,
-    required String email,
-    required IconData icon,
-    required Color iconBg,
-    required Color iconColor,
-  }) {
-    final isSelected = _identifierController.text == email;
-
-    return Material(
-      color: AppColors.surfaceContainerLowest,
-      borderRadius: const BorderRadius.all(Radius.circular(6)),
-      child: InkWell(
-        onTap: () => _onPresetSelected(email),
-        borderRadius: const BorderRadius.all(Radius.circular(6)),
-        child: Container(
-          padding: const EdgeInsets.all(AppSpacing.sm),
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(Radius.circular(6)),
-            border: Border.all(
-              color: isSelected ? AppColors.primary : Colors.transparent,
-              width: 1.5,
-            ),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 28,
-                height: 28,
-                decoration: BoxDecoration(
-                  color: iconBg,
-                  borderRadius: const BorderRadius.all(Radius.circular(6)),
-                ),
-                alignment: Alignment.center,
-                child: Icon(icon, size: 16, color: iconColor),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      name,
-                      style: AppTypography.labelMd.copyWith(
-                        fontWeight: FontWeight.w600,
-                        height: 1.2,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      role,
-                      style: AppTypography.labelSm.copyWith(
-                        color: AppColors.secondary,
-                        fontSize: 11,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildNfcQuickAssist() {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -390,7 +262,9 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(width: AppSpacing.sm),
               Text(
                 'بطاقة الموظف / شارة المدير جاهزة',
-                style: AppTypography.bodySm.copyWith(color: AppColors.onSurface),
+                style: AppTypography.bodySm.copyWith(
+                  color: AppColors.onSurface,
+                ),
               ),
             ],
           ),
@@ -419,7 +293,11 @@ class _LoginScreenState extends State<LoginScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Symbols.point_of_sale, size: 16, color: AppColors.secondary),
+            const Icon(
+              Symbols.point_of_sale,
+              size: 16,
+              color: AppColors.secondary,
+            ),
             const SizedBox(width: 6),
             Text(
               'نقطة بيع: الفرع الرئيسي - وسط البلد (#104)',

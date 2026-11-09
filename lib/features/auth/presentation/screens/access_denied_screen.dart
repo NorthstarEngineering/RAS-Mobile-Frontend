@@ -67,7 +67,11 @@ class AccessDeniedScreen extends StatelessWidget {
                         color: Colors.white,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.lock, size: 16, color: AppColors.error),
+                      child: const Icon(
+                        Icons.lock,
+                        size: 16,
+                        color: AppColors.error,
+                      ),
                     ),
                   ),
                 ],
@@ -117,7 +121,11 @@ class AccessDeniedScreen extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          const Icon(Icons.verified_user_outlined, size: 18, color: AppColors.secondary),
+                          const Icon(
+                            Icons.verified_user_outlined,
+                            size: 18,
+                            color: AppColors.secondary,
+                          ),
                           const SizedBox(width: 6),
                           Text(
                             'تتبع سجل التدقيق والأمان',
@@ -129,10 +137,15 @@ class AccessDeniedScreen extends StatelessWidget {
                         ],
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.errorContainer,
-                          borderRadius: BorderRadius.circular(AppDimens.radiusSm),
+                          borderRadius: BorderRadius.circular(
+                            AppDimens.radiusSm,
+                          ),
                         ),
                         child: Text(
                           'مسار مؤمّن',
@@ -146,13 +159,26 @@ class AccessDeniedScreen extends StatelessWidget {
                     ],
                   ),
                   const Divider(height: 20),
-                  _buildTraceItem('الدور الحالي للحساب', 'مسؤول وردية (Shift Supervisor)'),
+                  _buildTraceItem(
+                    'الدور الحالي للحساب',
+                    'مسؤول وردية (Shift Supervisor)',
+                  ),
                   const SizedBox(height: 8),
-                  _buildTraceItem('الصلاحية المطلوبة', 'المدير التنفيذي (role:exec_ceo)'),
+                  _buildTraceItem(
+                    'الصلاحية المطلوبة',
+                    'المدير التنفيذي (role:exec_ceo)',
+                  ),
                   const SizedBox(height: 8),
-                  _buildTraceItem('القسم المستهدف', '/admin/financial/executive-dashboard'),
+                  _buildTraceItem(
+                    'القسم المستهدف',
+                    '/admin/financial/executive-dashboard',
+                  ),
                   const SizedBox(height: 8),
-                  _buildTraceItem('معرّف الحادثة الأمني', 'SEC-403-894102', isMonospace: true),
+                  _buildTraceItem(
+                    'معرّف الحادثة الأمني',
+                    'SEC-403-894102',
+                    isMonospace: true,
+                  ),
                 ],
               ),
             ),
@@ -176,7 +202,9 @@ class AccessDeniedScreen extends StatelessWidget {
             OutlinedButton.icon(
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('تم إرسال طلب الصلاحية للإدارة التنفيذية')),
+                  const SnackBar(
+                    content: Text('تم إرسال طلب الصلاحية للإدارة التنفيذية'),
+                  ),
                 );
               },
               icon: const Icon(Icons.lock_open_outlined),
@@ -197,11 +225,21 @@ class AccessDeniedScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTraceItem(String label, String value, {bool isMonospace = false}) {
+  Widget _buildTraceItem(
+    String label,
+    String value, {
+    bool isMonospace = false,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: AppTypography.labelSm.copyWith(color: AppColors.secondary, fontSize: 11)),
+        Text(
+          label,
+          style: AppTypography.labelSm.copyWith(
+            color: AppColors.secondary,
+            fontSize: 11,
+          ),
+        ),
         const SizedBox(height: 2),
         Text(
           value,

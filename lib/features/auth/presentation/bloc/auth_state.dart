@@ -17,17 +17,19 @@ class AuthState extends Equatable {
   final int remainingAttempts;
 
   bool get isLoading => status == AuthStatus.loading;
-  bool get isAuthenticated => status == AuthStatus.authenticated && session != null;
+  bool get isAuthenticated =>
+      status == AuthStatus.authenticated && session != null;
 
   AuthState copyWith({
     AuthStatus? status,
     UserSession? session,
+    bool clearSession = false,
     String? errorMessage,
     int? remainingAttempts,
   }) {
     return AuthState(
       status: status ?? this.status,
-      session: session ?? this.session,
+      session: clearSession ? null : session ?? this.session,
       errorMessage: errorMessage,
       remainingAttempts: remainingAttempts ?? this.remainingAttempts,
     );

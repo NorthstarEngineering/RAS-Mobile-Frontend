@@ -6,13 +6,12 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_dimens.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/widgets.dart';
+import '../../../../core/di/service_locator.dart';
+import '../../data/repositories/api_overtime_repository.dart';
 import '../../domain/entities/overtime_record.dart';
 
 class OvertimeReviewScreen extends StatefulWidget {
-  const OvertimeReviewScreen({
-    super.key,
-    required this.record,
-  });
+  const OvertimeReviewScreen({super.key, required this.record});
 
   final OvertimeRecord record;
 
@@ -22,37 +21,61 @@ class OvertimeReviewScreen extends StatefulWidget {
 
 class _OvertimeReviewScreenState extends State<OvertimeReviewScreen> {
   bool _isLoading = false;
+  final _rejectionReasonController = TextEditingController();
+
+  @override
+  void dispose() {
+    _rejectionReasonController.dispose();
+    super.dispose();
+  }
 
   void _onApprove() async {
     setState(() => _isLoading = true);
-    await Future<void>.delayed(const Duration(milliseconds: 600));
-    if (!mounted) return;
-    setState(() => _isLoading = false);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('تم اعتماد الساعات الإضافية وترحيلها لمستحقات الراتب بنجاح (OT-04).'),
-        backgroundColor: AppColors.success,
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-    context.pop();
+    try {
+      await sl<ApiOvertimeRepository>().approve(widget.record.id);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('تم اعتماد الساعات الإضافية فعلياً')),
+      );
+      context.pop();
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('تعذر اعتماد الساعات: $error')));
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   void _onReject() async {
+    if (_rejectionReasonController.text.trim().length < 3) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('أدخل سبب الرفض')));
+      return;
+    }
     setState(() => _isLoading = true);
-    await Future<void>.delayed(const Duration(milliseconds: 500));
-    if (!mounted) return;
-    setState(() => _isLoading = false);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('تم رفض طلب الساعات الإضافية وإخطار الموظف.'),
-        backgroundColor: AppColors.error,
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-    context.pop();
+    try {
+      await sl<ApiOvertimeRepository>().reject(
+        widget.record.id,
+        _rejectionReasonController.text.trim(),
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('تم رفض الساعات الإضافية فعلياً')),
+      );
+      context.pop();
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('تعذر رفض الساعات: $error')));
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -193,6 +216,15 @@ class _OvertimeReviewScreenState extends State<OvertimeReviewScreen> {
                 ),
               ),
               const SizedBox(height: AppSpacing.xl),
+
+              TextField(
+                controller: _rejectionReasonController,
+                decoration: const InputDecoration(
+                  labelText: 'سبب الرفض',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.sm),
 
               // Approve Button (OT-04)
               RmsPrimaryButton(

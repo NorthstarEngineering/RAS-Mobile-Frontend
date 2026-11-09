@@ -11,7 +11,7 @@ import '../../../../core/widgets/widgets.dart';
 class OtpVerificationScreen extends StatefulWidget {
   const OtpVerificationScreen({
     super.key,
-    this.identifier = 'm.alvarez@rms-ops.com',
+    required this.identifier,
   });
 
   final String identifier;
@@ -21,8 +21,10 @@ class OtpVerificationScreen extends StatefulWidget {
 }
 
 class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
-  final List<TextEditingController> _controllers =
-      List.generate(6, (_) => TextEditingController());
+  final List<TextEditingController> _controllers = List.generate(
+    6,
+    (_) => TextEditingController(),
+  );
   final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
 
   int _resendCountdown = 105; // 01:45
@@ -33,11 +35,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   void initState() {
     super.initState();
     _startTimer();
-    // Default demo prepopulate
-    const demoCode = '582409';
-    for (int i = 0; i < demoCode.length; i++) {
-      _controllers[i].text = demoCode[i];
-    }
   }
 
   void _startTimer() {
