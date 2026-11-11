@@ -1,3 +1,6 @@
+import '../../../auth/domain/entities/user_session.dart';
+import '../../../auth/presentation/bloc/auth_bloc.dart';
+import '../widgets/menu_load_view.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/di/service_locator.dart';
@@ -19,6 +22,7 @@ class _MenuItemRequestsScreenState extends State<MenuItemRequestsScreen> {
   List<MenuItemRequest> _allRequests = [];
   String _activeTab = 'all'; // all, pending, approved, rejected
   bool _isLoading = true;
+  Object? _loadError;
 
   @override
   void initState() {
@@ -27,14 +31,24 @@ class _MenuItemRequestsScreenState extends State<MenuItemRequestsScreen> {
   }
 
   Future<void> _loadRequests() async {
-    setState(() => _isLoading = true);
-    final list = await _repository.getMenuItemRequests();
-    if (mounted) {
-      setState(() {
-        _allRequests = list;
-        _isLoading = false;
-      });
+    setState(() {
+      _isLoading = true;
+      _loadError = null;
+    });
+    try {
+      final requests = await _repository.getMenuItemRequests();
+      if (!mounted) return;
+      _allRequests = requests;
+    } on Exception catch (error) {
+      if (mounted) _loadError = error;
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  Future<void> _open(String path) async {
+    await context.push(path);
+    if (mounted) await _loadRequests();
   }
 
   List<MenuItemRequest> get _filteredRequests {
@@ -73,6 +87,8 @@ class _MenuItemRequestsScreenState extends State<MenuItemRequestsScreen> {
           ? const Center(
               child: CircularProgressIndicator(color: AppColors.primary),
             )
+          : _loadError != null
+          ? MenuErrorView(error: _loadError!, onRetry: _loadRequests)
           : RefreshIndicator(
               onRefresh: _loadRequests,
               color: AppColors.primary,
@@ -104,28 +120,22 @@ class _MenuItemRequestsScreenState extends State<MenuItemRequestsScreen> {
                             ),
                           ],
                         ),
-                        ElevatedButton.icon(
-                          onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'يتم تقديم طلب الصنف من حساب مدير الفرع',
+                        if (sl<AuthBloc>().state.session?.role ==
+                            StaffRole.branchManager)
+                          ElevatedButton.icon(
+                            onPressed: () => _open('/menu/requests/create'),
+                            icon: const Icon(Icons.add, size: 18),
+                            label: const Text('طلب جديد'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  AppDimens.radiusXl,
                                 ),
-                              ),
-                            );
-                          },
-                          icon: const Icon(Icons.add, size: 18),
-                          label: const Text('طلب جديد'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                AppDimens.radiusXl,
                               ),
                             ),
                           ),
-                        ),
                       ],
                     ),
                     const SizedBox(height: AppDimens.paddingMd),
@@ -288,10 +298,7 @@ class _MenuItemRequestsScreenState extends State<MenuItemRequestsScreen> {
     }
 
     return InkWell(
-      onTap: () async {
-        await context.push('/menu/requests/${req.id}');
-        _loadRequests();
-      },
+      onTap: () => _open('/menu/requests/${req.id}'),
       borderRadius: BorderRadius.circular(AppDimens.radiusXl),
       child: Container(
         padding: const EdgeInsets.all(AppDimens.paddingMd),
@@ -312,21 +319,25 @@ class _MenuItemRequestsScreenState extends State<MenuItemRequestsScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.surfaceContainerHigh,
-                    borderRadius: BorderRadius.circular(AppDimens.radiusSm),
-                  ),
-                  child: Text(
-                    req.requestNumber,
-                    style: AppTypography.labelSm.copyWith(
-                      fontFamily: 'monospace',
-                      fontWeight: FontWeight.bold,
-                      fontSize: 11,
+                Flexible(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.surfaceContainerHigh,
+                      borderRadius: BorderRadius.circular(AppDimens.radiusSm),
+                    ),
+                    child: Text(
+                      req.requestNumber,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTypography.labelSm.copyWith(
+                        fontFamily: 'monospace',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 11,
+                      ),
                     ),
                   ),
                 ),
@@ -385,10 +396,14 @@ class _MenuItemRequestsScreenState extends State<MenuItemRequestsScreen> {
                     ),
                   ],
                 ),
-                Text(
-                  req.branchName,
-                  style: AppTypography.labelSm.copyWith(
-                    color: AppColors.secondary,
+                Flexible(
+                  child: Text(
+                    'فرع: ${req.branchName}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTypography.labelSm.copyWith(
+                      color: AppColors.secondary,
+                    ),
                   ),
                 ),
               ],
@@ -397,11 +412,15 @@ class _MenuItemRequestsScreenState extends State<MenuItemRequestsScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'مقدم الطلب: ${req.requestedByName}',
-                  style: AppTypography.bodySm.copyWith(
-                    color: AppColors.onSurfaceVariant,
-                    fontSize: 11,
+                Expanded(
+                  child: Text(
+                    'معرّف مقدم الطلب: ${req.requestedByName}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTypography.bodySm.copyWith(
+                      color: AppColors.onSurfaceVariant,
+                      fontSize: 11,
+                    ),
                   ),
                 ),
                 const Icon(
