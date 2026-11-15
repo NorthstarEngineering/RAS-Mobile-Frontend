@@ -221,7 +221,7 @@ class _RoleBasedHomeScreenState extends State<RoleBasedHomeScreen> {
               _buildNavItem(0, Symbols.dashboard, 'الرئيسية'),
               _buildNavItem(1, Symbols.storefront, 'الفروع'),
               _buildNavItem(2, Symbols.badge, 'الموظفون'),
-              _buildNavItem(3, Symbols.inventory_2, 'التوريد'),
+              _buildNavItem(3, Symbols.inventory_2, 'العمليات'),
               _buildNavItem(4, Symbols.manage_accounts, 'الحساب'),
             ],
           ),
@@ -240,7 +240,7 @@ class _RoleBasedHomeScreenState extends State<RoleBasedHomeScreen> {
         } else if (index == 2) {
           context.push('/employees');
         } else if (index == 3) {
-          context.push('/branches/central-kitchen');
+          context.push('/operations');
         } else if (index == 4) {
           context.push('/profile');
         }

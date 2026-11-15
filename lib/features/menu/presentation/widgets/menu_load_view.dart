@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 String menuErrorMessage(Object error) {
   if (error is FormatException) return error.message;
   if (error is TimeoutException || error is http.ClientException) {
-    return 'تعذر الاتصال بخدمة القائمة. تأكد من تشغيل الخدمة ثم أعد المحاولة.';
+    return 'تعذر الاتصال بالخدمة. تأكد من الاتصال ثم أعد المحاولة.';
   }
   return 'تعذر إتمام العملية. أعد المحاولة.';
 }

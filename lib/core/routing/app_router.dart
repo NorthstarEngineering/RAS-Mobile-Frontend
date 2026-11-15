@@ -1,3 +1,4 @@
+import '../../features/operations/operations_screen.dart';
 import '../../features/menu/presentation/screens/master_menu_screen.dart';
 import '../../features/menu/presentation/screens/menu_categories_screen.dart';
 import '../../features/menu/presentation/screens/create_edit_menu_item_screen.dart';
@@ -60,6 +61,18 @@ final appRouter = GoRouter(
     return null;
   },
   routes: [
+    GoRoute(
+      path: '/operations',
+      builder: (context, state) =>
+          const MobileViewport(child: OperationsHome()),
+    ),
+    GoRoute(
+      path: '/operations/:module',
+      builder: (context, state) => MobileViewport(
+        child: OperationsScreen(module: state.pathParameters['module']!),
+      ),
+    ),
+
     GoRoute(
       path: '/under-development',
       name: 'under-development',
