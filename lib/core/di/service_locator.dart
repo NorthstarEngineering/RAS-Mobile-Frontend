@@ -1,3 +1,4 @@
+import '../../features/menu/data/repositories/api_item_cost_repository.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -58,6 +59,14 @@ Future<void> initServiceLocator() async {
       ),
     );
   });
+  const costUrl = String.fromEnvironment('RAS_COST_API_BASE_URL');
+  if (costUrl.isNotEmpty) {
+    sl.registerLazySingleton(
+      () => ApiItemCostRepository(
+        AuthenticatedApi(sl<AuthenticatedApi>().auth, baseUrl: costUrl),
+      ),
+    );
+  }
   sl.registerLazySingleton<PricingRepository>(() => MockPricingRepository());
 
   // UseCases

@@ -1,3 +1,4 @@
+import '../widgets/menu_item_cost_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/di/service_locator.dart';
@@ -72,6 +73,8 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
       ),
       if (item.description.isNotEmpty)
         ListTile(title: const Text('الوصف'), subtitle: Text(item.description)),
+      if (sl<AuthBloc>().state.session?.role == StaffRole.ceo)
+        MenuItemCostPanel(itemId: item.id),
       if (sl<AuthBloc>().state.session?.role == StaffRole.ceo)
         FilledButton.icon(
           onPressed: _edit,
