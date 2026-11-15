@@ -552,7 +552,7 @@ class _RoleBasedHomeScreenState extends State<RoleBasedHomeScreen> {
                         ),
                         _ScreenItem(
                           'MENU-03: تفاصيل الصنف والمكونات',
-                          '/menu/item_1',
+                          '/menu',
                           Symbols.lunch_dining,
                         ),
                         _ScreenItem(
@@ -567,7 +567,7 @@ class _RoleBasedHomeScreenState extends State<RoleBasedHomeScreen> {
                         ),
                         _ScreenItem(
                           'MENU-06: مراجعة طلب تعديل الصنف',
-                          '/menu/requests/req_1',
+                          '/menu/requests',
                           Symbols.assignment,
                         ),
                       ],

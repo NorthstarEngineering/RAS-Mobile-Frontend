@@ -1,3 +1,6 @@
+import '../../../auth/domain/entities/user_session.dart';
+import '../../../auth/presentation/bloc/auth_bloc.dart';
+import '../widgets/menu_load_view.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/di/service_locator.dart';
@@ -22,6 +25,7 @@ class _MasterMenuScreenState extends State<MasterMenuScreen> {
   String _selectedCategoryId = 'all';
   String _searchQuery = '';
   bool _isLoading = true;
+  Object? _loadError;
 
   @override
   void initState() {
@@ -30,16 +34,29 @@ class _MasterMenuScreenState extends State<MasterMenuScreen> {
   }
 
   Future<void> _loadData() async {
-    setState(() => _isLoading = true);
-    final items = await _repository.getMenuItems();
-    final categories = await _repository.getCategories();
-    if (mounted) {
-      setState(() {
-        _allItems = items;
-        _categories = categories;
-        _isLoading = false;
-      });
+    setState(() {
+      _isLoading = true;
+      _loadError = null;
+    });
+    try {
+      final items = await _repository.getMenuItems();
+      final categories = await _repository.getCategories();
+      if (!mounted) return;
+      _allItems = items;
+      _categories = categories;
+      if (!_categories.any((c) => c.id == _selectedCategoryId)) {
+        _selectedCategoryId = 'all';
+      }
+    } on Exception catch (error) {
+      if (mounted) _loadError = error;
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  Future<void> _open(String path) async {
+    await context.push(path);
+    if (mounted) await _loadData();
   }
 
   List<MenuItem> get _filteredItems {
@@ -51,8 +68,7 @@ class _MasterMenuScreenState extends State<MasterMenuScreen> {
           _searchQuery.isEmpty ||
           item.nameAr.contains(_searchQuery) ||
           item.nameEn.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          item.sku.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          item.barcode.contains(_searchQuery);
+          item.sku.toLowerCase().contains(_searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     }).toList();
   }
@@ -69,12 +85,12 @@ class _MasterMenuScreenState extends State<MasterMenuScreen> {
           IconButton(
             icon: const Icon(Icons.inbox_outlined),
             tooltip: 'طلبات الأصناف',
-            onPressed: () => context.push('/menu/requests'),
+            onPressed: () => _open('/menu/requests'),
           ),
           IconButton(
             icon: const Icon(Icons.category_outlined),
             tooltip: 'إدارة الفئات',
-            onPressed: () => context.push('/menu/categories'),
+            onPressed: () => _open('/menu/categories'),
           ),
         ],
       ),
@@ -82,6 +98,8 @@ class _MasterMenuScreenState extends State<MasterMenuScreen> {
           ? const Center(
               child: CircularProgressIndicator(color: AppColors.primary),
             )
+          : _loadError != null
+          ? MenuErrorView(error: _loadError!, onRetry: _loadData)
           : RefreshIndicator(
               onRefresh: _loadData,
               color: AppColors.primary,
@@ -128,21 +146,22 @@ class _MasterMenuScreenState extends State<MasterMenuScreen> {
                             ),
                           ],
                         ),
-                        ElevatedButton.icon(
-                          onPressed: () => context.push('/menu/create'),
-                          icon: const Icon(Icons.add, size: 18),
-                          label: const Text('إضافة صنف'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                AppDimens.radiusXl,
+                        if (sl<AuthBloc>().state.session?.role == StaffRole.ceo)
+                          ElevatedButton.icon(
+                            onPressed: () => _open('/menu/create'),
+                            icon: const Icon(Icons.add, size: 18),
+                            label: const Text('إضافة صنف'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  AppDimens.radiusXl,
+                                ),
                               ),
+                              elevation: 0,
                             ),
-                            elevation: 0,
                           ),
-                        ),
                       ],
                     ),
                     const SizedBox(height: AppDimens.paddingMd),
@@ -198,7 +217,7 @@ class _MasterMenuScreenState extends State<MasterMenuScreen> {
                             ],
                           ),
                           TextButton.icon(
-                            onPressed: () => context.push('/menu/categories'),
+                            onPressed: () => _open('/menu/categories'),
                             icon: const Icon(Icons.arrow_back, size: 14),
                             label: const Text('الفئات'),
                             style: TextButton.styleFrom(
@@ -227,7 +246,7 @@ class _MasterMenuScreenState extends State<MasterMenuScreen> {
                       child: TextField(
                         onChanged: (val) => setState(() => _searchQuery = val),
                         decoration: InputDecoration(
-                          hintText: 'بحث بالاسم، الكود، أو الباركود...',
+                          hintText: 'بحث بالاسم أو الكود...',
                           hintStyle: AppTypography.bodySm.copyWith(
                             color: AppColors.onSurfaceVariant.withValues(
                               alpha: 0.7,
@@ -236,21 +255,6 @@ class _MasterMenuScreenState extends State<MasterMenuScreen> {
                           prefixIcon: const Icon(
                             Icons.search,
                             color: AppColors.onSurfaceVariant,
-                          ),
-                          suffixIcon: IconButton(
-                            icon: const Icon(
-                              Icons.qr_code_scanner,
-                              color: AppColors.primary,
-                            ),
-                            onPressed: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'ماسح الباركود متصل وجاهز للعمل',
-                                  ),
-                                ),
-                              );
-                            },
                           ),
                           border: InputBorder.none,
                           contentPadding: const EdgeInsets.symmetric(
@@ -271,7 +275,7 @@ class _MasterMenuScreenState extends State<MasterMenuScreen> {
                           ..._categories.map(
                             (cat) => _buildFilterChip(
                               cat.id,
-                              '${cat.nameAr} (${cat.itemsCount})',
+                              '${cat.nameAr} (${_allItems.where((item) => item.categoryId == cat.id).length})',
                             ),
                           ),
                         ],
@@ -385,7 +389,7 @@ class _MasterMenuScreenState extends State<MasterMenuScreen> {
 
   Widget _buildMenuItemCard(MenuItem item) {
     return InkWell(
-      onTap: () => context.push('/menu/${item.id}'),
+      onTap: () => _open('/menu/${item.id}'),
       borderRadius: BorderRadius.circular(AppDimens.radiusXl),
       child: Container(
         padding: const EdgeInsets.all(AppDimens.paddingMd),
