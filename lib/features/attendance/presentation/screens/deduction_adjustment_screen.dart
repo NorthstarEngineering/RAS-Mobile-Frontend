@@ -21,7 +21,6 @@ class DeductionAdjustmentScreen extends StatefulWidget {
 class _DeductionAdjustmentScreenState extends State<DeductionAdjustmentScreen> {
   late final TextEditingController _amountController;
   final _reasonController = TextEditingController();
-  bool _isLoading = false;
   String _presetReason = 'traffic'; // traffic, medical, official
 
   @override
@@ -52,20 +51,14 @@ class _DeductionAdjustmentScreenState extends State<DeductionAdjustmentScreen> {
     });
   }
 
-  void _onSave() async {
-    setState(() => _isLoading = true);
-    await Future<void>.delayed(const Duration(milliseconds: 600));
-    if (!mounted) return;
-    setState(() => _isLoading = false);
-
+  void _onSave() {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('تم اعتماد تعديل الخصم الإداري وتحديث كشف الراتب.'),
-        backgroundColor: AppColors.success,
-        behavior: SnackBarBehavior.floating,
+        content: Text(
+          'لم يُحفظ التعديل. معرّف الخصم الفعلي غير متاح في شاشة الحضور الحالية.',
+        ),
       ),
     );
-    context.pop();
   }
 
   @override
@@ -262,7 +255,6 @@ class _DeductionAdjustmentScreenState extends State<DeductionAdjustmentScreen> {
                       label: 'اعتماد تعديل الخصم الإداري',
                       loadingLabel: 'جاري الاعتماد...',
                       icon: Symbols.check,
-                      isLoading: _isLoading,
                       onPressed: _onSave,
                     ),
                   ],

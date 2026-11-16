@@ -191,9 +191,7 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/branches/central-kitchen',
       name: 'central-kitchen',
-      builder: (context, state) => const MobileViewport(
-        child: UnderDevelopmentScreen(feature: 'عمليات المطبخ المركزي'),
-      ),
+      redirect: (context, state) => '/operations/supply',
     ),
     GoRoute(
       path: '/branches/:id',
