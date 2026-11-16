@@ -18,7 +18,9 @@ class OperationsHome extends StatelessWidget {
       children: [
         for (final (route, title) in const [
           ('sales', 'المبيعات والورديات'),
-          ('inventory', 'الخامات وحركات المخزون'),
+          ('inventory', 'دليل الخامات'),
+          ('stock', 'مخزون الفروع'),
+          ('reports', 'التقارير وسجل التدقيق'),
           ('supply', 'طلبات التوريد'),
           ('transfers', 'التحويلات بين الفروع'),
         ])
@@ -44,7 +46,15 @@ class OperationsScreen extends StatelessWidget {
         'المبيعات والورديات',
         const String.fromEnvironment('RAS_SALES_API_BASE_URL'),
       ),
-      'inventory' => ('الخامات وحركات المخزون', supplyUrl),
+      'inventory' => ('دليل الخامات', supplyUrl),
+      'stock' => (
+        'مخزون الفروع',
+        const String.fromEnvironment('RAS_STOCK_API_BASE_URL'),
+      ),
+      'reports' => (
+        'التقارير وسجل التدقيق',
+        const String.fromEnvironment('RAS_REPORTS_API_BASE_URL'),
+      ),
       'supply' => ('طلبات التوريد', supplyUrl),
       'transfers' => (
         'التحويلات بين الفروع',
@@ -79,6 +89,8 @@ class OperationsScreen extends StatelessWidget {
     final operations = switch (module) {
       'sales' => api.sales,
       'inventory' => api.inventory,
+      'stock' => api.stock,
+      'reports' => api.reports,
       'supply' => api.supply,
       'transfers' => api.transfers,
       _ => const <Operation>[],
@@ -216,6 +228,17 @@ class _OperationFormState extends State<OperationForm> {
 
 String _label(String key) =>
     const {
+      '': 'الكل',
+      'AVAILABLE': 'متوفر',
+      'LOW': 'منخفض',
+      'CRITICAL': 'حرج',
+      'min_stock': 'حد الأمان',
+      'max_stock': 'السعة القصوى',
+      'location_code': 'مكان التخزين',
+      'reorder_level': 'حد إعادة الطلب',
+      'unit_cost': 'تكلفة الوحدة',
+      'quantity_before': 'الرصيد قبل الحركة',
+      'quantity_after': 'الرصيد بعد الحركة',
       'id': 'المعرّف',
       'name': 'الاسم',
       'code': 'الرقم',

@@ -4,7 +4,7 @@ import '../auth/domain/entities/user_session.dart';
 typedef Fields = Map<String, Object?>;
 typedef OperationCall = Future<Object?> Function(Fields fields);
 
-enum InputKind { text, id, positive, nonnegative, number, lines }
+enum InputKind { text, id, positive, nonnegative, number, lines, date }
 
 class OperationField {
   const OperationField(
@@ -39,8 +39,17 @@ class OperationField {
       InputKind.nonnegative ||
       InputKind.number => _parseNumber(input),
       InputKind.lines => _parseRows(input),
+      InputKind.date => _parseDate(input),
       InputKind.text => input,
     };
+  }
+
+  String _parseDate(String input) {
+    final date = DateTime.tryParse(input);
+    if (date == null || date.toIso8601String().split('T').first != input) {
+      throw FormatException('تاريخ $label غير صالح');
+    }
+    return input;
   }
 
   String _parseId(String input) {
@@ -117,6 +126,23 @@ const _amount = OperationField(
   'قيمة الخصم',
   kind: InputKind.positive,
 );
+
+const _search = OperationField('q', 'بحث', optional: true);
+const _page = OperationField('page', 'رقم الصفحة', initial: '1');
+const _dates = [
+  OperationField(
+    'from',
+    'من تاريخ (YYYY-MM-DD)',
+    kind: InputKind.date,
+    optional: true,
+  ),
+  OperationField(
+    'to',
+    'إلى تاريخ (YYYY-MM-DD)',
+    kind: InputKind.date,
+    optional: true,
+  ),
+];
 
 class OperationsApi {
   const OperationsApi(this._api, this._session);
@@ -206,10 +232,18 @@ class OperationsApi {
   ];
 
   List<Operation> get inventory => [
-    Operation('الخامات', [], (_) => _api.get('/api/v1/inventory/goods')),
-    Operation('تفاصيل خامة', [
-      _good,
-    ], (f) => _api.get('/api/v1/inventory/goods/${_id(f, 'good_id')}')),
+    Operation(
+      'الخامات',
+      [],
+      (_) => _api.get('/api/v1/central-kitchen/inventory/goods'),
+    ),
+    Operation(
+      'تفاصيل خامة',
+      [_good],
+      (f) => _api.get(
+        '/api/v1/central-kitchen/inventory/goods/${_id(f, 'good_id')}',
+      ),
+    ),
     if (_ceo)
       Operation(
         'إضافة خامة',
@@ -239,34 +273,194 @@ class OperationsApi {
             optional: true,
           ),
         ],
-        (f) => _api.post('/api/v1/inventory/goods', f),
+        (f) => _api.post('/api/v1/central-kitchen/inventory/goods', f),
         changesData: true,
       ),
+  ];
+
+  static const _stock = '/api/v1/stock';
+  static const _reports = '/api/v1/reports';
+
+  List<Operation> get stock => [
+    Operation('أرصدة الخامات', [
+      ..._branchFields,
+      _search,
+      const OperationField('category', 'التصنيف', optional: true),
+      const OperationField(
+        'status',
+        'حالة الرصيد',
+        optional: true,
+        choices: ['', 'AVAILABLE', 'LOW', 'CRITICAL'],
+      ),
+      _page,
+    ], (f) => _api.get(_withQuery(_stock, f))),
     Operation(
-      'تسجيل حركة مخزون',
+      'ملخص رصيد الفرع',
+      _branchFields,
+      (f) => _api.get(_withQuery('$_stock/summary', f)),
+    ),
+    Operation('تفاصيل رصيد خامة', [
+      ..._branchFields,
+      _good,
+    ], (f) => _api.get(_stockItem(f))),
+    Operation(
+      'تعديل إعدادات الرصيد',
       [
         ..._branchFields,
         _good,
         const OperationField(
-          'type',
-          'نوع الحركة',
-          choices: ['IN', 'OUT', 'ADJUSTMENT'],
-          initial: 'IN',
+          'min_stock',
+          'حد الأمان',
+          kind: InputKind.nonnegative,
+          optional: true,
         ),
-        _quantity,
-        _reason,
+        const OperationField(
+          'reorder_level',
+          'حد إعادة الطلب',
+          kind: InputKind.nonnegative,
+          optional: true,
+        ),
+        const OperationField(
+          'max_stock',
+          'السعة القصوى',
+          kind: InputKind.nonnegative,
+          optional: true,
+        ),
+        const OperationField('location_code', 'مكان التخزين', optional: true),
       ],
-      (f) => _api.post('/api/v1/inventory/movements', {
-        ...f,
-        'branch_id': _branchId(f),
-        'actor_id': _session.id,
-      }),
+      _updateStockSettings,
       changesData: true,
+    ),
+    _movement('إضافة للمخزون', 'IN'),
+    _movement('صرف من المخزون', 'OUT'),
+    _movement('تسوية الرصيد', 'ADJUSTMENT'),
+    Operation('سجل حركات المخزون', [
+      ..._movementFilters,
+      _page,
+    ], (f) => _api.get(_withQuery('$_stock/movements', f))),
+    Operation(
+      'ملخص حركات المخزون',
+      _movementFilters,
+      (f) => _api.get(_withQuery('$_stock/movements/summary', f)),
+    ),
+    Operation(
+      'قيمة مخزون الفرع',
+      _branchFields,
+      (f) => _api.get(_withQuery('$_stock/value', f)),
     ),
   ];
 
+  List<OperationField> get _movementFilters => [
+    ..._branchFields,
+    _search,
+    ..._dates,
+    const OperationField(
+      'good_id',
+      'معرّف الخامة',
+      kind: InputKind.id,
+      optional: true,
+    ),
+    const OperationField(
+      'type',
+      'نوع الحركة',
+      optional: true,
+      choices: ['', 'IN', 'OUT', 'ADJUSTMENT'],
+    ),
+  ];
+
+  Operation _movement(String title, String type) => Operation(
+    title,
+    [
+      ..._branchFields,
+      _good,
+      if (type == 'ADJUSTMENT')
+        const OperationField(
+          'quantity',
+          'الرصيد الفعلي بعد التسوية',
+          kind: InputKind.nonnegative,
+        )
+      else
+        _quantity,
+      if (type == 'IN')
+        const OperationField(
+          'unit_cost',
+          'تكلفة الوحدة',
+          kind: InputKind.nonnegative,
+          optional: true,
+        )
+      else
+        _reason,
+      const OperationField(
+        'expected_quantity_before',
+        'الرصيد المتوقع قبل الحركة',
+        kind: InputKind.nonnegative,
+        optional: true,
+      ),
+    ],
+    (f) => _api.post('$_stock/movements', {...f, 'type': type}),
+    changesData: true,
+  );
+
+  String _stockItem(Fields fields, {String suffix = ''}) => _withQuery(
+    '$_stock/items/${_id(fields, 'good_id')}$suffix',
+    {if (fields.containsKey('branch_id')) 'branch_id': fields['branch_id']},
+  );
+
+  Future<Object?> _updateStockSettings(Fields fields) {
+    final body = Map<String, Object?>.of(fields)
+      ..remove('branch_id')
+      ..remove('good_id');
+    if (body.isEmpty) {
+      throw const FormatException('أدخل إعدادًا واحدًا على الأقل');
+    }
+    return _api.patch(_stockItem(fields, suffix: '/settings'), body);
+  }
+
+  String _withQuery(String path, Fields fields) {
+    if (fields.isEmpty) return path;
+    return Uri(
+      path: path,
+      queryParameters: fields.map(
+        (key, value) => MapEntry(
+          key,
+          key == 'page' ? _positivePage(value).toString() : value.toString(),
+        ),
+      ),
+    ).toString();
+  }
+
+  List<OperationField> get _reportBranchFields => [
+    if (_ceo)
+      const OperationField(
+        'branch_id',
+        'معرّف الفرع (اختياري)',
+        kind: InputKind.id,
+        optional: true,
+      ),
+  ];
+
+  List<Operation> get reports => [
+    _report('تقرير المبيعات', 'sales', [..._reportBranchFields, ..._dates]),
+    _report('تقرير المخزون', 'inventory', _reportBranchFields),
+    _report('تقرير الحضور', 'attendance', [..._reportBranchFields, ..._dates]),
+    if (_ceo) ...[
+      _report('الطلبات المنتظرة للموافقة', 'approvals', _reportBranchFields),
+      _report('سجل التدقيق', 'audit', const [
+        OperationField('action', 'العملية', optional: true),
+        OperationField('entity_type', 'نوع السجل', optional: true),
+      ]),
+    ],
+  ];
+
+  Operation _report(String title, String route, List<OperationField> fields) =>
+      Operation(
+        title,
+        fields,
+        (f) => _api.get(_withQuery('$_reports/$route', f)),
+      );
+
   Future<Object?> _listSupply() async {
-    final rows = await _api.get('/api/v1/supply/requests');
+    final rows = await _api.get('/api/v1/central-kitchen/supply/requests');
     if (rows is! List) {
       throw const FormatException('استجابة طلبات التوريد غير صالحة');
     }
@@ -280,10 +474,10 @@ class OperationsApi {
 
   Future<Object?> _supplyAction(String action, Fields fields) {
     final body = Map<String, Object?>.of(fields)..remove('id');
-    return _api.patch('/api/v1/supply/requests/${_id(fields, 'id')}/$action', {
-      ...body,
-      'actor_role': _role,
-    });
+    return _api.patch(
+      '/api/v1/central-kitchen/supply/requests/${_id(fields, 'id')}/$action',
+      {...body, 'actor_role': _role},
+    );
   }
 
   List<Operation> get supply => [
@@ -308,7 +502,7 @@ class OperationsApi {
           ],
         ),
       ],
-      (f) => _api.post('/api/v1/supply/requests', {
+      (f) => _api.post('/api/v1/central-kitchen/supply/requests', {
         ...f,
         'branch_id': _branchId(f),
       }),

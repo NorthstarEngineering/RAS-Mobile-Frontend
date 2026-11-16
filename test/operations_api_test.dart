@@ -28,6 +28,57 @@ Future<AuthenticatedApi> connect(http.Client client) async {
 
 void main() {
   test(
+    'a zero-count stock adjustment uses the stock gateway and returns the new balance',
+    () async {
+      final api = await connect(
+        MockClient((request) async {
+          expect(request.url.path, '/api/v1/stock/movements');
+          expect(jsonDecode(request.body), {
+            'good_id': itemId,
+            'quantity': 0,
+            'reason': 'Count',
+            'type': 'ADJUSTMENT',
+          });
+          return http.Response('{"quantity_after":"0"}', 201);
+        }),
+      );
+      final op = OperationsApi(
+        api,
+        account,
+      ).stock.singleWhere((op) => op.title == 'تسوية الرصيد');
+      final quantity = op.fields.singleWhere((f) => f.key == 'quantity');
+      expect(
+        await op.run({
+          'good_id': itemId,
+          'quantity': quantity.parse('0'),
+          'reason': 'Count',
+        }),
+        {'quantity_after': '0'},
+      );
+    },
+  );
+
+  test(
+    'branch manager can filter attendance reports and cannot open CEO audit',
+    () async {
+      final api = await connect(
+        MockClient((request) async {
+          expect(request.url.path, '/api/v1/reports/attendance');
+          expect(request.url.queryParameters, {'from': '2026-11-01'});
+          return http.Response('{"total":2}', 200);
+        }),
+      );
+      final reports = OperationsApi(api, account).reports;
+      expect(
+        reports.map((entry) => entry.title),
+        isNot(contains('سجل التدقيق')),
+      );
+      final report = reports.singleWhere((op) => op.title == 'تقرير الحضور');
+      expect(await report.run({'from': '2026-11-01'}), {'total': 2});
+    },
+  );
+
+  test(
     'branch manager opens a shift for their own branch and account',
     () async {
       final api = await connect(
@@ -102,7 +153,7 @@ void main() {
     () async {
       final api = await connect(
         MockClient((request) async {
-          expect(request.url.path, '/api/v1/supply/requests');
+          expect(request.url.path, '/api/v1/central-kitchen/supply/requests');
           return http.Response(
             jsonEncode([
               {'id': 'own', 'branch_id': branchId},
