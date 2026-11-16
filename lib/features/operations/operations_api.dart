@@ -235,7 +235,8 @@ class OperationsApi {
     Operation(
       'الخامات',
       [],
-      (_) => _api.get('/api/v1/central-kitchen/inventory/goods'),
+      (_) async =>
+          await _api.get('/api/v1/central-kitchen/inventory/goods') ?? const [],
     ),
     Operation(
       'تفاصيل خامة',

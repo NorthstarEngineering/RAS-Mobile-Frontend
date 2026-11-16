@@ -1,3 +1,10 @@
+import 'dart:convert';
+
+import '../../../../core/di/service_locator.dart';
+import '../../../../core/network/authenticated_api.dart';
+import '../bloc/auth_bloc.dart';
+import '../bloc/auth_event.dart';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -20,7 +27,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   bool _obscureCurrent = true;
   bool _obscureNew = true;
   bool _obscureConfirm = true;
-  bool _logoutOtherDevices = true;
   bool _isLoading = false;
 
   @override
@@ -31,22 +37,39 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     super.dispose();
   }
 
-  void _handleSubmit() {
-    if (!_formKey.currentState!.validate()) return;
+  Future<void> _handleSubmit() async {
+    if (_isLoading || !_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
-
-    Future.delayed(const Duration(milliseconds: 900), () {
-      if (mounted) {
-        setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('تم تغيير كلمة المرور بنجاح وتحديث جلسة الأمان'),
-            backgroundColor: Color(0xFF2E8B2E),
+    try {
+      final session = await sl<AuthenticatedApi>().auth.changePassword(
+        currentPassword: _currentPasswordController.text,
+        newPassword: _newPasswordController.text,
+      );
+      final bloc = sl<AuthBloc>();
+      final updated = bloc.stream.firstWhere(
+        (state) => state.session == session,
+      );
+      bloc.add(SessionRestored(session));
+      await updated;
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('تم تغيير كلمة المرور')));
+      context.go('/home');
+    } on Exception catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            error is FormatException
+                ? error.message
+                : 'تعذر الاتصال لتغيير كلمة المرور',
           ),
-        );
-        context.pop();
-      }
-    });
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -234,7 +257,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 controller: _newPasswordController,
                 obscureText: _obscureNew,
                 decoration: InputDecoration(
-                  hintText: 'على الأقل 8 أحرف وأرقام',
+                  hintText: '10 خانات على الأقل وتشمل حروفًا وأرقامًا',
                   prefixIcon: const Icon(Icons.key_outlined),
                   suffixIcon: IconButton(
                     icon: Icon(
@@ -247,8 +270,13 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   ),
                 ),
                 validator: (val) {
-                  if (val == null || val.length < 8) {
-                    return 'يجب ألا تقل عن 8 خانات';
+                  final password = val ?? '';
+                  final length = utf8.encode(password).length;
+                  if (length < 10 ||
+                      length > 72 ||
+                      !RegExp(r'[A-Za-z]').hasMatch(password) ||
+                      !RegExp(r'[0-9]').hasMatch(password)) {
+                    return 'استخدم 10 إلى 72 بايت مع حرف إنجليزي ورقم';
                   }
                   return null;
                 },
@@ -288,30 +316,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 },
               ),
               const SizedBox(height: AppDimens.paddingMd),
-
-              // Security checkbox
-              CheckboxListTile(
-                value: _logoutOtherDevices,
-                contentPadding: EdgeInsets.zero,
-                controlAffinity: ListTileControlAffinity.leading,
-                title: Text(
-                  'تسجيل الخروج من كافة الأجهزة الأخرى',
-                  style: AppTypography.labelSm.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                subtitle: Text(
-                  'إنهاء جلسات الكاشير والهواتف المتصلة بحسابك فورياً',
-                  style: AppTypography.bodySm.copyWith(
-                    color: AppColors.secondary,
-                    fontSize: 11,
-                  ),
-                ),
-                activeColor: AppColors.primary,
-                onChanged: (val) =>
-                    setState(() => _logoutOtherDevices = val ?? true),
-              ),
-              const SizedBox(height: AppDimens.paddingLg),
 
               // Action button
               ElevatedButton(

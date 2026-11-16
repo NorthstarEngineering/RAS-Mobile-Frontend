@@ -52,7 +52,15 @@ final appRouter = GoRouter(
     final path = state.uri.path;
     final isPublic =
         path == '/splash' || path == '/login' || path.startsWith('/auth/');
-    final isAuthenticated = sl<AuthBloc>().state.isAuthenticated;
+    final auth = sl<AuthBloc>().state;
+    final isAuthenticated = auth.isAuthenticated;
+    if (isAuthenticated &&
+        auth.session?.mustChangePassword == true &&
+        path != '/auth/change-password' &&
+        path != '/splash') {
+      return '/auth/change-password';
+    }
+    if (path == '/auth/change-password' && !isAuthenticated) return '/login';
     if (!isPublic && !isAuthenticated) return '/login';
     if (path == '/login' && isAuthenticated) return '/home';
     if (path.startsWith('/pricing')) {

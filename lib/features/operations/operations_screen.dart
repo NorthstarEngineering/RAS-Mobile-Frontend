@@ -6,6 +6,8 @@ import '../../core/network/authenticated_api.dart';
 import '../auth/domain/entities/user_session.dart';
 import '../auth/presentation/bloc/auth_bloc.dart';
 import '../menu/presentation/widgets/menu_load_view.dart';
+import '../branches/domain/entities/branch.dart';
+import '../branches/domain/repositories/branch_repository.dart';
 import 'operations_api.dart';
 
 class OperationsHome extends StatelessWidget {
@@ -124,6 +126,74 @@ class _OperationFormState extends State<OperationForm> {
   late final Map<String, String> _values = {
     for (final field in widget.operation.fields) field.key: field.initial,
   };
+  Future<List<Branch>>? _branches;
+
+  bool _isBranchField(OperationField field) => const {
+    'branch_id',
+    'source_branch_id',
+    'dest_branch_id',
+  }.contains(field.key);
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.operation.fields.any(_isBranchField)) {
+      _branches = sl<BranchRepository>().getBranches();
+    }
+  }
+
+  Widget _branchInput(OperationField field, bool enabled) =>
+      FutureBuilder<List<Branch>>(
+        future: _branches,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Column(
+              children: [
+                _textInput(field, enabled),
+                TextButton(
+                  onPressed: enabled
+                      ? () => setState(() {
+                          _branches = sl<BranchRepository>().getBranches();
+                        })
+                      : null,
+                  child: const Text('إعادة تحميل الفروع'),
+                ),
+              ],
+            );
+          }
+          if (!snapshot.hasData) {
+            return const LinearProgressIndicator();
+          }
+          final branches = snapshot.data!;
+          if (branches.isEmpty) {
+            return const ListTile(
+              title: Text('مفيش فروع متاحة. أضف فرع من شاشة الفروع أولًا.'),
+            );
+          }
+          final current = _values[field.key];
+          return DropdownButtonFormField<String>(
+            initialValue: branches.any((branch) => branch.id == current)
+                ? current
+                : field.optional
+                ? ''
+                : null,
+            isExpanded: true,
+            decoration: InputDecoration(
+              labelText: field.label.replaceFirst('معرّف ', ''),
+            ),
+            items: [
+              if (field.optional)
+                const DropdownMenuItem(value: '', child: Text('كل الفروع')),
+              for (final branch in branches)
+                DropdownMenuItem(value: branch.id, child: Text(branch.name)),
+            ],
+            onChanged: enabled
+                ? (value) => _values[field.key] = value ?? ''
+                : null,
+          );
+        },
+      );
+
   bool _busy = false;
   bool _completed = false;
   Object? _response;
@@ -195,7 +265,9 @@ class _OperationFormState extends State<OperationForm> {
 
   Widget _input(OperationField field, bool enabled) => Padding(
     padding: const EdgeInsets.only(bottom: 12),
-    child: field.choices.isNotEmpty
+    child: _isBranchField(field) && _branches != null
+        ? _branchInput(field, enabled)
+        : field.choices.isNotEmpty
         ? DropdownButtonFormField<String>(
             initialValue: field.initial,
             decoration: InputDecoration(labelText: field.label),
@@ -209,20 +281,22 @@ class _OperationFormState extends State<OperationForm> {
                 .toList(),
             onChanged: enabled ? (value) => _values[field.key] = value! : null,
           )
-        : TextFormField(
-            initialValue: field.initial,
-            enabled: enabled,
-            minLines: field.kind == InputKind.lines ? 3 : 1,
-            maxLines: field.kind == InputKind.lines ? 7 : 1,
-            decoration: InputDecoration(
-              labelText: field.label,
-              helperMaxLines: 3,
-              helperText: field.columns.isEmpty
-                  ? null
-                  : 'كل بند في سطر. افصل الخانات بفاصلة: ${field.columns.map((column) => column.label).join('، ')}',
-            ),
-            onChanged: (value) => _values[field.key] = value,
-          ),
+        : _textInput(field, enabled),
+  );
+
+  Widget _textInput(OperationField field, bool enabled) => TextFormField(
+    initialValue: field.initial,
+    enabled: enabled,
+    minLines: field.kind == InputKind.lines ? 3 : 1,
+    maxLines: field.kind == InputKind.lines ? 7 : 1,
+    decoration: InputDecoration(
+      labelText: field.label,
+      helperMaxLines: 3,
+      helperText: field.columns.isEmpty
+          ? null
+          : 'كل بند في سطر. افصل الخانات بفاصلة: ${field.columns.map((column) => column.label).join('، ')}',
+    ),
+    onChanged: (value) => _values[field.key] = value,
   );
 }
 

@@ -28,6 +28,56 @@ Future<AuthenticatedApi> connect(http.Client client) async {
 
 void main() {
   test(
+    'first-login password rotation persists the new unrestricted session',
+    () async {
+      Map<String, Object?> profile(bool requiresChange) => {
+        'id': itemId,
+        'name': account.name,
+        'email': account.email,
+        'role': 'CEO',
+        'must_change_password': requiresChange,
+      };
+      final auth = ApiAuthRepository(
+        client: MockClient((request) async {
+          final changing = request.url.path.endsWith('/change-password');
+          if (changing) {
+            expect(request.headers['authorization'], 'Bearer restricted');
+            expect(jsonDecode(request.body), {
+              'current_password': 'temporary1',
+              'new_password': 'replacement2',
+            });
+          }
+          return http.Response(
+            jsonEncode({
+              'access_token': changing ? 'new-token' : 'restricted',
+              'refresh_token': changing ? 'new-refresh' : 'old-refresh',
+              'user': profile(!changing),
+            }),
+            200,
+          );
+        }),
+        baseUrl: 'https://auth.test',
+      );
+      final initial = await auth.login(
+        identifier: account.email,
+        password: 'temporary1',
+      );
+      expect(initial.mustChangePassword, isTrue);
+      expect(
+        UserSession.fromStorage(initial.toStorage()).mustChangePassword,
+        isTrue,
+      );
+      final updated = await auth.changePassword(
+        currentPassword: 'temporary1',
+        newPassword: 'replacement2',
+      );
+      expect(updated.mustChangePassword, isFalse);
+      expect(await auth.getCurrentSession(), updated);
+      expect((await auth.authHeaders())['authorization'], 'Bearer new-token');
+    },
+  );
+
+  test(
     'a zero-count stock adjustment uses the stock gateway and returns the new balance',
     () async {
       final api = await connect(

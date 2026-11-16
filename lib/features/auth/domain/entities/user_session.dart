@@ -21,6 +21,7 @@ class UserSession extends Equatable {
     this.refreshToken = '',
     this.branchId = '',
     this.branchName = '',
+    this.mustChangePassword = false,
   });
 
   final String id;
@@ -31,6 +32,7 @@ class UserSession extends Equatable {
   final String refreshToken;
   final String branchId;
   final String branchName;
+  final bool mustChangePassword;
 
   Map<String, String> toStorage() => {
     'id': id,
@@ -41,6 +43,7 @@ class UserSession extends Equatable {
     'refreshToken': refreshToken,
     'branchId': branchId,
     'branchName': branchName,
+    'mustChangePassword': mustChangePassword.toString(),
   };
 
   factory UserSession.fromStorage(Map<String, String> values) => UserSession(
@@ -55,6 +58,7 @@ class UserSession extends Equatable {
     refreshToken: values['refreshToken'] ?? '',
     branchId: values['branchId'] ?? '',
     branchName: values['branchName'] ?? '',
+    mustChangePassword: values['mustChangePassword'] == 'true',
   );
 
   @override
@@ -67,5 +71,6 @@ class UserSession extends Equatable {
     refreshToken,
     branchId,
     branchName,
+    mustChangePassword,
   ];
 }

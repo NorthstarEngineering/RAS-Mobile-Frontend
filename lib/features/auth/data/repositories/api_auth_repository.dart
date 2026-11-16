@@ -122,6 +122,34 @@ class ApiAuthRepository implements AuthRepository {
     };
   }
 
+  Future<UserSession> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    final response = await _client
+        .post(
+          Uri.parse('$baseUrl/api/v1/auth/change-password'),
+          headers: await authHeaders(),
+          body: jsonEncode({
+            'current_password': currentPassword,
+            'new_password': newPassword,
+          }),
+        )
+        .timeout(const Duration(seconds: 20));
+    final payload = _decode(response);
+    if (response.statusCode != 200) {
+      throw FormatException(_message(payload, 'تعذر تغيير كلمة المرور'));
+    }
+    final session = _sessionFrom(payload);
+    if (session.token.isEmpty || session.mustChangePassword) {
+      throw const FormatException(
+        'السيرفر لم يرجع جلسة صالحة بعد تغيير كلمة المرور',
+      );
+    }
+    await persistSession(session);
+    return session;
+  }
+
   Future<void> refreshForApi() => _refreshSession();
 
   Future<void> _refreshSession() async {
@@ -269,6 +297,7 @@ class ApiAuthRepository implements AuthRepository {
       token: '${data['access_token'] ?? ''}',
       refreshToken: '${data['refresh_token'] ?? ''}',
       branchId: '${user['branch_id'] ?? ''}',
+      mustChangePassword: user['must_change_password'] == true,
       branchName: '${user['branch_name'] ?? ''}',
     );
   }
