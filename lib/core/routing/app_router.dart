@@ -37,6 +37,7 @@ import '../../features/overtime/domain/entities/overtime_record.dart';
 import '../../features/overtime/presentation/screens/create_overtime_screen.dart';
 import '../../features/overtime/presentation/screens/overtime_list_screen.dart';
 import '../../features/overtime/presentation/screens/overtime_review_screen.dart';
+import '../../features/cost_reports/presentation/screens/cost_screens.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/splash',
@@ -409,6 +410,48 @@ final appRouter = GoRouter(
       name: 'preview',
       builder: (context, state) =>
           const MobileViewport(child: DesignSystemPreviewScreen()),
+    ),
+    GoRoute(
+      path: '/cost/cogs',
+      name: 'cost-cogs',
+      builder: (context, state) =>
+          const MobileViewport(child: CogsReportScreen()),
+    ),
+    GoRoute(
+      path: '/cost/gross-profit',
+      name: 'cost-gross-profit',
+      builder: (context, state) =>
+          const MobileViewport(child: GrossProfitReportScreen()),
+    ),
+    GoRoute(
+      path: '/cost/recipe',
+      name: 'cost-recipe',
+      builder: (context, state) =>
+          const MobileViewport(child: RecipeCostScreen()),
+    ),
+    GoRoute(
+      path: '/cost/contribution',
+      name: 'cost-contribution',
+      builder: (context, state) =>
+          const MobileViewport(child: ContributionReportScreen()),
+    ),
+    GoRoute(
+      path: '/cost/variance',
+      name: 'cost-variance',
+      builder: (context, state) =>
+          const MobileViewport(child: ConsumptionVarianceScreen()),
+    ),
+    GoRoute(
+      path: '/cost/labor',
+      name: 'cost-labor',
+      builder: (context, state) =>
+          const MobileViewport(child: LaborCostReportScreen()),
+    ),
+    GoRoute(
+      path: '/cost/inventory',
+      name: 'cost-inventory',
+      builder: (context, state) =>
+          const MobileViewport(child: InventoryValueReportScreen()),
     ),
   ],
 );

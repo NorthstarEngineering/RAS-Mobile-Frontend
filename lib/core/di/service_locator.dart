@@ -16,6 +16,10 @@ import '../../features/menu/data/repositories/mock_menu_repository.dart';
 import '../../features/menu/domain/repositories/menu_repository.dart';
 import '../../features/pricing/data/repositories/mock_pricing_repository.dart';
 import '../../features/pricing/domain/repositories/pricing_repository.dart';
+import '../network/api_client.dart';
+import '../../features/cost_reports/domain/repositories/cost_repository.dart';
+import '../../features/cost_reports/data/repositories/http_cost_repository.dart';
+import '../../features/menu/data/repositories/api_item_cost_repository.dart';
 
 final sl = GetIt.instance;
 final getIt = sl;
@@ -45,6 +49,16 @@ Future<void> initServiceLocator() async {
   sl.registerLazySingleton(() => ApiOvertimeRepository(sl<AuthenticatedApi>()));
   sl.registerLazySingleton<MenuRepository>(() => MockMenuRepository());
   sl.registerLazySingleton<PricingRepository>(() => MockPricingRepository());
+  sl.registerLazySingleton<ApiClient>(() => ApiClient());
+  sl.registerLazySingleton<CostRepository>(
+    () => HttpCostRepository(apiClient: sl<ApiClient>()),
+  );
+  sl.registerLazySingleton<HttpCostRepository>(
+    () => sl<CostRepository>() as HttpCostRepository,
+  );
+  sl.registerLazySingleton<ApiItemCostRepository>(
+    () => ApiItemCostRepository(sl<AuthenticatedApi>()),
+  );
 
   // UseCases
   sl.registerLazySingleton(() => LoginUseCase(sl()));
