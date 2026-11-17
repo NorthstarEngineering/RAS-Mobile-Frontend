@@ -1,485 +1,228 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/di/service_locator.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_dimens.dart';
-import '../../../../core/theme/app_typography.dart';
+import '../../../auth/domain/entities/user_session.dart';
+import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../domain/entities/menu_category.dart';
 import '../../domain/entities/menu_item.dart';
 import '../../domain/repositories/menu_repository.dart';
+import '../widgets/menu_load_view.dart';
 
 class CreateEditMenuItemScreen extends StatefulWidget {
-  final String? itemId;
-
   const CreateEditMenuItemScreen({super.key, this.itemId});
-
+  final String? itemId;
   @override
   State<CreateEditMenuItemScreen> createState() =>
       _CreateEditMenuItemScreenState();
 }
 
 class _CreateEditMenuItemScreenState extends State<CreateEditMenuItemScreen> {
-  final MenuRepository _repository = getIt<MenuRepository>();
+  final _repository = sl<MenuRepository>();
   final _formKey = GlobalKey<FormState>();
-
-  late TextEditingController _nameArController;
-  late TextEditingController _nameEnController;
-  late TextEditingController _skuController;
-  late TextEditingController _barcodeController;
-  late TextEditingController _priceController;
-  late TextEditingController _costController;
-  late TextEditingController _kitchenStationController;
-
-  String? _selectedCategoryId;
-  bool _isActive = true;
-  bool _isLoading = true;
-  List<MenuCategory> _categories = [];
-
-  bool get isEdit => widget.itemId != null;
+  final _name = TextEditingController();
+  final _nameEn = TextEditingController();
+  final _sku = TextEditingController();
+  final _price = TextEditingController();
+  final _station = TextEditingController();
+  final _prepTime = TextEditingController(text: '0');
+  final _description = TextEditingController();
+  late Future<List<MenuCategory>> _initial;
+  String _categoryId = '';
+  bool _active = true;
+  bool _saving = false;
+  bool get _isEdit => widget.itemId != null;
 
   @override
   void initState() {
     super.initState();
-    _nameArController = TextEditingController();
-    _nameEnController = TextEditingController();
-    _skuController = TextEditingController();
-    _barcodeController = TextEditingController();
-    _priceController = TextEditingController();
-    _costController = TextEditingController();
-    _kitchenStationController = TextEditingController(
-      text: 'محطة البرجر واللحوم',
-    );
-    _loadInitialData();
+    _initial = _load();
   }
 
-  Future<void> _loadInitialData() async {
-    final cats = await _repository.getCategories();
-    MenuItem? item;
-    if (isEdit) {
-      item = await _repository.getMenuItemById(widget.itemId!);
+  Future<List<MenuCategory>> _load() async {
+    final categories = await _repository.getCategories();
+    if (_isEdit) {
+      final item = await _repository.getMenuItemById(widget.itemId!);
+      if (item == null) throw const FormatException('الصنف غير موجود');
+      if (!mounted) return categories;
+      _name.text = item.nameAr;
+      _nameEn.text = item.nameEn;
+      _sku.text = item.sku;
+      _price.text = item.price.toStringAsFixed(2);
+      _station.text = item.kitchenStation;
+      _prepTime.text = item.prepTimeMinutes.toString();
+      _description.text = item.description;
+      _categoryId = item.categoryId;
+      _active = item.isActive;
     }
-
-    if (mounted) {
-      setState(() {
-        _categories = cats;
-        if (cats.isNotEmpty) {
-          _selectedCategoryId = cats.first.id;
-        }
-
-        if (item != null) {
-          _nameArController.text = item.nameAr;
-          _nameEnController.text = item.nameEn;
-          _skuController.text = item.sku;
-          _barcodeController.text = item.barcode;
-          _priceController.text = item.price.toStringAsFixed(2);
-          _costController.text = item.cost.toStringAsFixed(2);
-          _kitchenStationController.text = item.kitchenStation;
-          _selectedCategoryId = item.categoryId;
-          _isActive = item.isActive;
-        }
-        _isLoading = false;
-      });
-    }
+    return categories;
   }
 
   @override
   void dispose() {
-    _nameArController.dispose();
-    _nameEnController.dispose();
-    _skuController.dispose();
-    _barcodeController.dispose();
-    _priceController.dispose();
-    _costController.dispose();
-    _kitchenStationController.dispose();
+    for (final controller in [
+      _name,
+      _nameEn,
+      _sku,
+      _price,
+      _station,
+      _prepTime,
+      _description,
+    ]) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
-  Future<void> _handleSave() async {
-    if (!_formKey.currentState!.validate()) return;
+  MenuItem _draft() => MenuItem(
+    id: widget.itemId ?? '',
+    sku: _sku.text.trim(),
+    barcode: '',
+    nameAr: _name.text.trim(),
+    nameEn: _nameEn.text.trim(),
+    categoryId: _categoryId,
+    categoryName: '',
+    price: double.parse(_price.text.trim()),
+    cost: 0,
+    kitchenStation: _station.text.trim(),
+    description: _description.text.trim(),
+    prepTimeMinutes: int.parse(_prepTime.text.trim()),
+    isActive: _active,
+  );
 
-    final selectedCat = _categories.firstWhere(
-      (c) => c.id == _selectedCategoryId,
-      orElse: () => _categories.first,
-    );
-
-    final item = MenuItem(
-      id: isEdit
-          ? widget.itemId!
-          : 'item_${DateTime.now().millisecondsSinceEpoch}',
-      sku: _skuController.text.trim(),
-      barcode: _barcodeController.text.trim(),
-      nameAr: _nameArController.text.trim(),
-      nameEn: _nameEnController.text.trim(),
-      categoryId: selectedCat.id,
-      categoryName: selectedCat.nameAr,
-      price: double.tryParse(_priceController.text.trim()) ?? 0.0,
-      cost: double.tryParse(_costController.text.trim()) ?? 0.0,
-      kitchenStation: _kitchenStationController.text.trim(),
-      isActive: _isActive,
-    );
-
-    await _repository.saveMenuItem(item);
-
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            isEdit
-                ? 'تم تحديث بيانات الصنف بنجاح'
-                : 'تمت إضافة الصنف الجديد إلى المنيو',
-          ),
-          backgroundColor: const Color(0xFF2E8B2E),
-        ),
-      );
-      context.pop();
+  Future<void> _save() async {
+    if (_saving || !_formKey.currentState!.validate()) return;
+    setState(() => _saving = true);
+    try {
+      await _repository.saveMenuItem(_draft());
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('تم حفظ الصنف')));
+      context.pop(true);
+    } on Exception catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(menuErrorMessage(error))));
+      }
+    } finally {
+      if (mounted) setState(() => _saving = false);
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.surface,
-      appBar: AppBar(
-        title: Text(isEdit ? 'تعديل صنف القائمة' : 'إضافة صنف جديد'),
+  Widget _field(TextEditingController controller, String label) => Padding(
+    padding: const EdgeInsets.only(bottom: 16),
+    child: TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
       ),
-      body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
-            )
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(AppDimens.paddingMd),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Top banner
-                    Container(
-                      padding: const EdgeInsets.all(AppDimens.paddingMd),
-                      decoration: BoxDecoration(
-                        color: AppColors.surfaceContainerLow,
-                        borderRadius: BorderRadius.circular(AppDimens.radiusXl),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.restaurant_menu,
-                            color: AppColors.primary,
-                            size: 24,
-                          ),
-                          const SizedBox(width: AppDimens.paddingSm),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  isEdit
-                                      ? 'صنف رقم #${widget.itemId}'
-                                      : 'إضافة صنف جديد بالقائمة المركزية',
-                                  style: AppTypography.labelMd.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  'تعديلات الصنف تنعكس مباشرة على أنظمة الكاشير المعتمدة',
-                                  style: AppTypography.bodySm.copyWith(
-                                    color: AppColors.secondary,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.errorContainer,
-                              borderRadius: BorderRadius.circular(
-                                AppDimens.radiusFull,
-                              ),
-                            ),
-                            child: Text(
-                              'خاص بالإدارة المركزية',
-                              style: AppTypography.labelSm.copyWith(
-                                color: AppColors.onErrorContainer,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 10,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: AppDimens.paddingLg),
+    ),
+  );
 
-                    // Section 1: Basic Info
-                    Container(
-                      padding: const EdgeInsets.all(AppDimens.paddingLg),
-                      decoration: BoxDecoration(
-                        color: AppColors.surfaceContainerLowest,
-                        borderRadius: BorderRadius.circular(AppDimens.radiusXl),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x06000000),
-                            blurRadius: 6,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'البيانات الأساسية للصنف',
-                                style: AppTypography.headlineSm.copyWith(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                'حقول إلزامية (*)',
-                                style: AppTypography.labelSm.copyWith(
-                                  color: AppColors.secondary,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: AppDimens.paddingMd),
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(
+      title: Text(_isEdit ? 'تعديل صنف القائمة' : 'إضافة صنف جديد'),
+    ),
+    body: sl<AuthBloc>().state.session?.role != StaffRole.ceo
+        ? const Center(child: Text('إدارة الأصناف متاحة للمدير التنفيذي فقط'))
+        : MenuLoadView<List<MenuCategory>>(
+            future: _initial,
+            onRetry: () => setState(() => _initial = _load()),
+            builder: _form,
+          ),
+  );
 
-                          // Name Ar
-                          TextFormField(
-                            controller: _nameArController,
-                            decoration: const InputDecoration(
-                              labelText: 'اسم الصنف بالعربية *',
-                              hintText: 'مثال: برجر دجاج مقرمش',
-                              border: OutlineInputBorder(),
-                              prefixIcon: Icon(Icons.translate),
-                            ),
-                            validator: (val) =>
-                                val == null || val.trim().isEmpty
-                                ? 'يرجى إدخال اسم الصنف'
-                                : null,
-                          ),
-                          const SizedBox(height: AppDimens.paddingMd),
-
-                          // Name En
-                          TextFormField(
-                            controller: _nameEnController,
-                            decoration: const InputDecoration(
-                              labelText: 'اسم الصنف بالإنجليزية',
-                              hintText: 'e.g. Crispy Chicken Burger',
-                              border: OutlineInputBorder(),
-                              prefixIcon: Icon(Icons.language),
-                            ),
-                          ),
-                          const SizedBox(height: AppDimens.paddingMd),
-
-                          // SKU & Barcode
-                          Row(
-                            children: [
-                              Expanded(
-                                child: TextFormField(
-                                  controller: _skuController,
-                                  decoration: const InputDecoration(
-                                    labelText: 'رمز الصنف (SKU) *',
-                                    hintText: 'CHK-01',
-                                    border: OutlineInputBorder(),
-                                  ),
-                                  validator: (val) =>
-                                      val == null || val.trim().isEmpty
-                                      ? 'مطلوب'
-                                      : null,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: TextFormField(
-                                  controller: _barcodeController,
-                                  decoration: const InputDecoration(
-                                    labelText: 'الباركود',
-                                    hintText: '6223001849...',
-                                    border: OutlineInputBorder(),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: AppDimens.paddingMd),
-
-                          // Category select
-                          DropdownButtonFormField<String>(
-                            isExpanded: true,
-                            initialValue: _selectedCategoryId,
-                            decoration: const InputDecoration(
-                              labelText: 'الفئة / القسم *',
-                              border: OutlineInputBorder(),
-                              prefixIcon: Icon(Icons.category_outlined),
-                            ),
-                            items: _categories.map((c) {
-                              return DropdownMenuItem<String>(
-                                value: c.id,
-                                child: Text(c.nameAr),
-                              );
-                            }).toList(),
-                            onChanged: (val) =>
-                                setState(() => _selectedCategoryId = val),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: AppDimens.paddingMd),
-
-                    // Section 2: Pricing
-                    Container(
-                      padding: const EdgeInsets.all(AppDimens.paddingLg),
-                      decoration: BoxDecoration(
-                        color: AppColors.surfaceContainerLowest,
-                        borderRadius: BorderRadius.circular(AppDimens.radiusXl),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x06000000),
-                            blurRadius: 6,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'البيانات المالية والتسعير',
-                            style: AppTypography.headlineSm.copyWith(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: AppDimens.paddingMd),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: TextFormField(
-                                  controller: _priceController,
-                                  keyboardType:
-                                      const TextInputType.numberWithOptions(
-                                        decimal: true,
-                                      ),
-                                  decoration: const InputDecoration(
-                                    labelText: 'سعر البيع (ج.م) *',
-                                    border: OutlineInputBorder(),
-                                    prefixIcon: Icon(Icons.sell_outlined),
-                                  ),
-                                  validator: (val) =>
-                                      val == null || val.trim().isEmpty
-                                      ? 'مطلوب'
-                                      : null,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: TextFormField(
-                                  controller: _costController,
-                                  keyboardType:
-                                      const TextInputType.numberWithOptions(
-                                        decimal: true,
-                                      ),
-                                  decoration: const InputDecoration(
-                                    labelText: 'تكلفة الإنتاج (ج.م)',
-                                    border: OutlineInputBorder(),
-                                    prefixIcon: Icon(
-                                      Icons.account_balance_wallet_outlined,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: AppDimens.paddingMd),
-
-                    // Section 3: Operations & Kitchen
-                    Container(
-                      padding: const EdgeInsets.all(AppDimens.paddingLg),
-                      decoration: BoxDecoration(
-                        color: AppColors.surfaceContainerLowest,
-                        borderRadius: BorderRadius.circular(AppDimens.radiusXl),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x06000000),
-                            blurRadius: 6,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'محطة التشغيل والحالة',
-                            style: AppTypography.headlineSm.copyWith(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: AppDimens.paddingMd),
-                          TextFormField(
-                            controller: _kitchenStationController,
-                            decoration: const InputDecoration(
-                              labelText: 'محطة الطهي (KDS)',
-                              hintText: 'محطة البرجر واللحوم',
-                              border: OutlineInputBorder(),
-                              prefixIcon: Icon(Icons.kitchen_outlined),
-                            ),
-                          ),
-                          const SizedBox(height: AppDimens.paddingMd),
-                          SwitchListTile(
-                            contentPadding: EdgeInsets.zero,
-                            title: const Text('تفعيل الصنف للبيع على الكاشير'),
-                            subtitle: const Text(
-                              'عند الإلغاء، يختفي الصنف فوراً من نقاط البيع',
-                            ),
-                            value: _isActive,
-                            activeThumbColor: AppColors.primary,
-                            onChanged: (val) => setState(() => _isActive = val),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: AppDimens.paddingLg),
-
-                    // Submit Button
-                    ElevatedButton(
-                      onPressed: _handleSave,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                            AppDimens.radiusXl,
-                          ),
-                        ),
-                      ),
-                      child: Text(
-                        isEdit ? 'حفظ التعديلات' : 'إضافة الصنف للمنيو',
-                        style: AppTypography.labelMd.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                  ],
+  Widget _form(List<MenuCategory> categories) => SingleChildScrollView(
+    padding: const EdgeInsets.all(AppDimens.paddingMd),
+    child: Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          TextFormField(
+            controller: _name,
+            decoration: const InputDecoration(labelText: 'اسم الصنف *'),
+            validator: (text) =>
+                text == null || text.trim().isEmpty ? 'أدخل اسم الصنف' : null,
+          ),
+          const SizedBox(height: 16),
+          _field(_nameEn, 'الاسم بالإنجليزية'),
+          TextFormField(
+            controller: _sku,
+            enabled: !_isEdit,
+            decoration: const InputDecoration(labelText: 'كود الصنف SKU *'),
+            validator: (text) =>
+                text == null || text.trim().isEmpty ? 'أدخل كود الصنف' : null,
+          ),
+          const SizedBox(height: 16),
+          DropdownButtonFormField<String>(
+            initialValue: _categoryId,
+            isExpanded: true,
+            decoration: const InputDecoration(labelText: 'التصنيف'),
+            items: [
+              const DropdownMenuItem(value: '', child: Text('بدون تصنيف')),
+              ...categories.map(
+                (category) => DropdownMenuItem(
+                  value: category.id,
+                  child: Text(category.nameAr),
                 ),
               ),
+              if (_categoryId.isNotEmpty &&
+                  !categories.any((c) => c.id == _categoryId))
+                DropdownMenuItem(
+                  value: _categoryId,
+                  child: const Text('التصنيف الحالي'),
+                ),
+            ],
+            onChanged: (selected) =>
+                setState(() => _categoryId = selected ?? ''),
+          ),
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: _price,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            decoration: const InputDecoration(labelText: 'سعر البيع *'),
+            validator: (text) {
+              final price = double.tryParse(text?.trim() ?? '');
+              return price == null || !price.isFinite || price <= 0
+                  ? 'أدخل سعرًا أكبر من صفر'
+                  : null;
+            },
+          ),
+          const SizedBox(height: 16),
+          _field(_station, 'محطة التحضير'),
+          TextFormField(
+            controller: _prepTime,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              labelText: 'وقت التحضير بالدقائق',
             ),
-    );
-  }
+            validator: (text) {
+              final minutes = int.tryParse(text?.trim() ?? '');
+              return minutes == null || minutes < 0
+                  ? 'أدخل عدد دقائق صحيحًا غير سالب'
+                  : null;
+            },
+          ),
+          const SizedBox(height: 16),
+          _field(_description, 'الوصف'),
+          if (_isEdit)
+            SwitchListTile(
+              title: const Text('الصنف نشط'),
+              value: _active,
+              onChanged: (active) => setState(() => _active = active),
+            ),
+          const SizedBox(height: 16),
+          FilledButton(
+            onPressed: _saving ? null : _save,
+            child: Text(_saving ? 'جارٍ الحفظ...' : 'حفظ الصنف'),
+          ),
+        ],
+      ),
+    ),
+  );
 }

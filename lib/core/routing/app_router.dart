@@ -1,3 +1,11 @@
+import '../../features/operations/operations_screen.dart';
+import '../../features/menu/presentation/screens/master_menu_screen.dart';
+import '../../features/menu/presentation/screens/menu_categories_screen.dart';
+import '../../features/menu/presentation/screens/create_edit_menu_item_screen.dart';
+import '../../features/menu/presentation/screens/menu_item_requests_screen.dart';
+import '../../features/menu/presentation/screens/menu_item_request_review_screen.dart';
+import '../../features/menu/presentation/screens/menu_item_details_screen.dart';
+import '../../features/menu/presentation/screens/create_menu_request_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -44,15 +52,35 @@ final appRouter = GoRouter(
     final path = state.uri.path;
     final isPublic =
         path == '/splash' || path == '/login' || path.startsWith('/auth/');
-    final isAuthenticated = sl<AuthBloc>().state.isAuthenticated;
+    final auth = sl<AuthBloc>().state;
+    final isAuthenticated = auth.isAuthenticated;
+    if (isAuthenticated &&
+        auth.session?.mustChangePassword == true &&
+        path != '/auth/change-password' &&
+        path != '/splash') {
+      return '/auth/change-password';
+    }
+    if (path == '/auth/change-password' && !isAuthenticated) return '/login';
     if (!isPublic && !isAuthenticated) return '/login';
     if (path == '/login' && isAuthenticated) return '/home';
-    if (path.startsWith('/menu') || path.startsWith('/pricing')) {
+    if (path.startsWith('/pricing')) {
       return '/under-development';
     }
     return null;
   },
   routes: [
+    GoRoute(
+      path: '/operations',
+      builder: (context, state) =>
+          const MobileViewport(child: OperationsHome()),
+    ),
+    GoRoute(
+      path: '/operations/:module',
+      builder: (context, state) => MobileViewport(
+        child: OperationsScreen(module: state.pathParameters['module']!),
+      ),
+    ),
+
     GoRoute(
       path: '/under-development',
       name: 'under-development',
@@ -163,9 +191,7 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/branches/central-kitchen',
       name: 'central-kitchen',
-      builder: (context, state) => const MobileViewport(
-        child: UnderDevelopmentScreen(feature: 'عمليات المطبخ المركزي'),
-      ),
+      redirect: (context, state) => '/operations/supply',
     ),
     GoRoute(
       path: '/branches/:id',
@@ -332,54 +358,57 @@ final appRouter = GoRouter(
         return MobileViewport(child: OvertimeReviewScreen(record: record));
       },
     ),
-    // Story 6 (MENU) Routes
     GoRoute(
       path: '/menu',
       name: 'master-menu',
-      builder: (context, state) => const MobileViewport(
-        child: UnderDevelopmentScreen(feature: 'إدارة قائمة الطعام'),
-      ),
+      builder: (context, state) =>
+          const MobileViewport(child: MasterMenuScreen()),
     ),
     GoRoute(
       path: '/menu/categories',
       name: 'menu-categories',
-      builder: (context, state) => const MobileViewport(
-        child: UnderDevelopmentScreen(feature: 'تصنيفات قائمة الطعام'),
-      ),
+      builder: (context, state) =>
+          const MobileViewport(child: MenuCategoriesScreen()),
     ),
     GoRoute(
       path: '/menu/create',
       name: 'create-menu-item',
-      builder: (context, state) => const MobileViewport(
-        child: UnderDevelopmentScreen(feature: 'إنشاء عنصر قائمة الطعام'),
-      ),
+      builder: (context, state) =>
+          const MobileViewport(child: CreateEditMenuItemScreen()),
     ),
     GoRoute(
       path: '/menu/edit/:id',
       name: 'edit-menu-item',
-      builder: (context, state) => const MobileViewport(
-        child: UnderDevelopmentScreen(feature: 'تعديل عنصر قائمة الطعام'),
+      builder: (context, state) => MobileViewport(
+        child: CreateEditMenuItemScreen(itemId: state.pathParameters['id']!),
       ),
     ),
     GoRoute(
       path: '/menu/requests',
       name: 'menu-requests',
-      builder: (context, state) => const MobileViewport(
-        child: UnderDevelopmentScreen(feature: 'طلبات قائمة الطعام'),
-      ),
+      builder: (context, state) =>
+          const MobileViewport(child: MenuItemRequestsScreen()),
+    ),
+    GoRoute(
+      path: '/menu/requests/create',
+      name: 'create-menu-request',
+      builder: (context, state) =>
+          const MobileViewport(child: CreateMenuRequestScreen()),
     ),
     GoRoute(
       path: '/menu/requests/:id',
       name: 'menu-request-review',
-      builder: (context, state) => const MobileViewport(
-        child: UnderDevelopmentScreen(feature: 'مراجعة طلب قائمة الطعام'),
+      builder: (context, state) => MobileViewport(
+        child: MenuItemRequestReviewScreen(
+          requestId: state.pathParameters['id']!,
+        ),
       ),
     ),
     GoRoute(
       path: '/menu/:id',
       name: 'menu-item-details',
-      builder: (context, state) => const MobileViewport(
-        child: UnderDevelopmentScreen(feature: 'تفاصيل عنصر قائمة الطعام'),
+      builder: (context, state) => MobileViewport(
+        child: MenuItemDetailsScreen(itemId: state.pathParameters['id']!),
       ),
     ),
     // Story 7 (PRICE) Routes

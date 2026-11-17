@@ -1,4 +1,6 @@
+import '../../features/menu/data/repositories/api_item_cost_repository.dart';
 import 'package:get_it/get_it.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../network/authenticated_api.dart';
@@ -12,7 +14,7 @@ import '../../features/attendance/data/repositories/api_attendance_repository.da
 import '../../features/employees/data/repositories/api_employee_repository.dart';
 import '../../features/employees/domain/repositories/employee_repository.dart';
 import '../../features/overtime/data/repositories/api_overtime_repository.dart';
-import '../../features/menu/data/repositories/mock_menu_repository.dart';
+import '../../features/menu/data/repositories/api_menu_repository.dart';
 import '../../features/menu/domain/repositories/menu_repository.dart';
 import '../../features/pricing/data/repositories/mock_pricing_repository.dart';
 import '../../features/pricing/domain/repositories/pricing_repository.dart';
@@ -43,7 +45,28 @@ Future<void> initServiceLocator() async {
     () => ApiAttendanceRepository(sl<AuthenticatedApi>()),
   );
   sl.registerLazySingleton(() => ApiOvertimeRepository(sl<AuthenticatedApi>()));
-  sl.registerLazySingleton<MenuRepository>(() => MockMenuRepository());
+  sl.registerLazySingleton<MenuRepository>(() {
+    const configuredUrl = String.fromEnvironment('RAS_MENU_API_BASE_URL');
+    final localHost = !kIsWeb && defaultTargetPlatform == TargetPlatform.android
+        ? '10.0.2.2'
+        : 'localhost';
+    return ApiMenuRepository(
+      AuthenticatedApi(
+        sl<AuthenticatedApi>().auth,
+        baseUrl: configuredUrl.isEmpty
+            ? 'http://$localHost:9005'
+            : configuredUrl,
+      ),
+    );
+  });
+  const costUrl = String.fromEnvironment('RAS_COST_API_BASE_URL');
+  if (costUrl.isNotEmpty) {
+    sl.registerLazySingleton(
+      () => ApiItemCostRepository(
+        AuthenticatedApi(sl<AuthenticatedApi>().auth, baseUrl: costUrl),
+      ),
+    );
+  }
   sl.registerLazySingleton<PricingRepository>(() => MockPricingRepository());
 
   // UseCases

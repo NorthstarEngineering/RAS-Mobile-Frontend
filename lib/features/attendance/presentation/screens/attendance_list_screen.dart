@@ -29,6 +29,12 @@ class _AttendanceListScreenState extends State<AttendanceListScreen> {
     _loadEmployees();
   }
 
+  Future<void> _refreshEmployees() async {
+    if (_isLoading) return;
+    setState(() => _isLoading = true);
+    await _loadEmployees();
+  }
+
   Future<void> _loadEmployees() async {
     try {
       final employees = await sl<EmployeeRepository>().getEmployees();
@@ -46,18 +52,6 @@ class _AttendanceListScreenState extends State<AttendanceListScreen> {
         ).showSnackBar(SnackBar(content: Text('تعذر تحميل الموظفين: $error')));
       }
     }
-  }
-
-  void _onSyncDevices() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-          'تمت مزامنة بيانات البصمة مع أجهزة الدخول البيومترية بنجاح.',
-        ),
-        backgroundColor: AppColors.success,
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
   }
 
   @override
@@ -80,7 +74,8 @@ class _AttendanceListScreenState extends State<AttendanceListScreen> {
         actions: [
           IconButton(
             icon: const Icon(Symbols.sync, color: AppColors.primary),
-            onPressed: _onSyncDevices,
+            tooltip: 'تحديث قائمة الموظفين',
+            onPressed: _isLoading ? null : _refreshEmployees,
           ),
         ],
       ),
@@ -145,9 +140,9 @@ class _AttendanceListScreenState extends State<AttendanceListScreen> {
                     ],
                   ),
                   TextButton.icon(
-                    onPressed: _onSyncDevices,
+                    onPressed: _isLoading ? null : _refreshEmployees,
                     icon: const Icon(Symbols.sync, size: 16),
-                    label: const Text('مزامنة الأجهزة'),
+                    label: const Text('تحديث قائمة الموظفين'),
                   ),
                 ],
               ),

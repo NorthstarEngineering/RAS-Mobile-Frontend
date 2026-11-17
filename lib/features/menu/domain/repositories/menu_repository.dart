@@ -7,14 +7,23 @@ abstract class MenuRepository {
   Future<MenuItem?> getMenuItemById(String id);
   Future<List<MenuCategory>> getCategories();
   Future<void> saveMenuItem(MenuItem item);
-  Future<void> deleteMenuItem(String id);
   Future<void> addCategory(MenuCategory category);
-  Future<void> updateCategoryOrder(List<MenuCategory> categories);
   Future<List<MenuItemRequest>> getMenuItemRequests();
   Future<MenuItemRequest?> getMenuItemRequestById(String id);
-  Future<void> reviewMenuItemRequest({
-    required String requestId,
-    required bool isApproved,
-    String? note,
+  Future<void> createMenuItemRequest(MenuRequestDraft draft);
+  Future<void> approveMenuItemRequest(String requestId, String sku);
+  Future<void> rejectMenuItemRequest(String requestId, String reason);
+}
+
+class MenuRequestDraft {
+  const MenuRequestDraft({
+    required this.name,
+    required this.price,
+    this.description = '',
+    this.justification = '',
   });
+  final String name;
+  final double price;
+  final String description;
+  final String justification;
 }

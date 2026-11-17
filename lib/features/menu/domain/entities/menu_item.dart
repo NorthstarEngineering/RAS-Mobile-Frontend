@@ -1,4 +1,5 @@
 class MenuItem {
+  final int prepTimeMinutes;
   final String id;
   final String sku;
   final String barcode;
@@ -17,6 +18,7 @@ class MenuItem {
   final List<String> allergens;
 
   const MenuItem({
+    this.prepTimeMinutes = 0,
     required this.id,
     required this.sku,
     required this.barcode,
@@ -36,6 +38,7 @@ class MenuItem {
   });
 
   MenuItem copyWith({
+    int? prepTimeMinutes,
     String? id,
     String? sku,
     String? barcode,
@@ -54,6 +57,7 @@ class MenuItem {
     List<String>? allergens,
   }) {
     return MenuItem(
+      prepTimeMinutes: prepTimeMinutes ?? this.prepTimeMinutes,
       id: id ?? this.id,
       sku: sku ?? this.sku,
       barcode: barcode ?? this.barcode,

@@ -55,7 +55,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   behavior: SnackBarBehavior.floating,
                 ),
               );
-              context.go('/home');
+              context.go(
+                state.session!.mustChangePassword
+                    ? '/auth/change-password'
+                    : '/home',
+              );
             }
           },
           builder: (context, state) {
